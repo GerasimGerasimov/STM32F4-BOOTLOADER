@@ -2083,7 +2083,7 @@
                 </option>
                 <option>
                     <name>IlinkTrustzoneImportLibraryOut</name>
-                    <state>###Unitialized###</state>
+                    <state>DExS.M4CPU.VTEG_import_lib.o</state>
                 </option>
                 <option>
                     <name>OILinkExtraOption</name>
@@ -2236,9 +2236,6 @@
             <name>$PROJ_DIR$\..\STM32F4xx_Intmash_Driver\STM32F4xx_intmash_MBbasicCommands.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\STM32F4xx_Intmash_Driver\STM32F4xx_Intmash_RTC.c</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\..\STM32F4xx_Intmash_Driver\STM32F4xx_Intmash_USART.c</name>
         </file>
     </group>
@@ -2246,9 +2243,6 @@
         <name>Storages</name>
         <file>
             <name>$PROJ_DIR$\..\Storages\CalibrationData.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Storages\flashdata.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\Storages\ramdata.c</name>

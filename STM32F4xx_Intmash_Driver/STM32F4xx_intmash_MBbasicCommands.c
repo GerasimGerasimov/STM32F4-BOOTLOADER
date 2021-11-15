@@ -4,7 +4,6 @@
 #include "id.h"
 #include "crc16.h"
 #include "CalibrationData.h"
-#include "FlashData.h"
 #include "RAMdata.h"
 #include "ModbusSlave.h"
 
@@ -80,11 +79,7 @@ tU8 ModbusMemRead(ModbusSlaveType* Slave)
     case RAM_DATA_PREFIX:
       if(LastRegAddr < RAM_DATA_SIZE) Source=(tU8*)&RAM_DATA;  
     break;
-    
-    case FLASH_DATA_PREFIX:
-      if(LastRegAddr < FLASH_DATA_SIZE) Source=(tU8*)&FLASH_DATA;
-    break;
-    
+      
     case CD_DATA_PREFIX:
       if(LastRegAddr < CD_DATA_SIZE) Source=(tU8*)&CD_DATA;
     break; 
@@ -153,39 +148,6 @@ tU8 ModbusCDWrite(tU8* Buffer,tU8 BufDataIdx, tU8 RegAddr, tU8 RegNum)//
 
 }
 
-//функци€ записи во FLASH пам€ть
-tU8 ModbusFlashWrite(tU8* Buffer,tU8 BufDataIdx, tU8 RegAddr, tU8 RegNum)
-{ 
-  tU8 DataLength = 0; //длинна отправл€емой посылки
-  volatile tU16Union crc, _crc;
-  
-  if(FlashStatus.Bits.FLASH_WRITE_DIS == 0)
-  {
-    if(FlashStatus.Bits.FLASH_DATA_ERR==0)
-    {
-      //копирование данных из основного сектора с уставками в буфер
-      CopyFlashToTmpBuffer((tU32*)&FLASH_DATA);
-      //адрес во временном буфере
-      tU16 *ModbusAddrSet = (tU16*)((tU32)&FlashTmpBuffer + ((tU32)RegAddr << 1));
-       //внести изменени€ во временный буфер со свопом байт
-      ModbusSwapCopy((tU8*)&Buffer[BufDataIdx], (tU16*) ModbusAddrSet, RegNum);
-      //данные наход€тс€ во временном буфере, теперь:
-      //ѕодсчитать контрольную сумму временного буфера
-      if(BufDataIdx != 0) FrameEndCrc16((tU8*)FlashTmpBuffer, FlashTmpBufferSize);       
-      //буфер готов к записи       
-      FlashDataProtectedWrite((tU32*)&FLASH_DATA, (tU32*)&BKFLASH_DATA);
-    }
-  }   
-  /* если BufDataIdx = 0, значит мы работаем не с буфером slave, а с переменной. 
-  считать CRC в этом случае не нужно  */  
-  if(BufDataIdx != 0)
-  {
-    DataLength = WR_ANSWER_SIZE; //размер ответа на запись регистров (0x10, 0x06)
-    FrameEndCrc16((tU8*)Buffer, DataLength);
-  }
-  return DataLength; //возвращает размер отправл€емой посылки
-}
-
 //выбор функции записи в определенный сектор пам€ти
 tU8 ModbusMemWrite(ModbusSlaveType* Slave){  
   //старша€ тетрада старшего байта адреса первого регистра данных (префикс)
@@ -207,11 +169,6 @@ tU8 ModbusMemWrite(ModbusSlaveType* Slave){
     case RAM_DATA_PREFIX:
       if(LastRegAddr<RAM_DATA_SIZE ) DataLength=ModbusRamWrite(Slave->Buffer,MB_DATA_SECTION_CMD_10,RegAddr,RegNum);        
       else Error=1;//вдрес вне допустимой зоны       
-    break;
-    
-    case FLASH_DATA_PREFIX:
-      if(LastRegAddr<FLASH_DATA_SIZE ) DataLength=ModbusFlashWrite(Slave->Buffer,MB_DATA_SECTION_CMD_10,(tU8)RegAddr,(tU8)RegNum);
-      else Error=1;//вдрес вне допустимой зоны          
     break;
     
     case CD_DATA_PREFIX:
@@ -249,11 +206,6 @@ tU8 ModbusMemWriteSingle(ModbusSlaveType* Slave){
   {
     case RAM_DATA_PREFIX:
       if(RegAddr<RAM_DATA_SIZE ) DataLength = ModbusRamWrite(Slave->Buffer,MB_DATA_SECTION_CMD_06,RegAddr,SINGLE_WRITE_REGNUM); 
-      else Error=1;//вдрес вне допустимой зоны
-    break;
-    
-    case FLASH_DATA_PREFIX:
-      if(RegAddr<FLASH_DATA_SIZE ) DataLength = ModbusFlashWrite(Slave->Buffer,MB_DATA_SECTION_CMD_06,(tU8)RegAddr,SINGLE_WRITE_REGNUM);
       else Error=1;//вдрес вне допустимой зоны
     break;
     
@@ -305,16 +257,6 @@ tU8 ModbusMemWriteMask(ModbusSlaveType* Slave)
         Data = (Data & Mask_AND.I) | Mask_OR.I;
         ModbusRamWrite((tU8*)&Data,0,RegAddr,MASK_WRITE_REGNUM);
         DataLength = MASK_ANSWER_SIZE;      
-      }
-      else Error=1;//вдрес вне допустимой зоны
-    break;
-    
-    case FLASH_DATA_PREFIX:
-      if(RegAddr<FLASH_DATA_SIZE){
-        ModbusSwapCopy (((tU8*)&FLASH_DATA)+(RegAddr<<1),&Data,MASK_WRITE_REGNUM);          
-        Data = (Data & Mask_AND.I) | Mask_OR.I;
-        ModbusFlashWrite((tU8*)&Data,0,(tU8)RegAddr,MASK_WRITE_REGNUM);
-        DataLength = MASK_ANSWER_SIZE;
       }
       else Error=1;//вдрес вне допустимой зоны
     break;

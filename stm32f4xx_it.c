@@ -24,7 +24,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_it.h"
 #include "ramdata.h"
-#include "flashdata.h"
 #include "CalibrationData.h"
 
 /*Служебный таймер 0, 001с ****************************************************/
