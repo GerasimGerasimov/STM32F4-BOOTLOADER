@@ -1,3 +1,6 @@
+*Info/HexReader/node_modules/
+package-lock.json
+*Info/HexReader/dist/
 # Prerequisites
 *.d
 EWARMv6/STM32F407IGT6/

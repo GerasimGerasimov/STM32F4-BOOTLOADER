@@ -1,0 +1,17 @@
+{
+  "name": "hexreader",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "set APP_DEBUG=true & node dist",
+    "test": "test",
+    "start": "set APP_DEBUG=false & node dist"
+  },
+  "author": "Gerasimov V. Gerasim",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^16.11.7"
+  }
+}
