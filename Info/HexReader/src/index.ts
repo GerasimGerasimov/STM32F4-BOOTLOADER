@@ -26,7 +26,7 @@ function getMemoryAreas(content:Array<string>) {
     } else {
       if (isEndOfHex(hexstr)) {
         console.log(`0x${(Area.PrevOffset).toString(16)} : `, Area.segSize);
-        console.log('End Of Hex', hexstr);
+        console.log('End Of Hex');
         break;
       }
     }
@@ -35,7 +35,8 @@ function getMemoryAreas(content:Array<string>) {
 
 function isNewArea(Area:{ PrevOffset: number,  segSize: number}, addr: number, size: number): boolean {
   if ((addr - Area.segSize) > Area.PrevOffset){
-    console.log(`0x${(Area.PrevOffset).toString(16)} : `, Area.segSize);
+    if (Area.segSize !== 0)
+      console.log(`0x${(Area.PrevOffset).toString(16)} : `, Area.segSize);
     Area.PrevOffset = addr;
     Area.segSize = size;
     return true;
