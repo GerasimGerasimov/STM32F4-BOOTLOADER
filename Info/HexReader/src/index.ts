@@ -21,18 +21,15 @@ function getMemoryAreas(content:Array<string>) {
     const hexstr: string = content[idx];
     let HexSrtLen: number = getHexSrtLenght(hexstr);
     if (HexSrtLen) {
-      if (isAdditionSegmentAddress(segmentAddr, hexstr)) {
+      if (isAdditionSegmentAddress(segmentAddr, hexstr)) continue;
+      const {Addr, size} = getStartAddrAndSizeOfCodeStr(HexSrtLen, hexstr, segmentAddr.addr);
+      if ((Addr - segSize) > PrevOffset){
+        console.log(`0x${(PrevOffset).toString(16)} : `, segSize);
+        PrevOffset = Addr;
+        segSize = size;
         continue;
       } else {
-        const {Addr, size} = getStartAddrAndSizeOfCodeStr(HexSrtLen, hexstr, segmentAddr.addr);
-        if ((Addr - segSize) > PrevOffset){
-          console.log(`0x${(PrevOffset).toString(16)} : `, segSize);
-          PrevOffset = Addr;
-          segSize = size;
-          continue;
-        } else {
-          segSize += size;
-        }
+        segSize += size;
       }
     } else {
       if (isEndOfHex(hexstr)) {
