@@ -7,25 +7,39 @@ console.log('Start Hex Reader');
 const fileContent: Array<string> = fs.readFileSync('./src/stm32F4-short.hex').toString().split("\n");
 
 type TArea = {
-  from: number;
+  from: string;
   size: number
+}
+
+class TAreaProps {
+  PrevOffset: number = 0;
+  segSize: number = 0;
+
+  public getLastPosition(): TArea {
+    console.log(`0x${(this.PrevOffset).toString(16)} : ${this.segSize}`);
+    return {
+      from: `0x${(this.PrevOffset).toString(16)}`,
+      size: this.segSize
+    }
+  }
 }
 
 const Areas: Array<TArea> = [];
 
 function getMemoryAreas(content:Array<string>) {
   const segmentAddr = {addr: 0};
-  const Area = { PrevOffset:0,  segSize:0};
+  const Area: TAreaProps = new TAreaProps();
   for (const idx in content) {
     const hexstr: string = content[idx];
     let HexSrtLen: number = getHexSrtLenght(hexstr);
     if (HexSrtLen) {
       if (isAdditionSegmentAddress(segmentAddr, hexstr)) continue;
       const {Addr, size} = getStartAddrAndSizeOfCodeStr(HexSrtLen, hexstr, segmentAddr.addr);
-      if (isNewArea(Area, Addr, size)) {};
+      const NewArea: TArea = isNewArea(Area, Addr, size);
+      if (NewArea) Areas.push(NewArea);
     } else {
       if (isEndOfHex(hexstr)) {
-        console.log(`0x${(Area.PrevOffset).toString(16)} : `, Area.segSize);
+        Areas.push(Area.getLastPosition());
         console.log('End Of Hex');
         break;
       }
@@ -33,16 +47,22 @@ function getMemoryAreas(content:Array<string>) {
   };
 }
 
-function isNewArea(Area:{ PrevOffset: number,  segSize: number}, addr: number, size: number): boolean {
+function isNewArea(Area:{ PrevOffset: number,  segSize: number}, addr: number, size: number): TArea | undefined {
+  var newArea: TArea = undefined;
   if ((addr - Area.segSize) > Area.PrevOffset){
-    if (Area.segSize !== 0)
-      console.log(`0x${(Area.PrevOffset).toString(16)} : `, Area.segSize);
+    if (Area.segSize !== 0) {
+      newArea = {
+        from: `0x${(Area.PrevOffset).toString(16)}`,
+        size: Area.segSize
+      };
+      console.log(`${newArea.from} : ${newArea.size}`);
+    }
     Area.PrevOffset = addr;
-    Area.segSize = size;
-    return true;
+    Area.segSize    = size;
+    return newArea;
   } else {
     Area.segSize += size;
-    return false;
+    return undefined;
   }
 }
 
