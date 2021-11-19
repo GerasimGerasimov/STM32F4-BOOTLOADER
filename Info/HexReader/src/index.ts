@@ -14,31 +14,35 @@ type TArea = {
 const Areas: Array<TArea> = [];
 
 function getMemoryAreas(content:Array<string>) {
-  var segmentAddr = {addr: 0};
-  var PrevOffset: number = 0;
-  var segSize: number = 0;
+  const segmentAddr = {addr: 0};
+  const Area = { PrevOffset:0,  segSize:0};
   for (const idx in content) {
     const hexstr: string = content[idx];
     let HexSrtLen: number = getHexSrtLenght(hexstr);
     if (HexSrtLen) {
       if (isAdditionSegmentAddress(segmentAddr, hexstr)) continue;
       const {Addr, size} = getStartAddrAndSizeOfCodeStr(HexSrtLen, hexstr, segmentAddr.addr);
-      if ((Addr - segSize) > PrevOffset){
-        console.log(`0x${(PrevOffset).toString(16)} : `, segSize);
-        PrevOffset = Addr;
-        segSize = size;
-        continue;
-      } else {
-        segSize += size;
-      }
+      if (isNewArea(Area, Addr, size)) {};
     } else {
       if (isEndOfHex(hexstr)) {
-        console.log(`0x${(PrevOffset).toString(16)} : `, segSize);
+        console.log(`0x${(Area.PrevOffset).toString(16)} : `, Area.segSize);
         console.log('End Of Hex', hexstr);
         break;
       }
     }
   };
+}
+
+function isNewArea(Area:{ PrevOffset: number,  segSize: number}, addr: number, size: number): boolean {
+  if ((addr - Area.segSize) > Area.PrevOffset){
+    console.log(`0x${(Area.PrevOffset).toString(16)} : `, Area.segSize);
+    Area.PrevOffset = addr;
+    Area.segSize = size;
+    return true;
+  } else {
+    Area.segSize += size;
+    return false;
+  }
 }
 
 function getStrFirstAddr(str: string, Addition: number): number {
