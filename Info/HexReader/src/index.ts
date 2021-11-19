@@ -11,22 +11,20 @@ type TArea = {
   size: number
 }
 
+const Areas: Array<TArea> = [];
+
 function getMemoryAreas(content:Array<string>) {
-  var Area: TArea = {from: 0, size: 0};
-  const Areas: Array<TArea> = [];
-  var segmentAddr: number = 0;
+  var segmentAddr = {addr: 0};
   var PrevOffset: number = 0;
   var segSize: number = 0;
   for (const idx in content) {
     const hexstr: string = content[idx];
     let HexSrtLen: number = getHexSrtLenght(hexstr);
     if (HexSrtLen) {
-      const {isAddition, Addr, hexAddr} = isAdditionSegmentAddress(hexstr);
-      if (isAddition) {
-        segmentAddr = Addr;
+      if (isAdditionSegmentAddress(segmentAddr, hexstr)) {
+        continue;
       } else {
-        const {Addr, size} = getStartAddrAndSizeOfCodeStr(HexSrtLen, hexstr, segmentAddr);
-        
+        const {Addr, size} = getStartAddrAndSizeOfCodeStr(HexSrtLen, hexstr, segmentAddr.addr);
         if ((Addr - segSize) > PrevOffset){
           console.log(`0x${(PrevOffset).toString(16)} : `, segSize);
           PrevOffset = Addr;
@@ -59,11 +57,11 @@ function getStartAddrAndSizeOfCodeStr(size: number, str: string, Addition: numbe
 }
 
 //:020000040800F2
-function isAdditionSegmentAddress(str: string): {isAddition: boolean, Addr: number, hexAddr:string}{
+function isAdditionSegmentAddress(seg: {addr: number}, str: string): boolean {
   const code: string = str.slice(7,9);
   return (code == '04')
-         ? {isAddition: true, Addr:parseInt(`0x${str.slice(9,13)}0000`), hexAddr:`0x${str.slice(9,13)}0000`}
-         : {isAddition: false, Addr:0, hexAddr:'0x00000000'};
+         ? (seg.addr = parseInt(`0x${str.slice(9,13)}0000`), true)
+         : false;
 }
 
 function getHexSrtLenght(str: string): number {
