@@ -1,4 +1,4 @@
-export type THEXArea = {
+export type TCodeSegment = {
   start: string;
   info: number | string ;
 }
@@ -7,7 +7,7 @@ class TAreaProps {
   PrevOffset: number = 0;
   segSize: number = 0;
 
-  public getLastPosition(): THEXArea {
+  public getLastPosition(): TCodeSegment {
     return {
       start: `0x${(this.PrevOffset).toString(16)}`,
       info: this.segSize
@@ -18,8 +18,8 @@ class TAreaProps {
     return `0x${(this.PrevOffset).toString(16)}`;
   }
 
-  public getNewArea(addr: number, size: number): THEXArea | undefined {
-    var newArea: THEXArea = undefined;
+  public getNewArea(addr: number, size: number): TCodeSegment | undefined {
+    var newArea: TCodeSegment = undefined;
     if ((addr - this.segSize) > this.PrevOffset){
       if (this.segSize !== 0) {
         newArea = {
@@ -37,10 +37,10 @@ class TAreaProps {
   }
 }
 
-export function getUsageMemoryAddresAndSize(content:Array<string>): Array<THEXArea> {
+export function getUsageMemoryAddresAndSize(content:Array<string>): Array<TCodeSegment> {
   var segmentAddr = 0;
   const Area: TAreaProps = new TAreaProps();
-  const res:  Array<THEXArea> = [];
+  const res:  Array<TCodeSegment> = [];
   for (const idx in content) {
     const hexstr: string = content[idx];
     switch (getCommand(hexstr)) {
@@ -49,7 +49,7 @@ export function getUsageMemoryAddresAndSize(content:Array<string>): Array<THEXAr
         break;
       case '00'://данные
         const {Addr, size} = getStartAddrAndSizeOfCodeStr(hexstr, segmentAddr);
-        const NewArea: THEXArea = Area.getNewArea(Addr, size);
+        const NewArea: TCodeSegment = Area.getNewArea(Addr, size);
         if (NewArea) res.push(NewArea);
         break;
       case '05'://адрес начала приложения ARM
