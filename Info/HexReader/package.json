@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "set APP_DEBUG=true & node dist",
-    "test": "test",
+    "test": "mocha --config .mocharc.json --watch src/**/*.test.ts",
     "start": "set APP_DEBUG=false & node dist"
   },
   "author": "Gerasimov V. Gerasim",
