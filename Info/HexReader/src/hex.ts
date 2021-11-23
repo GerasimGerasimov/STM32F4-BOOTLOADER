@@ -1,16 +1,13 @@
-export type TCodeSegment = {
-  start: string;
-  info: number | string ;
-}
+import { TFlashSegmen } from "./hextypes";
 
 class TAreaProps {
   PrevOffset: number = 0;
   segSize: number = 0;
 
-  public getLastPosition(): TCodeSegment {
+  public getLastPosition(): TFlashSegmen {
     return {
       start: `0x${(this.PrevOffset).toString(16)}`,
-      info: this.segSize
+      size: this.segSize
     }
   }
 
@@ -18,13 +15,13 @@ class TAreaProps {
     return `0x${(this.PrevOffset).toString(16)}`;
   }
 
-  public getNewArea(addr: number, size: number): TCodeSegment | undefined {
-    var newArea: TCodeSegment = undefined;
+  public getNewArea(addr: number, size: number): TFlashSegmen | undefined {
+    var newArea: TFlashSegmen = undefined;
     if ((addr - this.segSize) > this.PrevOffset){
       if (this.segSize !== 0) {
         newArea = {
           start: `0x${(this.PrevOffset).toString(16)}`,
-          info: this.segSize
+          size: this.segSize
         };
       }
       this.PrevOffset = addr;
@@ -37,10 +34,10 @@ class TAreaProps {
   }
 }
 
-export function getUsageMemoryAddresAndSize(content:Array<string>): Array<TCodeSegment> {
+export function getUsageMemoryAddresAndSize(content:Array<string>): Array<TFlashSegmen> {
   var segmentAddr = 0;
   const Area: TAreaProps = new TAreaProps();
-  const res:  Array<TCodeSegment> = [];
+  const res:  Array<TFlashSegmen> = [];
   for (const idx in content) {
     const hexstr: string = content[idx];
     switch (getCommand(hexstr)) {
@@ -49,11 +46,11 @@ export function getUsageMemoryAddresAndSize(content:Array<string>): Array<TCodeS
         break;
       case '00'://данные
         const {Addr, size} = getStartAddrAndSizeOfCodeStr(hexstr, segmentAddr);
-        const NewArea: TCodeSegment = Area.getNewArea(Addr, size);
+        const NewArea: TFlashSegmen = Area.getNewArea(Addr, size);
         if (NewArea) res.push(NewArea);
         break;
       case '05'://адрес начала приложения ARM
-        res.push({start:getMainAddr(hexstr), info:'main'});
+        res.push({start:getMainAddr(hexstr), size:'main'});
         break;
       case '01'://конец файла
         res.push(Area.getLastPosition());
