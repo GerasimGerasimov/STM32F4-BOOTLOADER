@@ -1,24 +1,5 @@
 import { TFlashSegmen } from "./hextypes";
 
-/*
-passed:
-{"start":"0x8000000","info":61368} EFB8 = 3FFF + 3FFF + 3FFF + 2FBB
-{"start":"0x80a0000","info":104}
-{"start":"0x80c0000","info":104}
-{"start":"0x0800DD81","info":"main"}
-{"start":"0x80e0000","info":4}
-
-result:
-    {start: '0x08000000', size: 0x03FFF},//16K 3FFF
-    {start: '0x08004000', size: 0x03FFF},//16K 3FFF
-    {start: '0x08008000', size: 0x03FFF},//16K 3FFF
-    {start: '0x0800C000', size: 0x03FFF},//16K 2FBB
-
-    {start: '0x080A0000', size: 0x1FFFF},//128K
-    {start: '0x080C0000', size: 0x1FFFF},//128K
-    {start: '0x080E0000', size: 0x1FFFF} //128K
-
-*/
 export function getErasedPages( domain: Array<TFlashSegmen>): Array<string> {
   const res:Set<string> = new Set();
   const pages: Array<TFlashSegmen> = getFlashPages();
