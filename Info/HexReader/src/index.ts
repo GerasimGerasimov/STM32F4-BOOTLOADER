@@ -6,6 +6,7 @@ import { getUsageMemoryAddresAndSize} from "./hex";
 import { TFlashSegmen } from "./hextypes";
 import { getErasedPages} from "./mcu";
 import { settings } from "./settings";
+import { delay } from "./utils/delay";
 
 const COMx: ComPort = new ComPort(settings.COM);
 
@@ -32,6 +33,7 @@ function getCmdGetPageList(): iCmd {
       const result: any = await  COMx.getCOMAnswer(getCmdGetPageList()) ;//открыть соединение и получить ClientID
       console.log(result);
     } catch (e) {
+      await delay(1000);
       console.log('главЛовушка',e);
     }
 
