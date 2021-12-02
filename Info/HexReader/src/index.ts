@@ -1,7 +1,7 @@
 import fs = require ("fs");
 import ComPort from "./comport/comport";
 import { iCmd } from "./comport/netports";
-import { appendCRC16toArray } from "./crc/crc16";
+import { appendCRC16toArray, getCRC16 } from "./crc/crc16";
 import { getUsageMemoryAddresAndSize} from "./hex";
 import { TFlashSegmen } from "./hextypes";
 import { getErasedPages} from "./mcu";
@@ -35,6 +35,7 @@ function getCmdGetPageList(): iCmd {
   return {cmd}
 }
 
+
 (async () => { 
   while (true) {
     try {
@@ -44,8 +45,13 @@ function getCmdGetPageList(): iCmd {
       s = Buffer.from(ID.msg.slice(3,-2)).toString('ascii');
       console.log(s);
       const result: any = await  COMx.getCOMAnswer(getCmdGetPageList());
-      const buff: Array<number> = result.msg.slice(3,-2);
       
+      if (getCRC16(result.msg) != 0) {
+        console.log('CRC ERROR')
+      }
+      
+      const buff: Array<number> = result.msg.slice(3,-2);
+
       s = Buffer.from(buff).toString('ascii');
       console.log(s);
       const a: Array<TFlashSegmen> = JSON.parse(s);
