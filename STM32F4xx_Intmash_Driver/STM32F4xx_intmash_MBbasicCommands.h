@@ -4,7 +4,7 @@
 #include "ModbusSlave.h"
 
 //запись ID устройства в буфер + crc. ответ на команду х11
-tU8 GetDeviceID(ModbusSlaveType* Slave);
+tU16 GetDeviceID(ModbusSlaveType* Slave);
 //чтение памяти RAM, FLASH или CD
 tU8 ModbusMemRead(ModbusSlaveType* Slave);
 //запись в определенный сектор памяти

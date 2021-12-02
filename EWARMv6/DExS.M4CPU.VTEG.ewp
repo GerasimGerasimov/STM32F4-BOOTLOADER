@@ -2135,6 +2135,9 @@
         </settings>
     </configuration>
     <group>
+        <name>Bootloader</name>
+    </group>
+    <group>
         <name>CMSIS</name>
         <file>
             <name>$PROJ_DIR$\..\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c</name>
@@ -2249,8 +2252,14 @@
         </file>
     </group>
     <group>
-        <name>Bootloader</name>
+        <name>Utilites</name>
+        <file>
+            <name>$PROJ_DIR$\..\Utilities\str.c</name>
+        </file>
     </group>
+    <file>
+        <name>$PROJ_DIR$\..\bootloader.c</name>
+    </file>
     <file>
         <name>$PROJ_DIR$\..\main.cpp</name>
     </file>

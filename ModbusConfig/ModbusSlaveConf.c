@@ -7,6 +7,7 @@
 #include "RAMData.h"
 #include "crc16.h"
 #include "CalibrationData.h"
+#include "bootloader.h"
 
 //структуры драйверов UART и слейвов
 Intmash_Usart UARTtoUSB; // св€зь по USB
@@ -18,16 +19,16 @@ ModbusSlaveType RS485slave;
 Intmash_Usart UARTtoOptRS485; // св€зь с опциональным RS485
 ModbusSlaveType OptRS485slave;
 
-tU8 ModbusMemWrite_VTEG(ModbusSlaveType* Slave);
-tU8 ModbusMemRead_VTEG(ModbusSlaveType* Slave);
-tU8 WriteMemNotAnswer(ModbusSlaveType* Slave);//команда FA от системы резервировани€ (запись данных без ответа, но не широковещательна€)
+tU16 ModbusMemWrite_VTEG(ModbusSlaveType* Slave);
+tU16 ModbusMemRead_VTEG(ModbusSlaveType* Slave);
+
 
 //число используемых команд +1
 ModbusCommandHandlerType ModbusCommands[5]={
   {ModbusMemRead_VTEG, 0x03},
   {ModbusMemWrite_VTEG, 0x10},
   {GetDeviceID, 0x11},
-  {WriteMemNotAnswer, 0xFA},
+  {BootLoader, 0xB0},
   {0, 0},
 }; 
 
@@ -215,13 +216,6 @@ void ModbusSlaveProc(void)
   } 
 }
 
-//команда FA от системы резервировани€ (запись данных без ответа, но не широковещательна€)
-tU8 WriteMemNotAnswer (ModbusSlaveType* Slave){
-  Slave->Buffer[MB_DEVICE_ADDRESS] = BROADCAST_MSG_ADDR;//мен€ю адрес на широковещательный
-                                                        //чтобы на выходе из функции записи не генерилс€ ответ
-  return ModbusMemWrite_VTEG(Slave);//и вызываю функцию записи
-}
-
 
 tU8 ModbusCDRCWrite(tU8* Buffer,tU8 BufDataIdx, tU8 RegAddr, tU8 RegNum){ //u32 DATA_BASE
   tU8 DataLength = 0; //длинна отправл€емой посылки
@@ -244,7 +238,7 @@ tU8 ModbusCDRCWrite(tU8* Buffer,tU8 BufDataIdx, tU8 RegAddr, tU8 RegNum){ //u32 
 
 
 //выбор функции записи в определенный сектор пам€ти
-tU8 ModbusMemWrite_VTEG(ModbusSlaveType* Slave){
+tU16 ModbusMemWrite_VTEG(ModbusSlaveType* Slave){
   
   //старша€ тетрада старшего байта адреса первого регистра данных (префикс)
   tU8 MemSpacePrefix = (Slave->Buffer[MB_START_ADDR_HI])>>PREFIX_SHIFT;  
@@ -293,7 +287,7 @@ tU8 ModbusMemWrite_VTEG(ModbusSlaveType* Slave){
 
 
 //функци€ выбора функции чтени€ пам€ти RAM, FLASH или CD 
-tU8 ModbusMemRead_VTEG(ModbusSlaveType* Slave)
+tU16 ModbusMemRead_VTEG(ModbusSlaveType* Slave)
 {
   //старша€ тетрада старшего байта адреса первого регистра данных (префикс)
   tU8 MemSpacePrefix = (Slave->Buffer[MB_START_ADDR_HI])>>PREFIX_SHIFT; 

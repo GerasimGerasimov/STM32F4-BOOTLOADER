@@ -4,7 +4,7 @@
 #include "Intmash_bastypes.h"
 
 //размер буфера посылки ModBus
-#define MODBUS_BUFFER_SIZE 256
+#define MODBUS_BUFFER_SIZE 16384+8 //16К + 8 байт под заголовки было 256
 
 /***Индексы разметки протокола в буфере посылки********************************/
 /*  общий блок запроса для команд(кроме 0x11) */
@@ -113,7 +113,7 @@ typedef struct ModbusSlaveType
 /*** Тип структуры, описывающий обработчик команды ****************************/
 typedef struct ModbusCommandHandlerType
 {
-  tU8 (*Handler)(ModbusSlaveType* Slave); //указатель на обработчик
+  tU16 (*Handler)(ModbusSlaveType* Slave); //указатель на обработчик
   tU8 CommandCode; // соответствующая обработчику команда.
 } ModbusCommandHandlerType;
 

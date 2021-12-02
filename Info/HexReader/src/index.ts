@@ -20,9 +20,17 @@ Areas.forEach((item)=>{console.log(JSON.stringify(item))});
 
 console.log(getErasedPages(Areas));
 
+
+function getCmdGetID(): iCmd {
+  const FieldBusAddr: number = 0x01;
+  const cmdSource = new Uint8Array([FieldBusAddr, 0x11]);
+  const cmd: Array<number> = Array.from(appendCRC16toArray(cmdSource))
+  return {cmd}
+}
+
 function getCmdGetPageList(): iCmd {
   const FieldBusAddr: number = 0x01;
-  const cmdSource = new Uint8Array([FieldBusAddr, 0xB0]);
+  const cmdSource = new Uint8Array([FieldBusAddr, 0xB0, 0x00]);
   const cmd: Array<number> = Array.from(appendCRC16toArray(cmdSource))
   return {cmd}
 }
@@ -30,8 +38,17 @@ function getCmdGetPageList(): iCmd {
 (async () => { 
   while (true) {
     try {
-      const result: any = await  COMx.getCOMAnswer(getCmdGetPageList()) ;//открыть соединение и получить ClientID
-      console.log(result);
+      let s: string;
+      const ID: any = await COMx.getCOMAnswer(getCmdGetID());
+      //console.log(ID);
+      s = Buffer.from(ID.msg.slice(3,-2)).toString('ascii');
+      console.log(s);
+      const result: any = await  COMx.getCOMAnswer(getCmdGetPageList());
+      const buff: Array<number> = result.msg.slice(3,-2);
+      s = Buffer.from(buff).toString('ascii');
+      console.log(s);
+      const a: Array<TFlashSegmen> = JSON.parse(s);
+      console.log(a);
     } catch (e) {
       await delay(1000);
       console.log('главЛовушка',e);
