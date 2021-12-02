@@ -45,6 +45,7 @@ function getCmdGetPageList(): iCmd {
       console.log(s);
       const result: any = await  COMx.getCOMAnswer(getCmdGetPageList());
       const buff: Array<number> = result.msg.slice(3,-2);
+      
       s = Buffer.from(buff).toString('ascii');
       console.log(s);
       const a: Array<TFlashSegmen> = JSON.parse(s);

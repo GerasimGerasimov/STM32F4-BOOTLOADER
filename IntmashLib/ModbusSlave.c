@@ -56,9 +56,9 @@ Ret:
 размер отправляемой посылки в байтах
 *******************************************************************************/
 
-tU8 ModbusCommandDecode(ModbusSlaveType* Slave, tU8 MesageSize, ModbusCommandHandlerType* HandlerTable)
+tU16 ModbusCommandDecode(ModbusSlaveType* Slave, tU8 MesageSize, ModbusCommandHandlerType* HandlerTable)
 {
-  tU8 Answer=0;
+  tU16 Answer=0;
   //посчитали crc
   //отвечаем на команду только в случае, если контрольная сумма посылки сошлась
   if (crc16((tU8*)Slave->Buffer, MesageSize) == 0) 

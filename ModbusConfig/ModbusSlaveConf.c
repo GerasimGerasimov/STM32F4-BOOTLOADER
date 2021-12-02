@@ -104,7 +104,7 @@ tU8 CheckFilesCMD=0;
 tU8 CheckMsgUSB=0;
 void USART3_IRQHandler(void)
 {
-  tU8 MsgSize = UsartTxRxFinish(&UARTtoUSB);//определили что произошло: прием или принято MsgSize байт. 
+  tU16 MsgSize = UsartTxRxFinish(&UARTtoUSB);//определили что произошло: прием или принято MsgSize байт. 
   if(MsgSize){//если принятно  
     if(LED2_ST) LED2_ON; else LED2_OFF; //моргнули светиком
     //вызываем функцию декодирования, определяем размер пакета для отправки
@@ -133,7 +133,7 @@ tU8 CheckMsgRS485=0;
 void USART2_IRQHandler(void)
 {
   
-  tU8 MsgSize = UsartTxRxFinish(&UARTtoRS485);//определили что произошло: прием или принято MsgSize байт.
+  tU16 MsgSize = UsartTxRxFinish(&UARTtoRS485);//определили что произошло: прием или принято MsgSize байт.
   if(MsgSize){//если принятно  
     if(LED2_ST) LED2_ON; else LED2_OFF; //моргнули светиком
     //вызываем функцию декодирования, определяем размер пакета для отправки
@@ -164,7 +164,7 @@ tU8 CheckMsgOptRS485=0;
 void USART1_IRQHandler(void)
 {
   
-  tU8 MsgSize = UsartTxRxFinish(&UARTtoOptRS485);//определили что произошло: прием или принято MsgSize байт.
+  tU16 MsgSize = UsartTxRxFinish(&UARTtoOptRS485);//определили что произошло: прием или принято MsgSize байт.
   if(MsgSize){//если принятно  
     if(LED2_ST) LED2_ON; else LED2_OFF; //моргнули светиком
     //вызываем функцию декодирования, определяем размер пакета для отправки
@@ -196,7 +196,7 @@ tU8 ModbusFilesCMD(ModbusSlaveType* Slave)
 
 void ModbusSlaveProc(void)
 {
-  tU8 MsgSize = 0;
+  tU16 MsgSize = 0;
   if(CheckMsgUSB){   
     if(MsgSize) UsartTransmit(&UARTtoUSB, &USBslave.Buffer[0], MsgSize);
     else UsartRecieve(&UARTtoUSB, &USBslave.Buffer[0]);

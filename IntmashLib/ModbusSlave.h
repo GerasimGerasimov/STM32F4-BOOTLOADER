@@ -131,7 +131,7 @@ Ret:
   размер отправляемой посылки в байтах
 Comment:
 */
-tU8 ModbusCommandDecode(ModbusSlaveType* Slave, tU8 MesageSize, ModbusCommandHandlerType* HandlerTable);
+tU16 ModbusCommandDecode(ModbusSlaveType* Slave, tU8 MesageSize, ModbusCommandHandlerType* HandlerTable);
 //функции копирования данных с расстановкой данных по протоколу Modbus
 void ModbusSwapCopy(tU8* Src, tU16* Dst, tU16 RegNum);
 //обработка ошибок по modbus

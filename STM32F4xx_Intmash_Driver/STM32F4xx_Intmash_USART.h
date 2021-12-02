@@ -6,7 +6,7 @@
 
 
 
-#define URXBUFFSIZE  255 //размер буфера приёмника
+#define URXBUFFSIZE  16384+8 //было 255 размер буфера приёмника
 //значения для состояния DIR
 #define WITHOUT_DIR  0 // ноги дир нет, ничего не делаем
 #define POLARITY_LOW 1 // нога используется, инверсный сигнал.
@@ -50,9 +50,9 @@ typedef struct
 
 
 void UsartDriverInit (Intmash_Usart *UserUsartStr);
-void UsartTransmit(Intmash_Usart *UserUsartStr, tU8* Buffer, tU8 Cnt);
+void UsartTransmit(Intmash_Usart *UserUsartStr, tU8* Buffer, tU16 Cnt);
 void UsartRecieve (Intmash_Usart *UserUsartStr, tU8* Buffer);
-tU8 UsartTxRxFinish(Intmash_Usart *UserUsartStr);
+tU16 UsartTxRxFinish(Intmash_Usart *UserUsartStr);
 
 extern const tU32 USARTbaudRate[8];
 

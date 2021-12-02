@@ -78,7 +78,7 @@ Ret:
 Comment:
 	
 */
-void UsartTransmit(Intmash_Usart *UserUsartStr, tU8* Buffer, tU8 Cnt) 
+void UsartTransmit(Intmash_Usart *UserUsartStr, tU8* Buffer, tU16 Cnt) 
 {//настройка DMA на передачу данных в UART
   //SetDIRToTX;
   if (UserUsartStr->PolarityDIR == POLARITY_HI) GPIO_SetBits(UserUsartStr->GPIOxDIR, UserUsartStr->GPIO_PinDIR);
@@ -139,7 +139,7 @@ Comment:
 		  UsartTxRxFinish(&USERusart);
 		}
 */
-tU8 UsartTxRxFinish(Intmash_Usart *UserUsartStr)
+tU16 UsartTxRxFinish(Intmash_Usart *UserUsartStr)
 {
   static tU32 IIR;
   IIR = UserUsartStr->USARTx->SR;
@@ -159,7 +159,7 @@ tU8 UsartTxRxFinish(Intmash_Usart *UserUsartStr)
         UserUsartStr->USARTx->CR1 &=  ~USART_CR1_IDLEIE;//запретить прерывания по приёму данных
         UserUsartStr->USARTx->CR3 &=  ~USART_CR3_DMAR;  //запретить DMA RX
         UserUsartStr->DMAy_StreamRX->CR &= ~(uint32_t)DMA_SxCR_EN;//выключить DMA на приём       
-        return (URXBUFFSIZE - (tU8)UserUsartStr->DMAy_StreamRX->NDTR);//кол-во принятых байт
+        return (URXBUFFSIZE - (tU16)UserUsartStr->DMAy_StreamRX->NDTR);//кол-во принятых байт
       }
     return 0;
 }

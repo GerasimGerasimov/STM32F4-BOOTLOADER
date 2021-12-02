@@ -140,7 +140,7 @@ export default class ComPort {
             throw new Error ('cmd field is empty');
         result.cmd = req.cmd;
         result.timeOut = req.timeOut || 1000;
-        result.ChunksEndTime = req.ChunksEndTime || 10;
+        result.ChunksEndTime = req.ChunksEndTime || 20;
         result.NotRespond = (typeof req.NotRespond !== 'undefined') ? req.NotRespond : false ;
         return result;
     }

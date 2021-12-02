@@ -32,20 +32,28 @@ tU16 BootLoader(ModbusSlaveType* Slave){
 //0x00000000 HE поддерживается JSON,
 //поэтому hex значения надо кодировать в строки с помощью ""
 //и кавычки в строке экранировать обратным слэшэм 
-const char PagesList[] = "[{\"start\": \"0x00000000\" , \"size\": 4095}," \
-                          "{\"start\": \"0x00001000\" , \"size\": 4095}," \
-                          "{\"start\": \"0x00002000\" , \"size\": 4095}," \
-                          "{\"start\": \"0x00003000\" , \"size\": 4095}," \
-                          "{\"start\": \"0x00004000\" , \"size\": 4095}," \
-                          "{\"start\": \"0x00005000\" , \"size\": 4095}]";
-                             
+
+const char PagesList[] = 
+"[{\"start\": \"0x08000000\", \"size\": 16383}," \
+ "{\"start\": \"0x08004000\", \"size\": 16383}," \
+ "{\"start\": \"0x08008000\", \"size\": 16383}," \
+ "{\"start\": \"0x0800C000\", \"size\": 16383}," \
+ "{\"start\": \"0x08010000\", \"size\": 65535}," \
+ "{\"start\": \"0x08020000\", \"size\": 131071}," \
+ "{\"start\": \"0x08040000\", \"size\": 131071}," \
+ "{\"start\": \"0x08060000\", \"size\": 131071}," \
+ "{\"start\": \"0x08080000\", \"size\": 131071}," \
+ "{\"start\": \"0x080A0000\", \"size\": 131071}," \
+ "{\"start\": \"0x080C0000\", \"size\": 131071}," \
+ "{\"start\": \"0x080E0000\", \"size\": 131071}]";
+
 tU16 getPagesList(ModbusSlaveType* Slave){
   //return GetDeviceID(Slave);
   tU16 DataLength = 0; //длинна отправляемой посылки
   DataLength = strlen(PagesList);
   //Slave->Buffer[BOOT_PAGES_LIST_DATA_SECTION + 0] = (DataLength >> 8) & 0x00FF;
   //Slave->Buffer[BOOT_PAGES_LIST_DATA_SECTION + 1] = (DataLength) & 0x00FF;
-  //DataLength  = 2;
+  //DataLength  = 5;
   strcpy((char *) &Slave->Buffer[BOOT_PAGES_LIST_DATA_SECTION], PagesList);
   DataLength += BOOT_PAGES_LIST_DATA_SECTION;//прибавить длину заголовка   
   DataLength += CRC_SIZE;//прибавить длину crc 
