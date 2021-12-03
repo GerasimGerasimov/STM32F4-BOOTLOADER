@@ -13,19 +13,19 @@
 #define BOOT_PAGES_LIST_DATA_SECTION    3
 
 tU16 getPagesList(ModbusSlaveType* Slave);
+tU16 setErasedPages(ModbusSlaveType* Slave);
 
 tU16 BootLoader(ModbusSlaveType* Slave){
   tU8 cmd = Slave->Buffer[BOOT_CMD_CODE_OFFSET];
-  tU16 DataLength = 0;
   switch (cmd) {
     case BOOT_CMD_GET_PAGES_LIST:
-        DataLength = getPagesList(Slave);
-      break;
+        return getPagesList(Slave);
+    case BOOT_CMD_SET_ERASED_PAGES:
+        return setErasedPages(Slave);
     default:
-      break;
+      return 0;
   }
   
-  return DataLength;
 }
 
 //Описание страниц должно соответсвовать JSON
@@ -59,4 +59,19 @@ tU16 getPagesList(ModbusSlaveType* Slave){
   DataLength += CRC_SIZE;//прибавить длину crc 
   FrameEndCrc16((tU8*)Slave->Buffer, DataLength);
   return DataLength;
+}
+
+tU16 setErasedPages(ModbusSlaveType* Slave){
+  return GetDeviceID(Slave);
+  /*
+  tU16 DataLength = 0; //длинна отправляемой посылки
+  DataLength = strlen(PagesList);
+  //Slave->Buffer[BOOT_PAGES_LIST_DATA_SECTION + 0] = (DataLength >> 8) & 0x00FF;
+  //Slave->Buffer[BOOT_PAGES_LIST_DATA_SECTION + 1] = (DataLength) & 0x00FF;
+  //DataLength  = 5;
+  strcpy((char *) &Slave->Buffer[BOOT_PAGES_LIST_DATA_SECTION], PagesList);
+  DataLength += BOOT_PAGES_LIST_DATA_SECTION;//прибавить длину заголовка   
+  DataLength += CRC_SIZE;//прибавить длину crc 
+  FrameEndCrc16((tU8*)Slave->Buffer, DataLength);
+  return DataLength;*/
 }

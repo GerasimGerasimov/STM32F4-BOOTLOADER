@@ -21,41 +21,43 @@ Areas.forEach((item)=>{console.log(JSON.stringify(item))});
 console.log(getErasedPages(Areas));
 
 
-function getCmdGetID(): iCmd {
+async function getID(): Promise<string> {
   const FieldBusAddr: number = 0x01;
   const cmdSource = new Uint8Array([FieldBusAddr, 0x11]);
   const cmd: Array<number> = Array.from(appendCRC16toArray(cmdSource))
-  return {cmd}
+  const answer: any = await COMx.getCOMAnswer({cmd});
+  const msg: Array<number> = validateAnswer(answer);
+  return Buffer.from(msg.slice(3,-2)).toString('ascii');;
 }
 
-function getCmdGetPageList(): iCmd {
+async function getAvailablePagesList(): Promise< Array<TFlashSegmen>> {
   const FieldBusAddr: number = 0x01;
   const cmdSource = new Uint8Array([FieldBusAddr, 0xB0, 0x00]);
-  const cmd: Array<number> = Array.from(appendCRC16toArray(cmdSource))
-  return {cmd}
+  const cmd: Array<number> = Array.from(appendCRC16toArray(cmdSource));
+  const answer: any = await  COMx.getCOMAnswer({cmd});
+  const msg: Array<number> = validateAnswer(answer);
+  const buff: Array<number> = msg.slice(3,-2);
+  const str = Buffer.from(buff).toString('ascii');
+  const res: Array<TFlashSegmen> = JSON.parse(str);
+  return res;
 }
 
+function validateAnswer(answer: any): Array<number> | never {
+  if (!('msg' in answer)) throw new Error(`The Answer has no 'msg' field`);
+  if (getCRC16(answer.msg) != 0) throw new Error(`The Answer CRC doesn't match`);
+  return answer.msg;
+}
 
 (async () => { 
   while (true) {
     try {
       let s: string;
-      const ID: any = await COMx.getCOMAnswer(getCmdGetID());
-      //console.log(ID);
-      s = Buffer.from(ID.msg.slice(3,-2)).toString('ascii');
-      console.log(s);
-      const result: any = await  COMx.getCOMAnswer(getCmdGetPageList());
-      
-      if (getCRC16(result.msg) != 0) {
-        console.log('CRC ERROR')
-      }
-      
-      const buff: Array<number> = result.msg.slice(3,-2);
+      const ID: string = await getID();
+      console.log(ID);
 
-      s = Buffer.from(buff).toString('ascii');
-      console.log(s);
-      const a: Array<TFlashSegmen> = JSON.parse(s);
-      console.log(a);
+      const AvailiblePages: Array<TFlashSegmen> = await getAvailablePagesList();
+      console.log(AvailiblePages);
+      
     } catch (e) {
       await delay(1000);
       console.log('главЛовушка',e);
