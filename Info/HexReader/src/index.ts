@@ -1,25 +1,20 @@
 import fs = require ("fs");
 import ComPort from "./comport/comport";
-import { iCmd } from "./comport/netports";
 import { appendCRC16toArray, getCRC16 } from "./crc/crc16";
 import { getUsageMemoryAddresAndSize} from "./hex";
 import { TFlashSegmen } from "./hextypes";
-import { getErasedPages} from "./mcu";
+import { getErasedPages, getFlashPages} from "./mcu";
 import { settings } from "./settings";
 import { delay } from "./utils/delay";
 
 const COMx: ComPort = new ComPort(settings.COM);
 
-
 console.log('Start Hex Reader');
 const fileContent: Array<string> = fs.readFileSync('./src/hex-samples/stm32F405.hex').toString().split("\n");
-
 const Areas: Array<TFlashSegmen> = getUsageMemoryAddresAndSize(fileContent);
-
-Areas.forEach((item)=>{console.log(JSON.stringify(item))});
-
-console.log(getErasedPages(Areas));
-
+//Areas.forEach((item)=>{console.log(JSON.stringify(item))});
+console.log(getErasedPages(Areas, getFlashPages()));
+console.log('!');
 
 async function getID(): Promise<string> {
   const FieldBusAddr: number = 0x01;
@@ -42,6 +37,19 @@ async function getAvailablePagesList(): Promise< Array<TFlashSegmen>> {
   return res;
 }
 
+const BOOT_CMD_POSITION = 2;
+
+async function arePagesWereErased(ErasedPages:Array<string>): Promise<any> | never {
+  console.log(ErasedPages);
+  const FieldBusAddr: number = 0x01;
+  const ErasedPagesArray: Uint8Array = ErasedPagesToU8Array(ErasedPages);
+  const cmdSource = new Uint8Array([FieldBusAddr, 0xB0, 0x01, ...ErasedPagesArray]);
+  const cmd: Array<number> = Array.from(appendCRC16toArray(cmdSource));
+  const answer: any = await COMx.getCOMAnswer({cmd});
+  const msg: Array<number> = validateAnswer(answer);
+  if (msg[BOOT_CMD_POSITION] != 1) throw new Error ('Wrong Answer');
+}
+
 function validateAnswer(answer: any): Array<number> | never {
   if (!('msg' in answer)) throw new Error(`The Answer has no 'msg' field`);
   if (getCRC16(answer.msg) != 0) throw new Error(`The Answer CRC doesn't match`);
@@ -53,10 +61,10 @@ function validateAnswer(answer: any): Array<number> | never {
     try {
       let s: string;
       const ID: string = await getID();
-      console.log(ID);
-
       const AvailiblePages: Array<TFlashSegmen> = await getAvailablePagesList();
-      console.log(AvailiblePages);
+      const ErasedPages:Array<string> = getErasedPages(Areas, AvailiblePages);
+      console.log(ErasedPages);
+      await arePagesWereErased(ErasedPages);
       
     } catch (e) {
       await delay(1000);
@@ -87,6 +95,10 @@ function validateAnswer(answer: any): Array<number> | never {
 
 console.log('Hex Reader has Done');
 
+
+function ErasedPagesToU8Array(ErasedPages: string[]): Uint8Array {
+  throw new Error("Function not implemented.");
+}
 /*
 (async () => { 
   while (true) {

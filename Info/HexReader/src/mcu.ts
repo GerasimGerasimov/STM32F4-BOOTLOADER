@@ -1,8 +1,7 @@
 import { TFlashSegmen } from "./hextypes";
 
-export function getErasedPages( domain: Array<TFlashSegmen>): Array<string> {
+export function getErasedPages( domain: Array<TFlashSegmen>, pages: Array<TFlashSegmen>): Array<string> {
   const res:Set<string> = new Set();
-  const pages: Array<TFlashSegmen> = getFlashPages();
   domain.forEach((value)=>{
     if (value.size !== 'main') {
       const domain_set = {start: parseInt(value.start), end: parseInt(value.start) + Number(value.size)};
@@ -17,6 +16,37 @@ export function getErasedPages( domain: Array<TFlashSegmen>): Array<string> {
     }
   })
   return [...res];
+}
+
+/* ErasedPagesToU8Array
+['0x08000000', '0x08004000', '0x08008000', '0x0800C000', '0x080A0000', '0x080C0000', '0x080E0000']
+07 - кол-во страниц
+08000000
+08004000
+08008000
+0800C000
+080A0000
+080C0000
+080E0000
+
+    var view = new DataView(new ArrayBuffer(4))
+    view.setFloat32(0, float32);
+    const res: Array<number>=[view.getUint16(0), view.getUint16(2)];
+    return res;
+
+*/
+export function ErasedPagesToU8Array(ErasedPages:Array<string>): Uint8Array {
+  const acc: Array<number> = [];
+  acc.push(ErasedPages.length);
+  ErasedPages.forEach(value=>{
+    const i: number = parseInt(value, 16);
+    acc.push( (i >>  0) & 0x000000FF);
+    acc.push( (i >>  8) & 0x000000FF);
+    acc.push( (i >> 16) & 0x000000FF);
+    acc.push( (i >> 24) & 0x000000FF);
+  });
+  const res: Uint8Array = new Uint8Array(acc);
+  return res;
 }
 
 function intersection(A: {start:number, end: number}, B:{start: number, end: number}): boolean {
