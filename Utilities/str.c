@@ -6,3 +6,9 @@ int getStrLenght(char * str){
     while (str[i++]!=0);
   return i;
 }
+
+void u8_mem_cpy( unsigned char *s, unsigned char *d, unsigned int c){
+  while (c--) {
+    *d++ = *s++;
+  }
+}
