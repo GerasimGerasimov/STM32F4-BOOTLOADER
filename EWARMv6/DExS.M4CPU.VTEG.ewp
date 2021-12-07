@@ -1731,7 +1731,7 @@
                 </option>
                 <option>
                     <name>OOCOutputFile</name>
-                    <state>DExS.M4CPU.ARVSG.v2.0.3.2.hex</state>
+                    <state>STM32-BOOTLOADER.hex</state>
                 </option>
                 <option>
                     <name>OOCCommandLineProducer</name>

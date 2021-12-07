@@ -11,12 +11,12 @@
 //////////////////////////
 #include "ramdata.h"
 #include "CalibrationData.h"   
-
-char * IDtext = "DExS.M4CPU.ARVSG v1.16.8.7 14.11.2021 www.intmash.ru";
+                         
+const char * IDtext = "-=OTLOAD=- v1.0.0 07.12.2021 www.intmash.de";
 
 int main(void) {
   
-  IDinit(CD_DATA.serial_number, IDtext);
+  IDinit(CD_DATA.serial_number, (char *) IDtext);
   Init();
   LED2_ON;  
   LED1_ON;

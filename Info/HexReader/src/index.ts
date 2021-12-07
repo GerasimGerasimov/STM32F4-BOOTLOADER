@@ -3,7 +3,7 @@ import ComPort from "./comport/comport";
 import { appendCRC16toArray, getCRC16 } from "./crc/crc16";
 import { getUsageMemoryAddresAndSize} from "./hex";
 import { TFlashSegmen } from "./hextypes";
-import { getErasedPages, getFlashPages} from "./mcu";
+import { ErasedPagesToU8Array, getErasedPages, getFlashPages, U16ToU8Array, U32ToU8Array} from "./mcu";
 import { settings } from "./settings";
 import { delay } from "./utils/delay";
 
@@ -22,7 +22,7 @@ async function getID(): Promise<string> {
   const cmd: Array<number> = Array.from(appendCRC16toArray(cmdSource))
   const answer: any = await COMx.getCOMAnswer({cmd});
   const msg: Array<number> = validateAnswer(answer);
-  return Buffer.from(msg.slice(3,-2)).toString('ascii');;
+  return Buffer.from(msg.slice(3,-2)).toString('ascii');
 }
 
 async function getAvailablePagesList(): Promise< Array<TFlashSegmen>> {
@@ -50,6 +50,21 @@ async function arePagesWereErased(ErasedPages:Array<string>): Promise<any> | nev
   if (msg[BOOT_CMD_POSITION] != 1) throw new Error ('Wrong Answer');
 }
 
+async function readMem(U32Addr: number, U16Size: number): Promise<any> {
+  const FieldBusAddr: number = 0x01;
+  const cmdSource = new Uint8Array([FieldBusAddr, 0xB0, 0x03,
+                                    ...U32ToU8Array(U32Addr),
+                                    ...U16ToU8Array(U16Size)]);
+  const cmd: Array<number> = Array.from(appendCRC16toArray(cmdSource))
+  /*TODO It is necessary to calculate the chunkend time and timeout
+         depending on the required data size and boudrate.*/
+  const answer: any = await COMx.getCOMAnswer({cmd, 
+                                               ChunksEndTime:2000,
+                                               timeOut:4000});
+  const msg: Array<number> = validateAnswer(answer);
+  return msg;
+}
+
 function validateAnswer(answer: any): Array<number> | never {
   if (!('msg' in answer)) throw new Error(`The Answer has no 'msg' field`);
   if (getCRC16(answer.msg) != 0) throw new Error(`The Answer CRC doesn't match`);
@@ -65,6 +80,8 @@ function validateAnswer(answer: any): Array<number> | never {
       const ErasedPages:Array<string> = getErasedPages(Areas, AvailiblePages);
       console.log(ErasedPages);
       await arePagesWereErased(ErasedPages);
+      const mem: any = await readMem(0x08001F78, 0x4000);
+      console.log(Buffer.from(mem.slice(3,-2)).toString('ascii'))
       
     } catch (e) {
       await delay(1000);
@@ -95,10 +112,6 @@ function validateAnswer(answer: any): Array<number> | never {
 
 console.log('Hex Reader has Done');
 
-
-function ErasedPagesToU8Array(ErasedPages: string[]): Uint8Array {
-  throw new Error("Function not implemented.");
-}
 /*
 (async () => { 
   while (true) {

@@ -12,7 +12,8 @@
 #define BOOT_CMD_GET_MEMORY_FROM_ADDR   0x03 //передать участок указанное кол-во байт памяти начиная с указанного адреса 
 #define BOOT_CMD_PUT_AREA_CODE          0x04
 
-#define BOOT_PAGES_LIST_DATA_SECTION    3
+#define BOOT_PAGES_LIST_HEAD_SIZE    3
+#define BOOT_GET_MEM_HEAD_SIZE       5
 
 tU16 getPagesList(ModbusSlaveType* Slave);
 tU16 setErasedPages(ModbusSlaveType* Slave);
@@ -44,25 +45,30 @@ tU16 BootLoader(ModbusSlaveType* Slave){
 //      мастер, отправивший запрос, должен контролировать сколько байт возвращается
 //В случае ошибки:
 //01.B0.03.0000.CRC
+//Test string
+const char SIDtext[] = "BOOTLOADER v1.0.0 07.12.2021 www.intmash.ru";
+//const volatile char * id = (char *) &SIDtext;
+
 tU16 readMemoryBlockFromAddr(ModbusSlaveType* Slave) {
+  const volatile char * id = (char *) &SIDtext;
   const tU32Union StartAddr = {
-    .B[0] = Slave->Buffer[3],
-    .B[1] = Slave->Buffer[4],
-    .B[2] = Slave->Buffer[5],
-    .B[3] = Slave->Buffer[6]
+    .B[0] = Slave->Buffer[6],
+    .B[1] = Slave->Buffer[5],
+    .B[2] = Slave->Buffer[4],
+    .B[3] = Slave->Buffer[3]
   };
   const tU16Union count = {
-    .B[0] = Slave->Buffer[7],
-    .B[1] = Slave->Buffer[8],
+    .B[0] = Slave->Buffer[8],
+    .B[1] = Slave->Buffer[7],
   };
   /*TODO  if count is more than the Slave->Buffer length,
           the count should be as the Slave->Buffer lenght*/
-  u8_mem_cpy( (unsigned char *)StartAddr.I, &Slave->Buffer[5], count.I);
-  Slave->Buffer[3] =  count.B[0];
-  Slave->Buffer[4] =  count.B[1];
+  u8_mem_cpy( (unsigned char *)StartAddr.I, &Slave->Buffer[BOOT_GET_MEM_HEAD_SIZE], count.I);
+  Slave->Buffer[3] =  count.B[1];
+  Slave->Buffer[4] =  count.B[0];
   
   tU16 DataLength = count.I;
-  DataLength += BOOT_PAGES_LIST_DATA_SECTION;//прибавить длину заголовка   
+  DataLength += BOOT_GET_MEM_HEAD_SIZE;//прибавить длину заголовка   
   DataLength += CRC_SIZE;//прибавить длину crc 
   FrameEndCrc16((tU8*)Slave->Buffer, DataLength);
   return DataLength;
@@ -94,8 +100,8 @@ tU16 getPagesList(ModbusSlaveType* Slave){
   //Slave->Buffer[BOOT_PAGES_LIST_DATA_SECTION + 0] = (DataLength >> 8) & 0x00FF;
   //Slave->Buffer[BOOT_PAGES_LIST_DATA_SECTION + 1] = (DataLength) & 0x00FF;
   //DataLength  = 5;
-  strcpy((char *) &Slave->Buffer[BOOT_PAGES_LIST_DATA_SECTION], PagesList);
-  DataLength += BOOT_PAGES_LIST_DATA_SECTION;//прибавить длину заголовка   
+  strcpy((char *) &Slave->Buffer[BOOT_PAGES_LIST_HEAD_SIZE], PagesList);
+  DataLength += BOOT_PAGES_LIST_HEAD_SIZE;//прибавить длину заголовка   
   DataLength += CRC_SIZE;//прибавить длину crc 
   FrameEndCrc16((tU8*)Slave->Buffer, DataLength);
   return DataLength;
