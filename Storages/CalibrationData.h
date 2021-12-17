@@ -18,6 +18,7 @@ typedef struct TCD_DATA{
 
 //параметры расположеные  в CD
 extern const TCD_DATA CD_DATA;
+extern const char SID_bkfdsection[];
 
 #define CD_DATA_PREFIX 0xC
 #define CD_DATA_SIZE sizeof(TCD_DATA)

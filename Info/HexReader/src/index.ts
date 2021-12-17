@@ -45,9 +45,13 @@ async function arePagesWereErased(ErasedPages:Array<string>): Promise<any> | nev
   const ErasedPagesArray: Uint8Array = ErasedPagesToU8Array(ErasedPages);
   const cmdSource = new Uint8Array([FieldBusAddr, 0xB0, 0x01, ...ErasedPagesArray]);
   const cmd: Array<number> = Array.from(appendCRC16toArray(cmdSource));
-  const answer: any = await COMx.getCOMAnswer({cmd});
+  const answer: any = await COMx.getCOMAnswer({cmd, 
+                                               ChunksEndTime:100,
+                                               timeOut:10000});
+  /*TODO timeOut depends of: number of pages, size of page, time to erase*/
   const msg: Array<number> = validateAnswer(answer);
-  if (msg[BOOT_CMD_POSITION] != 1) throw new Error ('Wrong Answer');
+  //if (msg[BOOT_CMD_POSITION] != 1) throw new Error ('Wrong Answer');
+  return msg;
 }
 
 async function readMem(U32Addr: number, U16Size: number): Promise<any> {
@@ -59,8 +63,8 @@ async function readMem(U32Addr: number, U16Size: number): Promise<any> {
   /*TODO It is necessary to calculate the chunkend time and timeout
          depending on the required data size and boudrate.*/
   const answer: any = await COMx.getCOMAnswer({cmd, 
-                                               ChunksEndTime:2000,
-                                               timeOut:4000});
+                                               ChunksEndTime:100,
+                                               timeOut:3800});
   const msg: Array<number> = validateAnswer(answer);
   return msg;
 }
@@ -79,11 +83,12 @@ function validateAnswer(answer: any): Array<number> | never {
       const AvailiblePages: Array<TFlashSegmen> = await getAvailablePagesList();
       const ErasedPages:Array<string> = getErasedPages(Areas, AvailiblePages);
       console.log(ErasedPages);
-      await arePagesWereErased(ErasedPages);
-      const mem: any = await readMem(0x08001F78, 0x4000);
-      console.log(Buffer.from(mem.slice(3,-2)).toString('ascii'))
-      
-    } catch (e) {
+      const mem_after: any = await readMem(0x080C0000, 0x0100);
+      console.log(Buffer.from(mem_after).toString('ascii'));
+      await arePagesWereErased(['0x08060000','0x08080000','0x080A0000', '0x080C0000']);//ErasedPages
+      const mem: any = await readMem(0x080C0000, 0x0100);//0x4000);
+      console.log(Buffer.from(mem).toString('ascii'));
+    } catch (e) {0x080C0000
       await delay(1000);
       console.log('главЛовушка',e);
     }

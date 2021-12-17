@@ -1,5 +1,4 @@
 #include "STM32F4xx_Intmash_Flash.h"
-#include "stm32f4xx.h"
 #include "crc16.h"
 
 
@@ -14,6 +13,41 @@ Arg:
 Ret:
 Comment:
 */
+
+tU32 getFlashPageNumber(tU32 Addr) {
+  switch(Addr) {
+    case 0x08000000: return FLASH_Sector_0;
+    case 0x08004000: return FLASH_Sector_1;
+    case 0x08008000: return FLASH_Sector_2;
+    case 0x0800C000: return FLASH_Sector_3;
+    case 0x08010000: return FLASH_Sector_4;
+    case 0x08020000: return FLASH_Sector_5;
+    case 0x08040000: return FLASH_Sector_6;
+    case 0x08060000: return FLASH_Sector_7;  
+    case 0x08080000: return FLASH_Sector_8;
+    case 0x080A0000: return FLASH_Sector_9;
+    case 0x080C0000: return FLASH_Sector_10;
+    case 0x080E0000: return FLASH_Sector_11;
+  }
+  return -1;
+}
+
+FLASH_Status EraseFlashPage(tU32 Addr) {
+  tU32 FLASH_Sector_Number = getFlashPageNumber(Addr);
+  return FLASH_EraseSector(FLASH_Sector_Number, VoltageRange_3); 
+}
+
+inline void StartFlashChange() {
+   __disable_irq(); // handles nested interrupt
+  FLASH_Unlock();  // Unlock the Flash Program Erase controller
+  FLASH_ClearFlag(FLASH_FLAG_BSY | FLASH_FLAG_EOP | FLASH_FLAG_OPERR | FLASH_FLAG_WRPERR | FLASH_FLAG_PGAERR | FLASH_FLAG_PGPERR | FLASH_FLAG_PGSERR);
+}
+
+inline void EndFlashChange() {
+  FLASH_Lock();
+  __enable_irq(); // handles nested interrupt
+}
+
 void FlashSectorWrite(tU32* FlashSectorAddr, tU32* Buffer)
 {
   volatile FLASH_Status FLASHStatus_;
@@ -21,49 +55,9 @@ void FlashSectorWrite(tU32* FlashSectorAddr, tU32* Buffer)
 
   if (FlashStatus.Bits.FLASH_WRITE_DIS) return; //если выставлен бит запрета - писать нельзя, выходим
 
-  __disable_irq(); // handles nested interrupt
-  FLASH_Unlock();  // Unlock the Flash Program Erase controller
-  /* Clear All pending flags */
-  FLASH_ClearFlag(FLASH_FLAG_BSY | FLASH_FLAG_EOP | FLASH_FLAG_OPERR | FLASH_FLAG_WRPERR | FLASH_FLAG_PGAERR | FLASH_FLAG_PGPERR | FLASH_FLAG_PGSERR);
-  switch((tU32)FlashSectorAddr)
-  {
-    case 0x08000000: // SECTOR0_START_ADDR
-      FLASHStatus_ = FLASH_EraseSector(FLASH_Sector_0, VoltageRange_3);
-      break;
-    case 0x08004000: // SECTOR1_START_ADDR
-      FLASHStatus_ = FLASH_EraseSector(FLASH_Sector_1, VoltageRange_3);
-      break;
-    case 0x08008000: // SECTOR2_START_ADDR
-      FLASHStatus_ = FLASH_EraseSector(FLASH_Sector_2, VoltageRange_3);
-      break;
-    case 0x0800C000: // SECTOR3_START_ADDR
-      FLASHStatus_ = FLASH_EraseSector(FLASH_Sector_3, VoltageRange_3);
-      break;
-      case 0x08010000: // SECTOR4_START_ADDR
-      FLASHStatus_ = FLASH_EraseSector(FLASH_Sector_4, VoltageRange_3);
-      break;
-    case 0x08020000: // SECTOR5_START_ADDR
-      FLASHStatus_ = FLASH_EraseSector(FLASH_Sector_5, VoltageRange_3);
-      break;
-    case 0x08040000: // SECTOR6_START_ADDR
-      FLASHStatus_ = FLASH_EraseSector(FLASH_Sector_6, VoltageRange_3);
-      break;
-    case 0x08060000: // SECTOR7_START_ADDR
-      FLASHStatus_ = FLASH_EraseSector(FLASH_Sector_7, VoltageRange_3);
-      break;   
-    case 0x08080000: // SECTOR8_START_ADDR
-      FLASHStatus_ = FLASH_EraseSector(FLASH_Sector_8, VoltageRange_3);
-      break;
-    case 0x080A0000: // SECTOR9_START_ADDR
-      FLASHStatus_ = FLASH_EraseSector(FLASH_Sector_9, VoltageRange_3);
-      break;
-    case 0x080C0000: // SECTOR10_START_ADDR
-      FLASHStatus_ = FLASH_EraseSector(FLASH_Sector_10, VoltageRange_3);
-      break;
-    case 0x080E0000: // SECTOR11_START_ADDR
-      FLASHStatus_ = FLASH_EraseSector(FLASH_Sector_11, VoltageRange_3);
-      break;
-  }
+  StartFlashChange();
+ 
+  EraseFlashPage((tU32)FlashSectorAddr);
 
   while(Count !=0 )
   {
@@ -72,8 +66,9 @@ void FlashSectorWrite(tU32* FlashSectorAddr, tU32* Buffer)
     Buffer ++;
     Count --;
   }
-  FLASH_Lock();
-  __enable_irq(); // handles nested interrupt
+  
+  EndFlashChange();
+
   FlashStatus.Bits.FLASH_CHANGE = 1; //выставили бит об изменении данных
 }
 

@@ -15,14 +15,17 @@ const TCD_DATA CD_DATA =
     0x0401, //Modbus_option; 
     0x0401, //Modbus_USB;   
     0x0401, //Modbus_RS485;
-
 };
 
 //копия уставок в оперативной памяти
 struct TCD_DATA CD_DATA_RC;
 
+#pragma location = ".bkfdsection"
+const char SID_bkfdsection[] = "BOOTLOADER bkfdsection v1.0.0 17.12.2021 www.intmash.ru";
+
 //запись во флэш память копии калибровок из ОЗУ
 void __SaveCD(void){
+  const volatile char * id = (char *) &SID_bkfdsection;
   //записать данные из временного буфера
   __disable_irq(); // handles nested interrupt
   FlashSectorWrite((tU32*)&CD_DATA, (tU32*) &CD_DATA_RC);  

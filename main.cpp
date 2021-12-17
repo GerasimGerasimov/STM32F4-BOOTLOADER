@@ -16,7 +16,7 @@ const char * IDtext = "-=OTLOAD=- v1.0.0 07.12.2021 www.intmash.de";
 
 int main(void) {
   
-  IDinit(CD_DATA.serial_number, (char *) IDtext);
+  IDinit(CD_DATA.serial_number, (char *) SID_bkfdsection);
   Init();
   LED2_ON;  
   LED1_ON;

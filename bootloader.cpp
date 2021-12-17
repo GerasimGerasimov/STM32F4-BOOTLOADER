@@ -3,6 +3,8 @@
 #include <string.h>
 #include "str.h"
 #include "STM32F4xx_intmash_MBbasicCommands.h"
+#include "STM32F4xx_Intmash_Flash.h"
+#include <vector>
 
 //Команды Бутлоадера
 #define BOOT_CMD_CODE_OFFSET            0x02
@@ -107,10 +109,41 @@ tU16 getPagesList(ModbusSlaveType* Slave){
   return DataLength;
 }
 
+//Стирание заданных страниц
+//Запрос
+//01.B0.01.PS.AAAAAAAA.BBBBBBBB.CCCCCCCC.CRC
+//PS - кол-во страниц
+//AAAAAAAA.BBBBBBBB.CCCCCCCC -  адреса начал страниц
+//
+//Ответ:
+//01.B0.01.CRC
+std::vector<tU32> getPagesAddrList( tU8 * buff) {
+    tU8 NumOfPages = buff[0];
+    tU32 * pPages = (tU32 * ) &buff[1];
+    std::vector<tU32> Pages (NumOfPages);
+    for (auto & page: Pages) {
+        page = *pPages ++;
+    };
+    
+    return Pages;
+}
+
+FLASH_Status erasePages(const std::vector<tU32> Pages) {
+  FLASH_Status status;
+  StartFlashChange();
+    for (const tU32 & page: Pages) {
+       status = EraseFlashPage(page);
+       if (status != FLASH_COMPLETE) break;
+    }
+  EndFlashChange();
+  return status;
+}
+
 tU16 setErasedPages(ModbusSlaveType* Slave){
-  tU16 DataLength = 0; //длинна отправляемой посылки
-  Slave->Buffer[2] = 0x01;
-  DataLength  = 3;
+  const std::vector<tU32> Pages = getPagesAddrList((tU8 *) &Slave->Buffer[3]);
+  FLASH_Status status = erasePages(Pages);
+  Slave->Buffer[4] = status;
+  tU16 DataLength  = 4;
   DataLength += CRC_SIZE;//прибавить длину crc 
   FrameEndCrc16((tU8*)Slave->Buffer, DataLength);
   return DataLength;

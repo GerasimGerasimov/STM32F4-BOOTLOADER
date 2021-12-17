@@ -18,7 +18,6 @@ char DeviceID[256];//массив для формирования ID-строки
 void IDinit(unsigned int SN, char* ID_text)
 { 
   tU8  Index=0;//индекс для перемещение по массиву ID
-  
   /*Сначала разместим серийный номер*/
   tU32 Divider=START_DIVIDER;//делитель 
   tU8  Digit;//число в текущем разряде  

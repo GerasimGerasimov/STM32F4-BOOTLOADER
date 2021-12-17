@@ -2963,7 +2963,7 @@
         </file>
     </group>
     <file>
-        <name>$PROJ_DIR$\..\bootloader.c</name>
+        <name>$PROJ_DIR$\..\bootloader.cpp</name>
     </file>
     <file>
         <name>$PROJ_DIR$\..\main.cpp</name>
