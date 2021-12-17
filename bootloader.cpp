@@ -20,6 +20,7 @@
 tU16 getPagesList(ModbusSlaveType* Slave);
 tU16 setErasedPages(ModbusSlaveType* Slave);
 tU16 readMemoryBlockFromAddr(ModbusSlaveType* Slave);
+tU16 writeCodeToFlash(ModbusSlaveType* Slave);
 
 tU16 BootLoader(ModbusSlaveType* Slave){
   tU8 cmd = Slave->Buffer[BOOT_CMD_CODE_OFFSET];
@@ -30,6 +31,8 @@ tU16 BootLoader(ModbusSlaveType* Slave){
         return setErasedPages(Slave);
     case BOOT_CMD_GET_MEMORY_FROM_ADDR:
         return readMemoryBlockFromAddr(Slave);
+    case BOOT_CMD_PUT_AREA_CODE:
+        return writeCodeToFlash(Slave);
     default:
       return 0;
   }
@@ -53,6 +56,7 @@ const char SIDtext[] = "BOOTLOADER v1.0.0 07.12.2021 www.intmash.ru";
 
 tU16 readMemoryBlockFromAddr(ModbusSlaveType* Slave) {
   const volatile char * id = (char *) &SIDtext;
+ / * TODO change address-endian at backend  * /
   const tU32Union StartAddr = {
     .B[0] = Slave->Buffer[6],
     .B[1] = Slave->Buffer[5],
@@ -144,6 +148,14 @@ tU16 setErasedPages(ModbusSlaveType* Slave){
   FLASH_Status status = erasePages(Pages);
   Slave->Buffer[4] = status;
   tU16 DataLength  = 4;
+  DataLength += CRC_SIZE;//прибавить длину crc 
+  FrameEndCrc16((tU8*)Slave->Buffer, DataLength);
+  return DataLength;
+}
+
+/*TODO starting write flash*/
+tU16 writeCodeToFlash(ModbusSlaveType* Slave) {
+  tU16 DataLength  = 3;
   DataLength += CRC_SIZE;//прибавить длину crc 
   FrameEndCrc16((tU8*)Slave->Buffer, DataLength);
   return DataLength;
