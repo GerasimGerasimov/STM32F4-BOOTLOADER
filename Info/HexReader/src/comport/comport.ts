@@ -30,6 +30,17 @@ export default class ComPort {
         this.Port.on('data',  this.onRead.bind(self));
     }
 
+    public async waitForOpen(): Promise<string> {
+        return new Promise((resolve, reject)=>{
+            const timer = setTimeout(() => {
+                if (this.isOpen) {
+                    clearTimeout(timer);
+                    return resolve('Port has opened');
+                }
+            }, 250);
+        })
+    }
+
     public async getCOMAnswer(cmd: Object): Promise<any> {
         try {
             this.isComPortOpen();

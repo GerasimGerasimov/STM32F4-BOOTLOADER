@@ -1,12 +1,12 @@
-import { TFlashSegmen } from "./hextypes";
+import { TFlashSegmen, TFlashSegmenDescription } from "./hextypes";
 
-export function getErasedPages( domain: Array<TFlashSegmen>, pages: Array<TFlashSegmen>): Array<string> {
+export function getErasedPages( domain: Array<TFlashSegmenDescription>, pages: Array<TFlashSegmenDescription>): Array<string> {
   const res:Set<string> = new Set();
   domain.forEach((value)=>{
     if (value.size !== 'main') {
       const domain_set = {start: parseInt(value.start), end: parseInt(value.start) + Number(value.size)};
       for (const idx in pages) {
-        const page:TFlashSegmen = pages[idx];
+        const page:TFlashSegmenDescription = pages[idx];
         const page_set = {start: parseInt(page.start), end: parseInt(page.start) + Number(page.size)};
         if (intersection(domain_set, page_set)) {
           res.add(page.start);
@@ -76,12 +76,12 @@ function intersection(A: {start:number, end: number}, B:{start: number, end: num
   return true;
 }
 
-export function getFlashPages(): Array<TFlashSegmen> {
+export function getFlashPages(): Array<TFlashSegmenDescription> {
 
   return FlashPagesSTM32F407IGT;
 }
 
-const FlashPagesSTM32F407IGT: Array<TFlashSegmen> = [
+const FlashPagesSTM32F407IGT: Array<TFlashSegmenDescription> = [
   {start: '0x08000000', size: 0x03FFF},//16K
   {start: '0x08004000', size: 0x03FFF},//16K
   {start: '0x08008000', size: 0x03FFF},//16K
@@ -98,7 +98,7 @@ const FlashPagesSTM32F407IGT: Array<TFlashSegmen> = [
   {start: '0x080E0000', size: 0x1FFFF} //128K
 ];
 
-const FlashPagesLPC2378: Array<TFlashSegmen> = [
+const FlashPagesLPC2378: Array<TFlashSegmenDescription> = [
   {start: '0x00000000', size: 0x0FFF},
   {start: '0x00001000', size: 0x0FFF},
   {start: '0x00002000', size: 0x0FFF},

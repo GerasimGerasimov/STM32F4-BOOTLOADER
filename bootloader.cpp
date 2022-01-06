@@ -6,12 +6,12 @@
 #include "STM32F4xx_Intmash_Flash.h"
 #include <vector>
 
-//Команды Бутлоадера
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 #define BOOT_CMD_CODE_OFFSET            0x02
 #define BOOT_CMD_GET_PAGES_LIST         0x00
 #define BOOT_CMD_SET_ERASED_PAGES       0x01
 #define BOOT_CMD_SET_AREA_START_ADDR    0x02
-#define BOOT_CMD_GET_MEMORY_FROM_ADDR   0x03 //передать участок указанное кол-во байт памяти начиная с указанного адреса 
+#define BOOT_CMD_GET_MEMORY_FROM_ADDR   0x03 //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ-пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ 
 #define BOOT_CMD_PUT_AREA_CODE          0x04
 
 #define BOOT_PAGES_LIST_HEAD_SIZE    3
@@ -39,16 +39,16 @@ tU16 BootLoader(ModbusSlaveType* Slave){
   
 }
 
-//Запрос:
-//01.B0.03.AAAAAAAA.CCСС.CRC
-//AAAAAAAA - начальный 32-битный адрес участка памяти
-//СССС - запрашиваемое кол-во байт 0..64К
-//Ответ:
+//пїЅпїЅпїЅпїЅпїЅпїЅ:
+//01.B0.03.AAAAAAAA.CCпїЅпїЅ.CRC
+//AAAAAAAA - пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ 32-пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+//пїЅпїЅпїЅпїЅ - пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ-пїЅпїЅ пїЅпїЅпїЅпїЅ 0..64пїЅ
+//пїЅпїЅпїЅпїЅпїЅ:
 //01.B0.03.CCCC.DD.DD.DD.DD.DD....DD.DD.CRC
-//CCCC- кол-во байт в ответе, может совпадать с запросом
-//      макс кол-во байт в ответе контролирует MCU
-//      мастер, отправивший запрос, должен контролировать сколько байт возвращается
-//В случае ошибки:
+//CCCC- пїЅпїЅпїЅ-пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+//      пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ-пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ MCU
+//      пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+//пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ:
 //01.B0.03.0000.CRC
 //Test string
 const char SIDtext[] = "BOOTLOADER v1.0.0 07.12.2021 www.intmash.ru";
@@ -56,7 +56,7 @@ const char SIDtext[] = "BOOTLOADER v1.0.0 07.12.2021 www.intmash.ru";
 
 tU16 readMemoryBlockFromAddr(ModbusSlaveType* Slave) {
   const volatile char * id = (char *) &SIDtext;
- / * TODO change address-endian at backend  * /
+  /* TODO change address-endian at backend  */
   const tU32Union StartAddr = {
     .B[0] = Slave->Buffer[6],
     .B[1] = Slave->Buffer[5],
@@ -74,16 +74,16 @@ tU16 readMemoryBlockFromAddr(ModbusSlaveType* Slave) {
   Slave->Buffer[4] =  count.B[0];
   
   tU16 DataLength = count.I;
-  DataLength += BOOT_GET_MEM_HEAD_SIZE;//прибавить длину заголовка   
-  DataLength += CRC_SIZE;//прибавить длину crc 
+  DataLength += BOOT_GET_MEM_HEAD_SIZE;//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ   
+  DataLength += CRC_SIZE;//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ crc 
   FrameEndCrc16((tU8*)Slave->Buffer, DataLength);
   return DataLength;
 }
 
-//Описание страниц должно соответсвовать JSON
-//0x00000000 HE поддерживается JSON,
-//поэтому hex значения надо кодировать в строки с помощью ""
-//и кавычки в строке экранировать обратным слэшэм 
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ JSON
+//0x00000000 HE пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ JSON,
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅ hex пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ ""
+//пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ 
 
 const char PagesList[] = 
 "[{\"start\": \"0x08000000\", \"size\": 16383}," \
@@ -101,25 +101,25 @@ const char PagesList[] =
 
 tU16 getPagesList(ModbusSlaveType* Slave){
   //return GetDeviceID(Slave);
-  tU16 DataLength = 0; //длинна отправляемой посылки
+  tU16 DataLength = 0; //пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
   DataLength = strlen(PagesList);
   //Slave->Buffer[BOOT_PAGES_LIST_DATA_SECTION + 0] = (DataLength >> 8) & 0x00FF;
   //Slave->Buffer[BOOT_PAGES_LIST_DATA_SECTION + 1] = (DataLength) & 0x00FF;
   //DataLength  = 5;
   strcpy((char *) &Slave->Buffer[BOOT_PAGES_LIST_HEAD_SIZE], PagesList);
-  DataLength += BOOT_PAGES_LIST_HEAD_SIZE;//прибавить длину заголовка   
-  DataLength += CRC_SIZE;//прибавить длину crc 
+  DataLength += BOOT_PAGES_LIST_HEAD_SIZE;//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ   
+  DataLength += CRC_SIZE;//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ crc 
   FrameEndCrc16((tU8*)Slave->Buffer, DataLength);
   return DataLength;
 }
 
-//Стирание заданных страниц
-//Запрос
+//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+//пїЅпїЅпїЅпїЅпїЅпїЅ
 //01.B0.01.PS.AAAAAAAA.BBBBBBBB.CCCCCCCC.CRC
-//PS - кол-во страниц
-//AAAAAAAA.BBBBBBBB.CCCCCCCC -  адреса начал страниц
+//PS - пїЅпїЅпїЅ-пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+//AAAAAAAA.BBBBBBBB.CCCCCCCC -  пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 //
-//Ответ:
+//пїЅпїЅпїЅпїЅпїЅ:
 //01.B0.01.CRC
 std::vector<tU32> getPagesAddrList( tU8 * buff) {
     tU8 NumOfPages = buff[0];
@@ -148,15 +148,46 @@ tU16 setErasedPages(ModbusSlaveType* Slave){
   FLASH_Status status = erasePages(Pages);
   Slave->Buffer[4] = status;
   tU16 DataLength  = 4;
-  DataLength += CRC_SIZE;//прибавить длину crc 
+  DataLength += CRC_SIZE;//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ crc 
   FrameEndCrc16((tU8*)Slave->Buffer, DataLength);
   return DataLength;
 }
 
 /*TODO starting write flash*/
+/*
+пїЅпїЅпїЅпїЅпїЅпїЅ:
+01.B0.04.CCCC.AAAAAAAA.DD.DD.DD.DD.DD....DD.DD.CRC
+CCCC - пїЅпїЅпїЅ-пїЅпїЅ пїЅпїЅпїЅпїЅ
+AAAAAAAA - пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+DD... - пїЅпїЅпїЅпїЅпїЅпїЅ
+
+пїЅпїЅпїЅпїЅпїЅ:
+01.B0.04
+*/
+void writeCodeSpase(tU32 startAddr, tU16 count, tU8 * buff) {
+  StartFlashChange();
+  while (count --) { 
+    FLASH_ProgramByte(startAddr++, *buff++);
+  }
+  EndFlashChange();
+}
+
+
 tU16 writeCodeToFlash(ModbusSlaveType* Slave) {
+  const tU16Union count = {
+    .B[0] = Slave->Buffer[3],
+    .B[1] = Slave->Buffer[4],
+  };
+  const tU32Union StartAddr = {
+    .B[0] = Slave->Buffer[5],
+    .B[1] = Slave->Buffer[6],
+    .B[2] = Slave->Buffer[7],
+    .B[3] = Slave->Buffer[8]
+  };    
+  tU8 * pData = (tU8 * ) &Slave->Buffer[9];
+  writeCodeSpase(StartAddr.I, count.I, pData);
   tU16 DataLength  = 3;
-  DataLength += CRC_SIZE;//прибавить длину crc 
+  DataLength += CRC_SIZE;//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ crc 
   FrameEndCrc16((tU8*)Slave->Buffer, DataLength);
   return DataLength;
 }
