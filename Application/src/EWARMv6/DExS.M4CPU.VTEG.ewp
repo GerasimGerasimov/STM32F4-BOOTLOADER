@@ -1731,7 +1731,7 @@
                 </option>
                 <option>
                     <name>OOCOutputFile</name>
-                    <state>STM32-BOOTLOADER.hex</state>
+                    <state>STM32-APP.hex</state>
                 </option>
                 <option>
                     <name>OOCCommandLineProducer</name>
@@ -2249,14 +2249,11 @@
         </file>
     </group>
     <group>
-        <name>Utilites</name>
+        <name>Utilities</name>
         <file>
             <name>$PROJ_DIR$\..\Utilities\str.c</name>
         </file>
     </group>
-    <file>
-        <name>$PROJ_DIR$\..\bootloader.cpp</name>
-    </file>
     <file>
         <name>$PROJ_DIR$\..\main.cpp</name>
     </file>

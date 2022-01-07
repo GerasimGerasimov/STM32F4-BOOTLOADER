@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
     <fileVersion>4</fileVersion>
-    <fileChecksum>2573090032</fileChecksum>
+    <fileChecksum>870556945</fileChecksum>
     <configuration>
         <name>STM32F407IGT6</name>
         <outputs>
@@ -1290,7 +1290,7 @@
             <outputs>
                 <tool>
                     <name>OBJCOPY</name>
-                    <file> 495 494</file>
+                    <file> 104</file>
                 </tool>
                 <tool>
                     <name>ILINK</name>
@@ -2450,10 +2450,6 @@
                 </tool>
             </outputs>
         </file>
-        <forcedrebuild>
-            <name>$PROJ_DIR$\STM32F407IGT6\Exe\Project.out</name>
-            <tool>OBJCOPY</tool>
-        </forcedrebuild>
         <forcedrebuild>
             <name>$PROJ_DIR$\..\DExS_M4CPU\fram.c</name>
             <tool>ICCARM</tool>

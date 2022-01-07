@@ -1,0 +1,6 @@
+ModbusSlave.pbi: \
+  D:\Project\Projects\STM32F4-BOOTLOADER\Bootloader\IntmashLib\ModbusSlave.c \
+  D:\Project\Projects\STM32F4-BOOTLOADER\Bootloader\IntmashLib/ModbusSlave.h \
+  D:\Project\Projects\STM32F4-BOOTLOADER\Bootloader\IntmashLib/Intmash_bastypes.h \
+  D:\Project\Projects\STM32F4-BOOTLOADER\Bootloader\IntmashLib/crc16.h \
+  D:\Project\Projects\STM32F4-BOOTLOADER\Bootloader\IntmashLib/id.h

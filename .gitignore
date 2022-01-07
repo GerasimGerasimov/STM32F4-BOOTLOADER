@@ -48,3 +48,4 @@ STM32F407IGT6/*
 *.out
 *.app
 .vscode/c_cpp_properties.json
+Bootloader/src/EWARMv6/STM32-BOOTLOADER.hex
