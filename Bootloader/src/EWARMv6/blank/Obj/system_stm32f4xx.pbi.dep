@@ -1,0 +1,2 @@
+system_stm32f4xx.pbi: \
+  D:\Project\Projects\STM32F4-BOOTLOADER\Bootloader\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c

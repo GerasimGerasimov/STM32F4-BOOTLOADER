@@ -1,0 +1,3 @@
+init.pbi: \
+  D:\Project\Projects\STM32F4-BOOTLOADER\Bootloader\DExS_M4CPU\init.c \
+  D:\Project\Projects\STM32F4-BOOTLOADER\Bootloader\DExS_M4CPU/init.h
