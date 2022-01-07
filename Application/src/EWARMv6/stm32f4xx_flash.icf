@@ -1,15 +1,15 @@
 /*###ICF### Section handled by ICF editor, don't touch! ****/
 /*-Editor annotation file-*/
 /* IcfEditorFile="$TOOLKIT_DIR$\config\ide\IcfEditor\cortex_v1_0.xml" */
-/*-Specials-*/
-define symbol __ICFEDIT_intvec_start__ = 0x08000000;
+/*-Specials-*/                           
+define symbol __ICFEDIT_intvec_start__ = 0x08008000;
 /*-Memory Regions-*/
-define symbol __ICFEDIT_region_ROM_start__  = 0x08000000;
+define symbol __ICFEDIT_region_ROM_start__  = 0x08008000;
 define symbol __ICFEDIT_region_ROM_end__    = 0x0809FFFF;
 define symbol __ICFEDIT_region_FD_start__   = 0x080A0000;
 define symbol __ICFEDIT_region_FD_end__     = 0x080BFFFF;
-define symbol __ICFEDIT_region_BKFD_start__   = 0x080C0000;
-define symbol __ICFEDIT_region_BKFD_end__     = 0x080DFFFF;
+define symbol __ICFEDIT_region_BKFD_start__ = 0x080C0000;
+define symbol __ICFEDIT_region_BKFD_end__   = 0x080DFFFF;
 define symbol __ICFEDIT_region_CD_start__   = 0x080E0000;
 define symbol __ICFEDIT_region_CD_end__     = 0x080FFFFF;
 define symbol __ICFEDIT_region_RAM_start__  = 0x20000000;
@@ -23,9 +23,9 @@ define symbol __ICFEDIT_size_heap__   = 0x10;
 
 define memory mem with size = 4G;
 define region ROM_region   = mem:[from __ICFEDIT_region_ROM_start__   to __ICFEDIT_region_ROM_end__];
-define region FD_region   = mem:[from __ICFEDIT_region_FD_start__   to __ICFEDIT_region_FD_end__];
-define region BKFD_region   = mem:[from __ICFEDIT_region_BKFD_start__   to __ICFEDIT_region_BKFD_end__];
-define region CD_region   = mem:[from __ICFEDIT_region_CD_start__   to __ICFEDIT_region_CD_end__];
+define region FD_region    = mem:[from __ICFEDIT_region_FD_start__    to __ICFEDIT_region_FD_end__];
+define region BKFD_region  = mem:[from __ICFEDIT_region_BKFD_start__  to __ICFEDIT_region_BKFD_end__];
+define region CD_region    = mem:[from __ICFEDIT_region_CD_start__    to __ICFEDIT_region_CD_end__];
 define region RAM_region   = mem:[from __ICFEDIT_region_RAM_start__   to __ICFEDIT_region_RAM_end__];
 
 define block CSTACK    with alignment = 8, size = __ICFEDIT_size_cstack__   { };
@@ -41,6 +41,6 @@ place in RAM_region   { readwrite,
                         block CSTACK, block HEAP };
 						
 place in FD_region    {section .fdsection};
-place in BKFD_region    {section .bkfdsection};
+place in BKFD_region  {section .bkfdsection};
 place in CD_region    {section .cdsection};
 
