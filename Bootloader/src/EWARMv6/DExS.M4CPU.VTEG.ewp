@@ -2242,9 +2242,6 @@
     <group>
         <name>Storages</name>
         <file>
-            <name>$PROJ_DIR$\..\Storages\CalibrationData.c</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\..\Storages\ramdata.c</name>
         </file>
     </group>

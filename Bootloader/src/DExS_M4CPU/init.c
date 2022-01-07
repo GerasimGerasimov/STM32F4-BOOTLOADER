@@ -40,6 +40,9 @@ void GPIO_Configuration(void){//настройка портов ввода-вывода
   //порт F                        LED1        
   GPIO_InitStructure.GPIO_Pin  =  GPIO_Pin_11;
   GPIO_Init(GPIOF, &GPIO_InitStructure);
+  //порт H                        LED3, LED4        
+  GPIO_InitStructure.GPIO_Pin  =  GPIO_Pin_2 | GPIO_Pin_3;
+  GPIO_Init(GPIOH, &GPIO_InitStructure);
 
 //------------------------------------------------------------------------------------------------------------   
   //»нициализируем ноги, св€занные с переферией:
@@ -69,29 +72,6 @@ void GPIO_Configuration(void){//настройка портов ввода-вывода
   //порт C                        USART6_Tx     USART6_Rx
   GPIO_InitStructure.GPIO_Pin  =  GPIO_Pin_6 | GPIO_Pin_7;
   GPIO_Init(GPIOC, &GPIO_InitStructure);
-}
-
-//******************************************************************************
-//“аймер дл€ работы с MODBUS клиентами
-void LogTimerConfiguration(void)
-{
-    //настройка таймера, который будет использоватьс€ дл€ записи в OSC с определенной частотой
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_TIM1, ENABLE); //тактирование 
-  TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
-  
-   /* Time Base configuration */
-  TIM_TimeBaseStructure.TIM_Prescaler = 10000-1;//частота = TIM4CLK(168ћ√ц)/10000 = 16,8k√ц.
-  TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
-  TIM_TimeBaseStructure.TIM_Period = 1680;//TimPeriod;//частота переполнени€ 16.8к√ц/1680 = 10√ц
-  TIM_TimeBaseStructure.TIM_ClockDivision = 0;
-  TIM_TimeBaseStructure.TIM_RepetitionCounter = 0;
-
-  TIM_TimeBaseInit(TIM1, &TIM_TimeBaseStructure);
-  TIM_ARRPreloadConfig(TIM1, DISABLE);
-  TIM1->SR = 0;
-  TIM_ITConfig(TIM1, TIM_IT_Update, ENABLE);
-  TIM_Cmd(TIM1, ENABLE);
-    
 }
 
 //******************************************************************************

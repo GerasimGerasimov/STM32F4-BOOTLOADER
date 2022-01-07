@@ -10,16 +10,15 @@
 #include "STM32F4xx_Intmash_BKP.h"
 //////////////////////////
 #include "ramdata.h"
-#include "CalibrationData.h"   
                          
-const char * IDtext = "-=OTLOAD=- v1.0.0 07.12.2021 www.intmash.de";
+const char * IDtext = "Bootloader v1.0.0 07.12.2021 www.intmash.ru";
 
 int main(void) {
   
-  IDinit(CD_DATA.serial_number, (char *) SID_bkfdsection);
+  IDinit(1, (char *) IDtext);
   Init();
-  LED2_ON;  
-  LED1_ON;
+  LED1_ON;  
+  LED2_OFF;  
   LED3_OFF;
   LED4_OFF;
 
@@ -29,6 +28,10 @@ int main(void) {
     ////////////////////////////////////////////////////////////////////////////    
     if (RAM_DATA.FLAGS0.bits.T1000Hz) {
       RAM_DATA.FLAGS0.bits.T1000Hz = 0;
+      static tU16 blink = 1000;
+      (blink)
+        ? (blink--)
+        : ((LED4_ST) ? (LED4_ON) : (LED4_OFF), blink = 1000);
     }
   }  
 }

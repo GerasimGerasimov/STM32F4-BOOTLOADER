@@ -6,7 +6,6 @@
 #include "STM32F4xx_Intmash_Flash.h"
 #include "RAMData.h"
 #include "crc16.h"
-#include "CalibrationData.h"
 #include "bootloader.h"
 
 //структуры драйверов UART и слейвов
@@ -40,14 +39,14 @@ void ModbusClientInit(void) //фукция инициализации структуры, пример
   
   //USART3, USB 
   UARTtoUSB.USARTx = USART3;
-  if(FlashStatus.Bits.FLASH_DATA_ERR) {
+  //if(FlashStatus.Bits.FLASH_DATA_ERR) {
     UARTtoUSB.USART_BaudRate = 115200;
     USBslave.SlaveAddress = 0x01;
-  }
-  else {
-    UARTtoUSB.USART_BaudRate = USARTbaudRate[CD_DATA.Modbus_USB.B[1]];;
-    USBslave.SlaveAddress = CD_DATA.Modbus_USB.B[0];;
-  }   
+  //}
+  //else {
+  //  UARTtoUSB.USART_BaudRate = USARTbaudRate[CD_DATA.Modbus_USB.B[1]];;
+  //  USBslave.SlaveAddress = CD_DATA.Modbus_USB.B[0];;
+  //}   
   UARTtoUSB.DMAy_StreamRX = DMA1_Stream1;
   UARTtoUSB.DMAy_StreamTX = DMA1_Stream3;
   UARTtoUSB.DMA_channel = DMA_Channel_4;
@@ -63,8 +62,9 @@ void ModbusClientInit(void) //фукция инициализации структуры, пример
   
   //USART2
   UARTtoRS485.USARTx = USART2;
-  UARTtoRS485.USART_BaudRate = USARTbaudRate[CD_DATA.Modbus_RS485.B[1]];
-  RS485slave.SlaveAddress = CD_DATA.Modbus_RS485.B[0];
+
+  UARTtoRS485.USART_BaudRate = 115200;//USARTbaudRate[CD_DATA.Modbus_RS485.B[1]];
+  RS485slave.SlaveAddress    = 0x01;  //CD_DATA.Modbus_RS485.B[0];
   UARTtoRS485.DMAy_StreamRX = DMA1_Stream5;
   UARTtoRS485.DMAy_StreamTX = DMA1_Stream6;
   UARTtoRS485.DMA_channel = DMA_Channel_4;
@@ -81,8 +81,8 @@ void ModbusClientInit(void) //фукция инициализации структуры, пример
   
   //USART1
   UARTtoOptRS485.USARTx = USART1;
-  UARTtoOptRS485.USART_BaudRate = USARTbaudRate[CD_DATA.Modbus_option.B[1]];
-  OptRS485slave.SlaveAddress = CD_DATA.Modbus_option.B[0];
+  UARTtoOptRS485.USART_BaudRate = 115200;//USARTbaudRate[CD_DATA.Modbus_option.B[1]];
+  OptRS485slave.SlaveAddress    = 0x01;  //CD_DATA.Modbus_option.B[0];
   UARTtoOptRS485.DMAy_StreamRX = DMA2_Stream2;
   UARTtoOptRS485.DMAy_StreamTX = DMA2_Stream7;
   UARTtoOptRS485.USART_StopBits=0;
@@ -216,15 +216,15 @@ void ModbusSlaveProc(void)
   } 
 }
 
-
+/*
 tU8 ModbusCDRCWrite(tU8* Buffer,tU8 BufDataIdx, tU8 RegAddr, tU8 RegNum){ //u32 DATA_BASE
   tU8 DataLength = 0; //длинна отправляемой посылки
   
   tU16 *ModbusAddrSet = (tU16*)((tU32)&CD_DATA + ((tU32)RegAddr << 1));
   //чтение буфера в память
   ModbusSwapCopy((tU8*)&Buffer[BufDataIdx], ModbusAddrSet, RegNum);
-  /* если BufDataIdx = 0, значит мы работаем не с буфером slave, а с переменной. 
-  считать CRC в этом случае не нужно  */  
+  // если BufDataIdx = 0, значит мы работаем не с буфером slave, а с переменной. 
+  //считать CRC в этом случае не нужно 
   if(BufDataIdx != 0)
   {
     DataLength = WR_ANSWER_SIZE; //размер ответа на запись регистров (0x10, 0x06)
@@ -232,7 +232,7 @@ tU8 ModbusCDRCWrite(tU8* Buffer,tU8 BufDataIdx, tU8 RegAddr, tU8 RegNum){ //u32 
   }
   return DataLength; //возвращает размер отправляемой посылки
 }
-
+*/
 #define PREFIX_SHIFT 4
 #define PREFIX_MASK  ((tU8)0xF0)
 
@@ -264,13 +264,14 @@ tU16 ModbusMemWrite_VTEG(ModbusSlaveType* Slave){
       else Error=1;//вдрес вне допустимой зоны       
     break;
     
+    /*
     case CD_DATA_PREFIX:
       if(LastRegAddr<CD_DATA_SIZE ) {
           DataLength=ModbusCDWrite(Slave->Buffer,MB_DATA_SECTION_CMD_10,(tU8)RegAddr,(tU8)RegNum); 
       }
       else Error=1;//вдрес вне допустимой зоны         
     break; 
-    
+    */
     default:   //не нашёл подходящей области 
       Error=1;         
     break;  
@@ -311,12 +312,13 @@ tU16 ModbusMemRead_VTEG(ModbusSlaveType* Slave)
     }
     break;
     
+  /*
   case CD_DATA_PREFIX:
       if(LastRegAddr < CD_DATA_SIZE) {
         Source=(tU8*)&CD_DATA;
       }
     break; 
-    
+  */  
   default:
     //не нашёл подходящей области      
     break;

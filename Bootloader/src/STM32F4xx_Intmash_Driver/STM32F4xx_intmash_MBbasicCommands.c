@@ -3,7 +3,6 @@
 #include "stm32f4xx.h"
 #include "id.h"
 #include "crc16.h"
-#include "CalibrationData.h"
 #include "RAMdata.h"
 #include "ModbusSlave.h"
 #include "str.h"
@@ -74,10 +73,11 @@ tU8 ModbusMemRead(ModbusSlaveType* Slave)
       if(LastRegAddr < RAM_DATA_SIZE) Source=(tU8*)&RAM_DATA;  
     break;
       
-    case CD_DATA_PREFIX:
+  /*  
+  case CD_DATA_PREFIX:
       if(LastRegAddr < CD_DATA_SIZE) Source=(tU8*)&CD_DATA;
     break; 
-    
+  */  
     default:
       break;
   }
@@ -107,6 +107,7 @@ tU8 ModbusRamWrite(tU8* Buffer,tU8 BufDataIdx, tU16 RegAddr, tU16 RegNum){
   return DataLength; //возвращает размер отправляемой посылки
 }
 
+/*
 //функция записи в CD
 tU8 ModbusCDWrite(tU8* Buffer,tU8 BufDataIdx, tU8 RegAddr, tU8 RegNum)// 
 {
@@ -131,17 +132,16 @@ tU8 ModbusCDWrite(tU8* Buffer,tU8 BufDataIdx, tU8 RegAddr, tU8 RegNum)//
   __disable_irq(); // handles nested interrupt
   FlashSectorWrite((tU32*)&CD_DATA, (tU32*) FlashTmpBuffer);
   __enable_irq(); // handles nested interrupt
-    /* если BufDataIdx = 0, значит мы работаем не с буфером slave, а с переменной. 
-  считать CRC в этом случае не нужно  */  
+    // если BufDataIdx = 0, значит мы работаем не с буфером slave, а с переменной. 
+    //считать CRC в этом случае не нужно  
   if(BufDataIdx != 0)
   {
     DataLength = WR_ANSWER_SIZE; //размер ответа на запись регистров (0x10, 0x06)
     FrameEndCrc16((tU8*)Buffer, DataLength);
   }
   return DataLength; //возвращает размер отправляемой посылки
-
 }
-
+*/
 //выбор функции записи в определенный сектор памяти
 tU8 ModbusMemWrite(ModbusSlaveType* Slave){  
   //старшая тетрада старшего байта адреса первого регистра данных (префикс)
@@ -165,11 +165,12 @@ tU8 ModbusMemWrite(ModbusSlaveType* Slave){
       else Error=1;//вдрес вне допустимой зоны       
     break;
     
-    case CD_DATA_PREFIX:
+  /*  
+  case CD_DATA_PREFIX:
       if(LastRegAddr<CD_DATA_SIZE ) DataLength=ModbusCDWrite(Slave->Buffer,MB_DATA_SECTION_CMD_10,(tU8)RegAddr,(tU8)RegNum);
       else Error=1;//вдрес вне допустимой зоны         
     break; 
-    
+    */
     default:   //не нашёл подходящей области 
       Error=1;         
     break;  
@@ -203,11 +204,12 @@ tU8 ModbusMemWriteSingle(ModbusSlaveType* Slave){
       else Error=1;//вдрес вне допустимой зоны
     break;
     
+    /*
     case CD_DATA_PREFIX:
       if(RegAddr<CD_DATA_SIZE ) DataLength = ModbusCDWrite(Slave->Buffer,MB_DATA_SECTION_CMD_06,(tU8)RegAddr,SINGLE_WRITE_REGNUM);
       else Error=1;//вдрес вне допустимой зоны
     break; 
-    
+    */
     default: //не нашёл подходящей области 
       Error=1; 
     break;  
@@ -255,6 +257,7 @@ tU8 ModbusMemWriteMask(ModbusSlaveType* Slave)
       else Error=1;//вдрес вне допустимой зоны
     break;
     
+    /*
     case CD_DATA_PREFIX:
       if(RegAddr<CD_DATA_SIZE){
         ModbusSwapCopy (((tU8*)&CD_DATA)+(RegAddr<<1),&Data,MASK_WRITE_REGNUM);          
@@ -264,7 +267,7 @@ tU8 ModbusMemWriteMask(ModbusSlaveType* Slave)
       }
       else Error=1;//вдрес вне допустимой зоны
     break; 
-    
+    */
     default:  //не нашёл подходящей области    
       Error=1;
     break;
