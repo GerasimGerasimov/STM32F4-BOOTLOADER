@@ -10,7 +10,7 @@ import { delay } from "./utils/delay";
 const COMx: ComPort = new ComPort(settings.COM);
 
 console.log('Start Hex Reader');
-const fileContent: Array<string> = fs.readFileSync('./src/hex-samples/DExS.M4CPU.VTEG.1.16.9.x.hex').toString().split("\n");
+const fileContent: Array<string> = fs.readFileSync('./src/hex-samples/STM32-BOOTLOADER.hex').toString().split("\n");
 const Areas: Array<TFlashSegmen> = getUsageMemoryAddresAndSize(fileContent);
 //Areas.forEach((item)=>{console.log(JSON.stringify(item))});
 //console.log(getErasedPages(Areas, getFlashPages()));

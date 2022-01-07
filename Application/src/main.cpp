@@ -12,13 +12,18 @@
                          
 const char * IDtext = "Application v1.0.0 07.01.2022 www.intmash.ru";
 
+/*TODO 
+the Bootloader took less 16kB of code, and fitted to one flash page from 0x08000000 to 0x08003FFF.
+But for future, i have reserved 32kB max size of Bootloader.
+Hence, an Application's Start Addres have to started from 0x08008000.
+*/
 int main(void) {
   
   IDinit(CD_DATA.serial_number, (char *) IDtext);
 
   Init();
-  LED2_ON;  
   LED1_ON;
+  LED2_OFF;  
   LED3_OFF;
   LED4_OFF;
 
