@@ -50,12 +50,8 @@ tU16 BootLoader(ModbusSlaveType* Slave){
 //      ������, ����������� ������, ������ �������������� ������� ���� ������������
 //� ������ ������:
 //01.B0.03.0000.CRC
-//Test string
-const char SIDtext[] = "BOOTLOADER v1.0.0 07.12.2021 www.intmash.ru";
-//const volatile char * id = (char *) &SIDtext;
 
 tU16 readMemoryBlockFromAddr(ModbusSlaveType* Slave) {
-  const volatile char * id = (char *) &SIDtext;
   /* TODO change address-endian at backend  */
   const tU32Union StartAddr = {
     .B[0] = Slave->Buffer[6],
@@ -155,39 +151,40 @@ tU16 setErasedPages(ModbusSlaveType* Slave){
 
 /*TODO starting write flash*/
 /*
-������:
-01.B0.04.CCCC.AAAAAAAA.DD.DD.DD.DD.DD....DD.DD.CRC
-CCCC - ���-�� ����
-AAAAAAAA - ��������� �����
-DD... - ������
+Respond:
+01.B0.04.CCCC.AA AA AA AA.DD.DD.DD.DD.DD....DD.DD.CRC
+CCCC - number of data bytes
+AAAAAAAA - 32-bit start address
+DD... - data bytes
 
-�����:
+Answer:
 01.B0.04
 */
 void writeCodeSpase(tU32 startAddr, tU16 count, tU8 * buff) {
   StartFlashChange();
-  while (count --) { 
+  while (count-- != 0) { 
     FLASH_ProgramByte(startAddr++, *buff++);
   }
   EndFlashChange();
 }
 
+/*TODO Need to rid up an error with length of data more than 240 bytes, because RX/TX buffer have 16KB length.*/
 
-tU16 writeCodeToFlash(ModbusSlaveType* Slave) {
+tU16 writeCodeToFlash(ModbusSlaveType* Slave) { 
   const tU16Union count = {
-    .B[0] = Slave->Buffer[3],
-    .B[1] = Slave->Buffer[4],
+    .B[0] = Slave->Buffer[4],
+    .B[1] = Slave->Buffer[3],
   };
   const tU32Union StartAddr = {
-    .B[0] = Slave->Buffer[5],
-    .B[1] = Slave->Buffer[6],
-    .B[2] = Slave->Buffer[7],
-    .B[3] = Slave->Buffer[8]
+    .B[0] = Slave->Buffer[8],
+    .B[1] = Slave->Buffer[7],
+    .B[2] = Slave->Buffer[6],
+    .B[3] = Slave->Buffer[5]
   };    
   tU8 * pData = (tU8 * ) &Slave->Buffer[9];
   writeCodeSpase(StartAddr.I, count.I, pData);
   tU16 DataLength  = 3;
-  DataLength += CRC_SIZE;//��������� ����� crc 
+  DataLength += CRC_SIZE;//crc 
   FrameEndCrc16((tU8*)Slave->Buffer, DataLength);
   return DataLength;
 }

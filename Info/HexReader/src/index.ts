@@ -76,10 +76,15 @@ async function writeMem(U32Addr: number, buff: Uint8Array): Promise<any> {
   /*TODO It is necessary to calculate the chunkend time and timeout
          depending on the required data size and boudrate.*/
   const answer: any = await COMx.getCOMAnswer({cmd, 
-                                               ChunksEndTime:100,
-                                               timeOut:3800});
+                                               ChunksEndTime:20,
+                                               timeOut:3000});
   const msg: Array<number> = validateAnswer(answer);
   return msg;
+}
+
+async function startApplication(): Promise<any> {
+  const res: string = 'app started';
+  return res;
 }
 
 function validateAnswer(answer: any): Array<number> | never {
@@ -97,18 +102,34 @@ function validateAnswer(answer: any): Array<number> | never {
       const AvailiblePages: Array<TFlashSegmen> = await getAvailablePagesList();
       const ErasedPages:Array<string> = getErasedPages(Areas, AvailiblePages);
       console.log(ErasedPages);
-      //const mem_after: any = await readMem(0x080C0000, 0x0100);
-      //console.log(Buffer.from(mem_after).toString('ascii'));
+      const mem_after: any = await readMem(0x08008000, 0x0100);
+      console.log(Buffer.from(mem_after).toString('ascii'));
       await eraseSpecifiedPages(ErasedPages);
-      //const mem: any = await readMem(0x080C0000, 0x0100);//0x4000);
-      //console.log(Buffer.from(mem).toString('ascii'));
+      const mem: any = await readMem(0x08008000, 0x0100);
+      console.log(Buffer.from(mem).toString('ascii'));
       try {
-        Areas.forEach((area)=> {
-          /*TODO there i gonna writing code to a flash pages*/
-        });
-      } catch (e) {
+        const chunkSize: number = 240;
+        for (const area of Areas) {
+          let StartAddr: number = parseInt(area.start);
+          const CodeData:Array<number> = area.code;
+          let count: number = Number((area.size !== 'main') ? area.size : 0);
+          let idx: number = 0;
+          while (count > 0) {
+            let trcount: number = (chunkSize > count) ? count : chunkSize;
+            count -= trcount;
 
+            const code: Uint8Array = new Uint8Array(CodeData.slice(idx, idx+trcount));
+            await writeMem(StartAddr, code);
+            StartAddr +=trcount;
+            idx += trcount;
+          }
+        }
+        
+      } catch (e) {
+        console.log('write flash error', e);
       }
+      /**TODO here, i gonna to ask the Bootloader to start an Application */
+      await startApplication();
     } catch (e) {
       await delay(1000);
       console.log('главЛовушка',e);

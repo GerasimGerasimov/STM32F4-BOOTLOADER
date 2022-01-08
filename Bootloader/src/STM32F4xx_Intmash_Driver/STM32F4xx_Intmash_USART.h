@@ -5,8 +5,8 @@
 #include "Intmash_bastypes.h" 
 
 
-
-#define URXBUFFSIZE  16384+8 //было 255 размер буфера приёмника
+#define BOOTLOADER_BUFFER 16384
+#define URXBUFFSIZE  BOOTLOADER_BUFFER+8 //размер буфера приёмника
 //значения для состояния DIR
 #define WITHOUT_DIR  0 // ноги дир нет, ничего не делаем
 #define POLARITY_LOW 1 // нога используется, инверсный сигнал.
