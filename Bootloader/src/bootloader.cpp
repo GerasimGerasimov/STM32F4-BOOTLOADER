@@ -149,7 +149,6 @@ tU16 setErasedPages(ModbusSlaveType* Slave){
   return DataLength;
 }
 
-/*TODO starting write flash*/
 /*
 Respond:
 01.B0.04.CCCC.AA AA AA AA.DD.DD.DD.DD.DD....DD.DD.CRC

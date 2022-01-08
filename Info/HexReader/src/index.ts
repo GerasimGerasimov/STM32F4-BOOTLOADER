@@ -128,7 +128,7 @@ function validateAnswer(answer: any): Array<number> | never {
       } catch (e) {
         console.log('write flash error', e);
       }
-      /**TODO here, i gonna to ask the Bootloader to start an Application */
+      /*TODO here, i gonna to ask the Bootloader to start an Application */
       await startApplication();
     } catch (e) {
       await delay(1000);
