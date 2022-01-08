@@ -40,6 +40,9 @@ void GPIO_Configuration(void){//настройка портов ввода-вывода
   //порт F                        LED1        
   GPIO_InitStructure.GPIO_Pin  =  GPIO_Pin_11;
   GPIO_Init(GPIOF, &GPIO_InitStructure);
+  //порт H                        LED3, LED4        
+  GPIO_InitStructure.GPIO_Pin  =  GPIO_Pin_2 | GPIO_Pin_3;
+  GPIO_Init(GPIOH, &GPIO_InitStructure);  
 
 //------------------------------------------------------------------------------------------------------------   
   //Инициализируем ноги, связанные с переферией:
@@ -139,17 +142,20 @@ void Watchdog_configuration(u16 reset_time_ms){
 * Return         : None
 ********************************************************************************/
 //разрешаем переходы по векторам и настраиваем приоритеты следующих прерываний:
+#define APP_START_ADDR 0x08008000
+
 void NVIC_Configuration(void)
 {
   NVIC_InitTypeDef NVIC_InitStructure;
 
-#ifdef  VECT_TAB_RAM  
-  /* Set the Vector Table base location at 0x20000000 */
-  NVIC_SetVectorTable(NVIC_VectTab_RAM, 0x0); 
-#else  /* VECT_TAB_FLASH  */
-  /* Set the Vector Table base location at 0x08000000 */ 
-  NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x0);   
-#endif
+  SCB->VTOR = APP_START_ADDR;//переносим начало вектора прерываний по указанному адресу
+//#ifdef  VECT_TAB_RAM  
+//  /* Set the Vector Table base location at 0x20000000 */
+//  NVIC_SetVectorTable(NVIC_VectTab_RAM, 0x0); 
+//#else  /* VECT_TAB_FLASH  */
+//  /* Set the Vector Table base location at 0x08000000 */ 
+//  NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x0);   
+//#endif
   
   NVIC_PriorityGroupConfig(NVIC_PriorityGroup_3);
   

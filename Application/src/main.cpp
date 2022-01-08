@@ -17,20 +17,19 @@ the Bootloader took less 16kB of code, and fitted to one flash page from 0x08000
 But for future, i have reserved 32kB max size of Bootloader.
 Hence, an Application's Start Addres have to started from 0x08008000.
 */
+
 int main(void) {
-  
   IDinit(CD_DATA.serial_number, (char *) IDtext);
 
   Init();
   LED1_ON;
-  LED2_OFF;  
+  LED2_ON;  
   LED3_OFF;
   LED4_OFF;
 
   BkpSram_Configuration();
   while (1)
-  { 
-    ////////////////////////////////////////////////////////////////////////////    
+  {    
     if (RAM_DATA.FLAGS0.bits.T1000Hz) {
       RAM_DATA.FLAGS0.bits.T1000Hz = 0;
       static tU16 blink = 1000;
