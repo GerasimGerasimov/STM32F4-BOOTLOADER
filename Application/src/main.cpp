@@ -13,9 +13,7 @@
 const char * IDtext = "Application v1.0.0 07.01.2022 www.intmash.ru";
 
 /*TODO 
-the Bootloader took less 16kB of code, and fitted to one flash page from 0x08000000 to 0x08003FFF.
-But for future, i have reserved 32kB max size of Bootloader.
-Hence, an Application's Start Addres have to started from 0x08008000.
+full reinitialize periferials before starting
 */
 
 int main(void) {
@@ -24,9 +22,9 @@ int main(void) {
   Init();
   LED1_ON;
   LED2_ON;  
-  LED3_OFF;
+  LED3_ON;
   LED4_OFF;
-
+  __enable_irq(); 
   BkpSram_Configuration();
   while (1)
   {    

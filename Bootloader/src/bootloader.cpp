@@ -10,7 +10,7 @@
 #define BOOT_CMD_CODE_OFFSET            0x02
 #define BOOT_CMD_GET_PAGES_LIST         0x00
 #define BOOT_CMD_SET_ERASED_PAGES       0x01
-#define BOOT_CMD_SET_AREA_START_ADDR    0x02
+#define BOOT_CMD_SET_START_APPLICATION  0x02
 #define BOOT_CMD_GET_MEMORY_FROM_ADDR   0x03 //�������� ������� ��������� ���-�� ���� ������ ������� � ���������� ������ 
 #define BOOT_CMD_PUT_AREA_CODE          0x04
 
@@ -21,6 +21,7 @@ tU16 getPagesList(ModbusSlaveType* Slave);
 tU16 setErasedPages(ModbusSlaveType* Slave);
 tU16 readMemoryBlockFromAddr(ModbusSlaveType* Slave);
 tU16 writeCodeToFlash(ModbusSlaveType* Slave);
+tU16 startApplication(ModbusSlaveType* Slave);
 
 tU16 BootLoader(ModbusSlaveType* Slave){
   tU8 cmd = Slave->Buffer[BOOT_CMD_CODE_OFFSET];
@@ -29,6 +30,8 @@ tU16 BootLoader(ModbusSlaveType* Slave){
         return getPagesList(Slave);
     case BOOT_CMD_SET_ERASED_PAGES:
         return setErasedPages(Slave);
+    case BOOT_CMD_SET_START_APPLICATION:
+        return startApplication(Slave);
     case BOOT_CMD_GET_MEMORY_FROM_ADDR:
         return readMemoryBlockFromAddr(Slave);
     case BOOT_CMD_PUT_AREA_CODE:
@@ -186,4 +189,36 @@ tU16 writeCodeToFlash(ModbusSlaveType* Slave) {
   DataLength += CRC_SIZE;//crc 
   FrameEndCrc16((tU8*)Slave->Buffer, DataLength);
   return DataLength;
+}
+
+#define APPLICATION_ADDRESS 0x08008000
+tU16 startApplication(ModbusSlaveType* Slave) {
+   /* Устанавливаем адрес перехода на основную программу */
+   /* Переход производится выполнением функции, адрес которой указывается вручную */
+   /* +4 байта потому, что в самом начале расположен указатель на вектор прерывания */ 
+   uint32_t jumpAddress = *(__IO uint32_t*) (APPLICATION_ADDRESS + 4); 
+   typedef void(*pFunction)(void);//объявляем пользовательский тип
+   pFunction Jump_To_Application = (pFunction) jumpAddress;
+   
+   /*Сбрасываем всю периферию на APB1 */
+   RCC->APB1RSTR = 0xFFFFFFFF; RCC->APB1RSTR = 0x0; 
+  /*Сбрасываем всю периферию на APB2 */ 
+   RCC->APB2RSTR = 0xFFFFFFFF; RCC->APB2RSTR = 0x0; 
+   RCC->APB1ENR = 0x0; /* Выключаем всю периферию на APB1 */ 
+   RCC->APB2ENR = 0x0; /* Выключаем всю периферию на APB2 */
+   RCC->AHB1ENR = 0x0; /* Выключаем всю периферию на AHB */
+   RCC->AHB2ENR = 0x0; /* Выключаем всю периферию на AHB */   
+   RCC->AHB3ENR = 0x0; /* Выключаем всю периферию на AHB */   
+   /* Сбрасываем все источники тактования по умолчанию, переходим на HSI*/
+   RCC_DeInit();  
+   
+   /* Выключаем прерывания */
+   __disable_irq(); 
+   /* Переносим адрес вектора прерываний */
+   SCB->VTOR = APPLICATION_ADDRESS;//
+   /* Переносим адрес стэка */ 
+    __set_MSP(*(__IO uint32_t*) APPLICATION_ADDRESS); 
+    /* Переходим в основную программу */  
+    Jump_To_Application(); 
+    return 0;
 }
