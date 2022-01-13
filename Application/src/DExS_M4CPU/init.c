@@ -14,7 +14,6 @@ ErrorStatus HSEStartUpStatus;
 //--------------------------------------------------------------
 
 void GPIO_Configuration(void){//настройка портов ввода-вывода
-  
   GPIO_InitTypeDef GPIO_InitStructure;
   
   RCC_AHB1PeriphClockCmd( RCC_AHB1Periph_GPIOA | RCC_AHB1Periph_GPIOB | RCC_AHB1Periph_GPIOC | RCC_AHB1Periph_GPIOD | RCC_AHB1Periph_GPIOE |\

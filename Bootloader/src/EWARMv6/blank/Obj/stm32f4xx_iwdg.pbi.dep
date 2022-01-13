@@ -1,2 +1,0 @@
-stm32f4xx_iwdg.pbi: \
-  D:\Project\Projects\STM32F4-BOOTLOADER\Bootloader\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_iwdg.c

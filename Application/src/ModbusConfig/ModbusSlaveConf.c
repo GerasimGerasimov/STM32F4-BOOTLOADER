@@ -20,13 +20,14 @@ ModbusSlaveType OptRS485slave;
 
 tU16 ModbusMemWrite_VTEG(ModbusSlaveType* Slave);
 tU16 ModbusMemRead_VTEG(ModbusSlaveType* Slave);
-
+tU16 StartBootLoader(ModbusSlaveType* Slave);
 
 //число используемых команд +1
-ModbusCommandHandlerType ModbusCommands[4]={
+ModbusCommandHandlerType ModbusCommands[5]={
   {ModbusMemRead_VTEG, 0x03},
   {ModbusMemWrite_VTEG, 0x10},
   {GetDeviceID, 0x11},
+  {StartBootLoader, 0x0B},
   {0, 0},
 }; 
 
@@ -324,8 +325,25 @@ tU16 ModbusMemRead_VTEG(ModbusSlaveType* Slave)
   return (DataLength);  
 }
 
+__no_init char BootLoaderStart[4] @ "BOOT_CMD";
+tU16 StartBootLoader(ModbusSlaveType* Slave) {
+  BootLoaderStart[0] = 0xA5;
+  BootLoaderStart[1] = 0x5A;
+  BootLoaderStart[2] = 0xA5;
+  BootLoaderStart[3] = 0x5A; 
+  FrameEndCrc16((tU8*)BootLoaderStart, 4);
+  NVIC_SystemReset();
+  return 0;
+}
 
-
+void BootLoadCmdFillZero(void) {
+  BootLoaderStart[0] = 0x00;
+  BootLoaderStart[1] = 0x00;
+  BootLoaderStart[2] = 0x00;
+  BootLoaderStart[3] = 0x00; 
+  BootLoaderStart[4] = 0x00;
+  BootLoaderStart[5] = 0x00;   
+}
 
 
 

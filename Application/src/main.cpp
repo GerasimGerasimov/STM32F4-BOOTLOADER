@@ -17,11 +17,11 @@ full reinitialize periferials before starting
 */
 
 int main(void) {
+  BootLoadCmdFillZero();
   IDinit(CD_DATA.serial_number, (char *) IDtext);
-
   Init();
   LED1_ON;
-  LED2_ON;  
+  LED2_ON;
   LED3_ON;
   LED4_OFF;
   __enable_irq(); 
