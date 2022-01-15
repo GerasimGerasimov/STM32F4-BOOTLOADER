@@ -27,7 +27,7 @@ ModbusCommandHandlerType ModbusCommands[5]={
   {ModbusMemRead_VTEG, 0x03},
   {ModbusMemWrite_VTEG, 0x10},
   {GetDeviceID, 0x11},
-  {StartBootLoader, 0x0B},
+  {StartBootLoader, 0xB0},
   {0, 0},
 }; 
 
@@ -325,15 +325,15 @@ tU16 ModbusMemRead_VTEG(ModbusSlaveType* Slave)
   return (DataLength);  
 }
 
-__no_init char BootLoaderStart[4] @ "BOOT_CMD";
+__no_init char BootLoaderStart[6] @ "BOOT_CMD";
 tU16 StartBootLoader(ModbusSlaveType* Slave) {
   BootLoaderStart[0] = 0xA5;
   BootLoaderStart[1] = 0x5A;
   BootLoaderStart[2] = 0xA5;
   BootLoaderStart[3] = 0x5A; 
-  FrameEndCrc16((tU8*)BootLoaderStart, 4);
+  //FrameEndCrc16((tU8*)BootLoaderStart, 4);
   NVIC_SystemReset();
-  return 0;
+  return 4;
 }
 
 void BootLoadCmdFillZero(void) {

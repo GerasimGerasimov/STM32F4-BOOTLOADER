@@ -10,10 +10,19 @@
 #include "STM32F4xx_Intmash_BKP.h"
 //////////////////////////
 #include "ramdata.h"
+
+#include "bootloader.h"
                          
 const char * IDtext = "Bootloader v1.0.0 07.12.2021 www.intmash.ru";
 
 int main(void) {
+  
+  
+  if (isBootLoaderMustBeStart() != true) {
+    if ( isApplicationReadyToStart()) {
+      jumpToApplication();
+    }
+  }
   
   IDinit(1, (char *) IDtext);
   Init();

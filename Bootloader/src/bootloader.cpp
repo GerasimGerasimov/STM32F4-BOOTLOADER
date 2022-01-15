@@ -192,7 +192,8 @@ tU16 writeCodeToFlash(ModbusSlaveType* Slave) {
 }
 
 #define APPLICATION_ADDRESS 0x08008000
-tU16 startApplication(ModbusSlaveType* Slave) {
+
+void jumpToApplication(void) {
    /* Устанавливаем адрес перехода на основную программу */
    /* Переход производится выполнением функции, адрес которой указывается вручную */
    /* +4 байта потому, что в самом начале расположен указатель на вектор прерывания */ 
@@ -220,5 +221,37 @@ tU16 startApplication(ModbusSlaveType* Slave) {
     __set_MSP(*(__IO uint32_t*) APPLICATION_ADDRESS); 
     /* Переходим в основную программу */  
     Jump_To_Application(); 
-    return 0;
+}
+
+__no_init char BootLoaderStart[6] @ "BOOT_CMD";
+
+bool isBootLoaderMustBeStart(void) {
+  if ( (BootLoaderStart[0] == 0xA5) &&
+       (BootLoaderStart[1] == 0x5A) &&
+       (BootLoaderStart[2] == 0xA5) &&
+       (BootLoaderStart[3] == 0x5A))
+   {
+     return true;
+   } else {
+    return false;
+   }
+}
+
+bool isApplicationReadyToStart(void) {
+  /*TODO to check the signature
+   Code from 0x08008000 not 0xFF.0xFF.0xFF.0xFF.0xFF.0xFF....*/
+  uint32_t jumpAddress = *(__IO uint32_t*) (APPLICATION_ADDRESS + 4); 
+  return (bool) (jumpAddress != 0xFFFFFFFF);
+}
+
+//01.B0.02.CRC
+tU16 startApplication(ModbusSlaveType* Slave) {
+  BootLoaderStart[0] = 0x00;
+  BootLoaderStart[1] = 0x00;
+  BootLoaderStart[2] = 0x00;
+  BootLoaderStart[3] = 0x00; 
+  BootLoaderStart[4] = 0x00;
+  BootLoaderStart[5] = 0x00;   
+  NVIC_SystemReset();
+  return 0;
 }

@@ -103,6 +103,8 @@ function validateAnswer(answer: any): Array<number> | never {
     try {
       await COMx.waitForOpen();
       const ID: string = await getID();
+      /*TODO To check (by ID), is this a Bootloader?
+             If it isn't, to start the Bootloader, and wait (limited by timeout) till it will be running.*/
       const AvailiblePages: Array<TFlashSegmen> = await getAvailablePagesList();
       const ErasedPages:Array<string> = getErasedPages(Areas, AvailiblePages);
       console.log(ErasedPages);
