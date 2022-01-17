@@ -98,42 +98,60 @@ function validateAnswer(answer: any): Array<number> | never {
   return answer.msg;
 }
 
+function isItApplication(ID: string): boolean {
+  let sa: Array<string> =  ID.split(' ');
+  let name:string = sa[1] || '';
+  return (name !== 'Bootloader');
+}
+
+async function downloadCodeToMCU() {
+  try {
+    const chunkSize: number = 240;
+    for (const area of Areas) {
+      let StartAddr: number = parseInt(area.start);
+      const CodeData:Array<number> = area.code;
+      let count: number = Number((area.size !== 'main') ? area.size : 0);
+      let idx: number = 0;
+      while (count > 0) {
+        let trcount: number = (chunkSize > count) ? count : chunkSize;
+        count -= trcount;
+        const code: Uint8Array = new Uint8Array(CodeData.slice(idx, idx+trcount));
+        await writeMem(StartAddr, code);
+        StartAddr +=trcount;
+        idx += trcount;
+      }
+    }
+    
+  } catch (e) {
+    console.log('write flash error', e);
+  }
+}
+
+async function startBootloader(): Promise<any> {
+  const FieldBusAddr: number = 0x01;
+  const cmdSource = new Uint8Array([FieldBusAddr, 0xB0]);
+  const cmd: Array<number> = Array.from(appendCRC16toArray(cmdSource))
+  await COMx.getCOMAnswer({cmd, ChunksEndTime:20,
+                                timeOut:500,
+                                NotRespond: true });
+  await delay(500);
+  return;
+}
 (async () => { 
   while (true) {
     try {
       await COMx.waitForOpen();
       const ID: string = await getID();
-      /*TODO To check (by ID), is this a Bootloader?
-             If it isn't, to start the Bootloader, and wait (limited by timeout) till it will be running.*/
+      if (isItApplication(ID)) {
+        await startBootloader();
+      }
       const AvailiblePages: Array<TFlashSegmen> = await getAvailablePagesList();
       const ErasedPages:Array<string> = getErasedPages(Areas, AvailiblePages);
-      console.log(ErasedPages);
-      //const mem_after: any = await readMem(0x08008000, 0x0100);
-      //console.log(Buffer.from(mem_after).toString('ascii'));
       await eraseSpecifiedPages(ErasedPages);
-      //const mem: any = await readMem(0x08008000, 0x0100);
-      //console.log(Buffer.from(mem).toString('ascii'));
-      try {
-        const chunkSize: number = 240;
-        for (const area of Areas) {
-          let StartAddr: number = parseInt(area.start);
-          const CodeData:Array<number> = area.code;
-          let count: number = Number((area.size !== 'main') ? area.size : 0);
-          let idx: number = 0;
-          while (count > 0) {
-            let trcount: number = (chunkSize > count) ? count : chunkSize;
-            count -= trcount;
-            const code: Uint8Array = new Uint8Array(CodeData.slice(idx, idx+trcount));
-            await writeMem(StartAddr, code);
-            StartAddr +=trcount;
-            idx += trcount;
-          }
-        }
-        
-      } catch (e) {
-        console.log('write flash error', e);
-      }
+      await downloadCodeToMCU();
       await startApplication();
+      console.log('Hex Reader has Done');
+      process.exit(0);
     } catch (e) {
       await delay(1000);
       console.log('главЛовушка',e);
@@ -141,5 +159,3 @@ function validateAnswer(answer: any): Array<number> | never {
 
   }
 })();
-
-console.log('Hex Reader has Done');
