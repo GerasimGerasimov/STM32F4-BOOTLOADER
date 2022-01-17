@@ -1,6 +1,8 @@
 import { TFlashSegmen, TFlashSegmenDescription } from "./hextypes";
 
-export function getErasedPages( domain: Array<TFlashSegmenDescription>, pages: Array<TFlashSegmenDescription>): Array<string> {
+export function getErasedPages( domain: Array<TFlashSegmenDescription>,
+                                  pages: Array<TFlashSegmenDescription>,
+                                    SkipSectors:Array<string>): Array<string> {
   const res:Set<string> = new Set();
   domain.forEach((value)=>{
     if (value.size !== 'main') {
@@ -9,8 +11,10 @@ export function getErasedPages( domain: Array<TFlashSegmenDescription>, pages: A
         const page:TFlashSegmenDescription = pages[idx];
         const page_set = {start: parseInt(page.start), end: parseInt(page.start) + Number(page.size)};
         if (intersection(domain_set, page_set)) {
-          res.add(page.start);
-          console.log(page);
+          if (!SkipSectors.includes(page.start)) {
+            res.add(page.start);
+            console.log(page);
+          }
         }
       }
     }

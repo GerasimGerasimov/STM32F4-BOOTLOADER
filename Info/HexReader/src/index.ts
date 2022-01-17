@@ -7,8 +7,15 @@ import { ErasedPagesToU8Array, getErasedPages, U16ToU8Array, U32ToU8Array} from 
 import { settings } from "./settings";
 import { delay } from "./utils/delay";
 
+const setings = {
+  "App": "D:/Project/Projects/!SMFCB/DExSys/FW/CM4/DExS-SMFCB/EWARMv6/STM32F407IGT6/Exe/DExS.M4CPU.SMFCB.hex",
+  "SkipSectors":['0x080A0000', '0x080C0000', '0x080E0000']
+}
+
 console.log('Start Hex Reader');
-const fileContent: Array<string> = fs.readFileSync('./src/hex-samples/STM32-APP.hex').toString().split("\n");
+//'./src/hex-samples/STM32-APP.hex'
+const src: string = setings.App;
+const fileContent: Array<string> = fs.readFileSync(src).toString().split("\n");
 const Areas: Array<TFlashSegmen> = getUsageMemoryAddresAndSize(fileContent);
 
 const COMx: ComPort = new ComPort(settings.COM);
@@ -23,9 +30,9 @@ const COMx: ComPort = new ComPort(settings.COM);
         await startBootloader();
       }
       const AvailiblePages: Array<TFlashSegmen> = await getAvailablePagesList();
-      const ErasedPages:Array<string> = getErasedPages(Areas, AvailiblePages);
+      const ErasedPages:Array<string> = getErasedPages(Areas, AvailiblePages, setings.SkipSectors);
       await eraseSpecifiedPages(ErasedPages);
-      await downloadCodeToMCU();
+      await downloadCodeToMCU(setings.SkipSectors);
       await startApplication();
       console.log('Hex Reader has Done');
       process.exit(0);
@@ -99,7 +106,7 @@ async function writeMem(U32Addr: number, buff: Uint8Array): Promise<any> {
   /*TODO It is necessary to calculate the chunkend time and timeout
          depending on the required data size and boudrate.*/
   const answer: any = await COMx.getCOMAnswer({cmd, 
-                                               ChunksEndTime:20,
+                                               ChunksEndTime:1,
                                                timeOut:3000});
   const msg: Array<number> = validateAnswer(answer);
   return msg;
@@ -127,11 +134,13 @@ function isItApplication(ID: string): boolean {
   return (name !== 'Bootloader');
 }
 
-async function downloadCodeToMCU() {
+async function downloadCodeToMCU(SkipSectors:Array<string>) {
+  const skipArea: Array<number> = SkipSectors.map((value)=>parseInt(value));
   try {
     const chunkSize: number = 240;
     for (const area of Areas) {
       let StartAddr: number = parseInt(area.start);
+      if (skipArea.includes(StartAddr)) continue;
       const CodeData:Array<number> = area.code;
       let count: number = Number((area.size !== 'main') ? area.size : 0);
       let idx: number = 0;
