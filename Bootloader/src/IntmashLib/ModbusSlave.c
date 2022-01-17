@@ -56,7 +56,7 @@ Ret:
 размер отправляемой посылки в байтах
 *******************************************************************************/
 
-tU16 ModbusCommandDecode(ModbusSlaveType* Slave, tU8 MesageSize, ModbusCommandHandlerType* HandlerTable)
+tU16 ModbusCommandDecode(ModbusSlaveType* Slave, tU16 MesageSize, ModbusCommandHandlerType* HandlerTable)
 {
   tU16 Answer=0;
   //посчитали crc

@@ -7,15 +7,9 @@ import { ErasedPagesToU8Array, getErasedPages, U16ToU8Array, U32ToU8Array} from 
 import { settings } from "./settings";
 import { delay } from "./utils/delay";
 
-const setings = {
-  "App": "D:/Project/Projects/!SMFCB/DExSys/FW/CM4/DExS-SMFCB/EWARMv6/STM32F407IGT6/Exe/DExS.M4CPU.SMFCB.hex",
-  "SkipSectors":['0x080A0000', '0x080C0000', '0x080E0000']
-}
-
 console.log('Start Hex Reader');
 //'./src/hex-samples/STM32-APP.hex'
-const src: string = setings.App;
-const fileContent: Array<string> = fs.readFileSync(src).toString().split("\n");
+const fileContent: Array<string> = fs.readFileSync(settings.App).toString().split("\n");
 const Areas: Array<TFlashSegmen> = getUsageMemoryAddresAndSize(fileContent);
 
 const COMx: ComPort = new ComPort(settings.COM);
@@ -30,9 +24,9 @@ const COMx: ComPort = new ComPort(settings.COM);
         await startBootloader();
       }
       const AvailiblePages: Array<TFlashSegmen> = await getAvailablePagesList();
-      const ErasedPages:Array<string> = getErasedPages(Areas, AvailiblePages, setings.SkipSectors);
+      const ErasedPages:Array<string> = getErasedPages(Areas, AvailiblePages, settings.SkipSectors);
       await eraseSpecifiedPages(ErasedPages);
-      await downloadCodeToMCU(setings.SkipSectors);
+      await downloadCodeToMCU(settings.SkipSectors);
       await startApplication();
       console.log('Hex Reader has Done');
       process.exit(0);
@@ -137,7 +131,7 @@ function isItApplication(ID: string): boolean {
 async function downloadCodeToMCU(SkipSectors:Array<string>) {
   const skipArea: Array<number> = SkipSectors.map((value)=>parseInt(value));
   try {
-    const chunkSize: number = 240;
+    const chunkSize: number = 8192;
     for (const area of Areas) {
       let StartAddr: number = parseInt(area.start);
       if (skipArea.includes(StartAddr)) continue;
