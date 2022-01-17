@@ -16,7 +16,6 @@ export default class ComPort {
     constructor(settings: any){
         this.PortSettings = settings;
         this.configure(settings);
-        console.log('ComPort class created')
     }
 
     public configure(settings: any): void {

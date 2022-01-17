@@ -7,11 +7,34 @@ import { ErasedPagesToU8Array, getErasedPages, U16ToU8Array, U32ToU8Array} from 
 import { settings } from "./settings";
 import { delay } from "./utils/delay";
 
-const COMx: ComPort = new ComPort(settings.COM);
-
 console.log('Start Hex Reader');
 const fileContent: Array<string> = fs.readFileSync('./src/hex-samples/STM32-APP.hex').toString().split("\n");
 const Areas: Array<TFlashSegmen> = getUsageMemoryAddresAndSize(fileContent);
+
+const COMx: ComPort = new ComPort(settings.COM);
+
+(async () => { 
+  while (true) {
+    try {
+      await COMx.waitForOpen();
+      const ID: string = await getID();
+      if (isItApplication(ID)) {
+        console.log('Swap to Bootloader');
+        await startBootloader();
+      }
+      const AvailiblePages: Array<TFlashSegmen> = await getAvailablePagesList();
+      const ErasedPages:Array<string> = getErasedPages(Areas, AvailiblePages);
+      await eraseSpecifiedPages(ErasedPages);
+      await downloadCodeToMCU();
+      await startApplication();
+      console.log('Hex Reader has Done');
+      process.exit(0);
+    } catch (e) {
+      await delay(1000);
+      console.log('главЛовушка',e);
+    }
+  }
+})();
 
 async function getID(): Promise<string> {
   const FieldBusAddr: number = 0x01;
@@ -137,25 +160,3 @@ async function startBootloader(): Promise<any> {
   await delay(500);
   return;
 }
-(async () => { 
-  while (true) {
-    try {
-      await COMx.waitForOpen();
-      const ID: string = await getID();
-      if (isItApplication(ID)) {
-        await startBootloader();
-      }
-      const AvailiblePages: Array<TFlashSegmen> = await getAvailablePagesList();
-      const ErasedPages:Array<string> = getErasedPages(Areas, AvailiblePages);
-      await eraseSpecifiedPages(ErasedPages);
-      await downloadCodeToMCU();
-      await startApplication();
-      console.log('Hex Reader has Done');
-      process.exit(0);
-    } catch (e) {
-      await delay(1000);
-      console.log('главЛовушка',e);
-    }
-
-  }
-})();
