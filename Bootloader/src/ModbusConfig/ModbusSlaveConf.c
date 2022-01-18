@@ -18,14 +18,8 @@ ModbusSlaveType RS485slave;
 Intmash_Usart UARTtoOptRS485; // связь с опциональным RS485
 ModbusSlaveType OptRS485slave;
 
-tU16 ModbusMemWrite_VTEG(ModbusSlaveType* Slave);
-tU16 ModbusMemRead_VTEG(ModbusSlaveType* Slave);
-
-
 //число используемых команд +1
-ModbusCommandHandlerType ModbusCommands[5]={
-  {ModbusMemRead_VTEG, 0x03},
-  {ModbusMemWrite_VTEG, 0x10},
+ModbusCommandHandlerType ModbusCommands[3]={
   {GetDeviceID, 0x11},
   {BootLoader, 0xB0},
   {0, 0},
@@ -216,120 +210,6 @@ void ModbusSlaveProc(void)
   } 
 }
 
-/*
-tU8 ModbusCDRCWrite(tU8* Buffer,tU8 BufDataIdx, tU8 RegAddr, tU8 RegNum){ //u32 DATA_BASE
-  tU8 DataLength = 0; //длинна отправляемой посылки
-  
-  tU16 *ModbusAddrSet = (tU16*)((tU32)&CD_DATA + ((tU32)RegAddr << 1));
-  //чтение буфера в память
-  ModbusSwapCopy((tU8*)&Buffer[BufDataIdx], ModbusAddrSet, RegNum);
-  // если BufDataIdx = 0, значит мы работаем не с буфером slave, а с переменной. 
-  //считать CRC в этом случае не нужно 
-  if(BufDataIdx != 0)
-  {
-    DataLength = WR_ANSWER_SIZE; //размер ответа на запись регистров (0x10, 0x06)
-    FrameEndCrc16((tU8*)Buffer, DataLength);
-  }
-  return DataLength; //возвращает размер отправляемой посылки
-}
-*/
-#define PREFIX_SHIFT 4
-#define PREFIX_MASK  ((tU8)0xF0)
-
-
-//выбор функции записи в определенный сектор памяти
-tU16 ModbusMemWrite_VTEG(ModbusSlaveType* Slave){
-  
-  //старшая тетрада старшего байта адреса первого регистра данных (префикс)
-  tU8 MemSpacePrefix = (Slave->Buffer[MB_START_ADDR_HI])>>PREFIX_SHIFT;  
-  //начальный адрес регистра данных
-  tU16 RegAddr = (((tU16)(Slave->Buffer[MB_START_ADDR_HI] & (~PREFIX_MASK))) << 8) + Slave->Buffer[MB_START_ADDR_LO];
-  //количество данных 
-  tU16 RegNum =  (((tU16)Slave->Buffer[MB_REG_NUM_HI_CMD_10])<<8) + Slave->Buffer[MB_REG_NUM_LO_CMD_10];  
-  //последний считываемый регистр  
-  tU16 LastRegAddr = RegAddr + RegNum -1;
-  //длинна отправляемой посылки
-  tU8 DataLength = 0; 
-  //переменная для определения ошибки обращения к несуществующему адресу
-  tU8  Error=0;
-  
-    //выбор программы записи памяти
-  switch (MemSpacePrefix)
-  {
-    case RAM_DATA_PREFIX:
-      if(LastRegAddr<RAM_DATA_SIZE ) 
-      {
-        DataLength=ModbusRamWrite(Slave->Buffer,MB_DATA_SECTION_CMD_10,RegAddr,RegNum);   
-      }
-      else Error=1;//вдрес вне допустимой зоны       
-    break;
-    
-    /*
-    case CD_DATA_PREFIX:
-      if(LastRegAddr<CD_DATA_SIZE ) {
-          DataLength=ModbusCDWrite(Slave->Buffer,MB_DATA_SECTION_CMD_10,(tU8)RegAddr,(tU8)RegNum); 
-      }
-      else Error=1;//вдрес вне допустимой зоны         
-    break; 
-    */
-    default:   //не нашёл подходящей области 
-      Error=1;         
-    break;  
-  }
-  //если широковещательное
-  if(MB_IS_BROADCAST_MSG) DataLength = 0;  
-  //если нет - смотрим была ли ошибка обращения к несуществующему адресу
-  else if(Error) DataLength = ModbusError(Slave,MB_ERR_CODE_ILLEGAL_ADDR); 
-  
-  return (DataLength);
-  
-
-}
-
-
-//функция выбора функции чтения памяти RAM, FLASH или CD 
-tU16 ModbusMemRead_VTEG(ModbusSlaveType* Slave)
-{
-  //старшая тетрада старшего байта адреса первого регистра данных (префикс)
-  tU8 MemSpacePrefix = (Slave->Buffer[MB_START_ADDR_HI])>>PREFIX_SHIFT; 
-  tU8 DataLength = 0; //длинна отправляемой посылки
-  //начальный адрес регистра данных
-  tU16 RegAddr = (((tU16)(Slave->Buffer[MB_START_ADDR_HI] & (~PREFIX_MASK))) << 8) + Slave->Buffer[MB_START_ADDR_LO];
-  //количество запрашиваемых регистров  
-  tU16 RegNum =  (((tU16)Slave->Buffer[MB_REG_NUM_HI_CMD_03]) << 8) + Slave->Buffer[MB_REG_NUM_LO_CMD_03];
-  //последний считываемый регистр
-  tU16 LastRegAddr = RegAddr + RegNum -1;
-  //указатель на область памяти для чтения
-  tU8* Source=0; 
-  bool isFlashRead = false;
-  
-  //выбор программы чтения памяти  
-  switch (MemSpacePrefix)
-  {
-  case RAM_DATA_PREFIX:
-    if(LastRegAddr < RAM_DATA_SIZE) {
-      Source=(tU8*)&RAM_DATA;  
-    }
-    break;
-    
-  /*
-  case CD_DATA_PREFIX:
-      if(LastRegAddr < CD_DATA_SIZE) {
-        Source=(tU8*)&CD_DATA;
-      }
-    break; 
-  */  
-  default:
-    //не нашёл подходящей области      
-    break;
-  }
-    //если указатель задан - читаем из памяти, если не задан - возвращаем ошибку
-  if(Source==0) DataLength = ModbusError(Slave,MB_ERR_CODE_ILLEGAL_ADDR);
-  else DataLength = ModbusDataRead(Source, Slave->Buffer, RegAddr, RegNum);
-  
-  if (isFlashRead) RAM_DATA.FLAGS0.bits.FLASH_WRITE = 0;//уставки прочитаны 
-  return (DataLength);  
-}
 
 
 
