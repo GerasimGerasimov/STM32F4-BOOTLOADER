@@ -4,13 +4,15 @@ import { appendCRC16toArray, getCRC16 } from "./crc/crc16";
 import { getUsageMemoryAddresAndSize} from "./hex";
 import { TFlashSegmen } from "./hextypes";
 import { ErasedPagesToU8Array, getErasedPages, U16ToU8Array, U32ToU8Array} from "./mcu";
+import { getResourses } from "./resourses";
 import { settings } from "./settings";
 import { delay } from "./utils/delay";
 
 console.log('Start Hex Reader');
 //'./src/hex-samples/STM32-APP.hex'
 const fileContent: Array<string> = fs.readFileSync(settings.App).toString().split("\n");
-const Areas: Array<TFlashSegmen> = getUsageMemoryAddresAndSize(fileContent);
+const Areas: Array<TFlashSegmen> = [...getUsageMemoryAddresAndSize(fileContent),
+                                    ...getResourses(settings.resourses || undefined)];
 
 const COMx: ComPort = new ComPort(settings.COM);
 

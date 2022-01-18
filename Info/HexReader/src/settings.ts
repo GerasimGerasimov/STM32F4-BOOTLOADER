@@ -10,5 +10,13 @@ export const settings =  {
         stopBits: 1,
         flowControl: false
     }
+  },
+  resourses: {
+    start: "0x08080000",
+    resourses: {
+      SN : '0x12345678',
+      ID : 'DExS.SMFCB v1.10.3.0 29.11.2021 MVK www.intmash.ru',
+      U1 : { file:'D:/Project/Projects/!SMFCB/DExSys/FW/CM4/DExS-SMFCB/Devices/DExS SMFCB 1_10_2.ini'},
+    }
   }
 }
