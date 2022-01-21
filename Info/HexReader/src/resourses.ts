@@ -1,6 +1,7 @@
 import { TFlashSegmen } from "./hextypes";
 import fs = require ("fs");
 import { U16ToU8Array, U32ToU8Array } from "./mcu";
+import { getCRC16 } from "./crc/crc16";
 /*TODO
 Result is structure from StartAddres:
   #Header
@@ -11,10 +12,12 @@ Result is structure from StartAddres:
       [ u32 Addr of Item_0
         u32 Size of Item_0
         [16] Name of Item_0, null-terminated string, not more than 15 simbols.
+        crc
       ],
       [ u32 Addr of Item_1
         u32 Size of Item_1
         [16] Name of Item_1, null-terminated string, not more than 15 simbols.
+        crc
       ]
     ]
   #Control
@@ -47,6 +50,16 @@ class TResourcesData {
 const SizeOfFieldSizeofResourcesRecord: number = 2;
 const SizeOfFieldNumberOfItems: number = 2;
 
+const SIZE_FIELD_OF_RESOURCE_ADDR: number = 4;
+const SIZE_FILED_OF_RESOURCE_SIZE: number = 4;
+const SIZE_FIELD_OF_RESOURCE_NAME: number = 16;
+const SIZE_FIELD_OF_RESOURCE_CRC: number = 2;
+const SIZE_OF_RESOURCE_TABLE_ITEM = 
+                          SIZE_FIELD_OF_RESOURCE_ADDR +
+                            SIZE_FILED_OF_RESOURCE_SIZE +
+                              SIZE_FIELD_OF_RESOURCE_NAME + 
+                                SIZE_FIELD_OF_RESOURCE_CRC;
+
 export function getResourses(resources: any):Array<TFlashSegmen> {
   const result: Array<TFlashSegmen> = [];
   const Resources: TResourcesData =  new TResourcesData();
@@ -66,46 +79,52 @@ export function getResourses(resources: any):Array<TFlashSegmen> {
   Resources.NumberOfItems = src.length;
   Resources.Table = getResoursesTable(src); 
   Resources.BinaryData = getBinaryData(src);
+  const Binary: Uint8Array = convertResourcesToBinary(Resources);
   return result;
 }
 
-/*
-  const cmdSource = new Uint8Array([FieldBusAddr, 0xB0, 0x04,
-    ...U16ToU8Array(buff.length),
-    ...U32ToU8Array(U32Addr),
-    ...buff]);
-*/
 function convertResourcesToBinary(Resources: TResourcesData):Uint8Array {
-  const res: Uint8Array = new Uint8Array([
+  const src: Uint8Array = new Uint8Array([
     ...U16ToU8Array(Resources.Size),
     ...U16ToU8Array(Resources.NumberOfItems),
-    ...resourceTableToBinary(Resources.Table)
-  ]);//+2 for CRC16
+    ...resourceTableToBinary(Resources.Table),
+    ...resourceDataToBinary(Resources.BinaryData)
+  ]);
+  const res: Uint8Array = new Uint8Array([
+    ...src,
+    ...U16ToU8Array(getCRC16(src))
+  ])
+  return res;
+}
 
+function resourceDataToBinary(BinaryData: Array<number>): Uint8Array {
+  const res: Uint8Array = new Uint8Array(BinaryData);
   return res;
 }
 
 function resourceTableToBinary(Table: Array<TResourceProps>): Uint8Array {
-  const AddrSize: number = 4;
-  const SizeOfDataSize: number = 4;
-  const SizeOfName: number = 16;
-  const itemOfTableSize = AddrSize + SizeOfDataSize + SizeOfName;
-  const res: Uint8Array = new Uint8Array(Table.length * itemOfTableSize);
+  const res: Uint8Array = new Uint8Array(Table.length * SIZE_OF_RESOURCE_TABLE_ITEM);
+  let offset: number = 0;
   Table.forEach((item)=> {
-    let itemBinary: Uint8Array = new Uint8Array([
+    let bin: Uint8Array = new Uint8Array([
       ...U32ToU8Array(item.Addr),
       ...U32ToU8Array(item.SizeOfData),
-      ...NullTermStrToU8Array(item.Name, 16)
-    ])
+      ...NullTermStrToU8Array(item.Name, SIZE_FIELD_OF_RESOURCE_NAME)
+    ]);
+    res.set([...bin, ...U16ToU8Array(getCRC16(bin))], offset);
+    offset += SIZE_OF_RESOURCE_TABLE_ITEM;
   });
   return res;
 }
 
 function NullTermStrToU8Array(text: string, arrSize: number): Uint8Array {
-  const res: Uint8Array = new Uint8Array(arrSize);
-  const str = Uint8Array.from(text, c => c.charCodeAt(0))
+  const res: Uint8Array = new Uint8Array(arrSize).fill(0);
+  const str = Uint8Array.from(text, c => c.charCodeAt(0));
+  if (str.length > (SIZE_FIELD_OF_RESOURCE_NAME-1)) throw new Error (`Name of Resource could not be above 15 symbols ${text}`)
   /*TODO export text and set zero after the text*/
-  res = [...str];
+  str.forEach((value, index)=>{
+    res[index] = value;
+  })
   return res;
 }
 
@@ -137,11 +156,7 @@ function getResoursesSize(src: Array<TResourcePropsAndData>): number {
 }
 
 function getSizeOfResourcesTable(src: Array<TResourcePropsAndData>): number {
-  const SizeOfAddr: number = 4;
-  const SizeOfSize: number = 4;
-  const SizeOfNameString: number = 16;
-  const OneRecordSize: number = SizeOfAddr + SizeOfSize + SizeOfNameString ;
-  return src.length * OneRecordSize;
+  return src.length * SIZE_OF_RESOURCE_TABLE_ITEM;
 }
 
 function calculateAddressOfData(src: Array<TResourcePropsAndData>, StartAddr: number) {
