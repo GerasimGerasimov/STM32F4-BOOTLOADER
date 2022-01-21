@@ -47,8 +47,10 @@ class TResourcesData {
   CRC16: number;
 }
 
+/*TODO size of resources may be over of 64K, must be use 32-bit value here*/
 const SizeOfFieldSizeofResourcesRecord: number = 2;
-const SizeOfFieldNumberOfItems: number = 2;
+const SIZE_OF_TOTAL_NUMBER_OF_ITEMS: number = 2;
+const SIZE_OF_TOTAL_CRC: number = 2;
 
 const SIZE_FIELD_OF_RESOURCE_ADDR: number = 4;
 const SIZE_FILED_OF_RESOURCE_SIZE: number = 4;
@@ -61,16 +63,14 @@ const SIZE_OF_RESOURCE_TABLE_ITEM =
                                 SIZE_FIELD_OF_RESOURCE_CRC;
 
 export function getResourses(resources: any):Array<TFlashSegmen> {
-  const result: Array<TFlashSegmen> = [];
   const Resources: TResourcesData =  new TResourcesData();
-  //return result;
-  if (!isResourcesValid(resources)) return result;
+  if (!isResourcesValid(resources)) return [];
   const {items, start} = resources;
   const src: Array<TResourcePropsAndData> = getResoursesData(items);
 
   const AddrOfResourceTable: number = parseInt(start) +
                                         SizeOfFieldSizeofResourcesRecord +
-                                          SizeOfFieldNumberOfItems;
+                                          SIZE_OF_TOTAL_NUMBER_OF_ITEMS;
   const StartAddrOfBinaryData: number = AddrOfResourceTable + 
                                           getSizeOfResourcesTable(src);
 
@@ -80,7 +80,17 @@ export function getResourses(resources: any):Array<TFlashSegmen> {
   Resources.Table = getResoursesTable(src); 
   Resources.BinaryData = getBinaryData(src);
   const Binary: Uint8Array = convertResourcesToBinary(Resources);
+  const result: Array<TFlashSegmen> = getFlashAreaFromBinaryResource(Binary, start, Resources);
   return result;
+}
+
+function getFlashAreaFromBinaryResource(bin: Uint8Array, startAddr: string, Resources: TResourcesData): Array<TFlashSegmen> {
+  const FlashSegmen: TFlashSegmen = {
+    start:startAddr,
+    size: bin.length,
+    code:[...bin]
+  }
+  return [FlashSegmen];
 }
 
 function convertResourcesToBinary(Resources: TResourcesData):Uint8Array {
@@ -151,7 +161,8 @@ function getResoursesSize(src: Array<TResourcePropsAndData>): number {
   });
   size += getSizeOfResourcesTable(src);
   size += SizeOfFieldSizeofResourcesRecord;
-  size +=  SizeOfFieldNumberOfItems;
+  size += SIZE_OF_TOTAL_NUMBER_OF_ITEMS;
+  size += SIZE_OF_TOTAL_CRC;
   return size;
 }
 
