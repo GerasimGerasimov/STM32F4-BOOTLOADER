@@ -12,7 +12,7 @@ console.log('Start Hex Reader');
 //'./src/hex-samples/STM32-APP.hex'
 const fileContent: Array<string> = fs.readFileSync(settings.App).toString().split("\n");
 const Areas: Array<TFlashSegmen> = [...getUsageMemoryAddresAndSize(fileContent),
-                                    ...getResourses(settings.resourses || undefined)];
+                                    ...getResourses(settings.resources || undefined)];
 
 const COMx: ComPort = new ComPort(settings.COM);
 
