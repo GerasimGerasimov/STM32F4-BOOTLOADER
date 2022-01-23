@@ -51,3 +51,4 @@ STM32F407IGT6/*
 Bootloader/src/EWARMv6/STM32-BOOTLOADER.hex
 Application/src/EWARMv6/settings/DExS.M4CPU.VTEG.dnx
 Application/src/EWARMv6/settings/DExS.M4CPU.VTEG.reggroups
+.vscode/iar-vsc.json
