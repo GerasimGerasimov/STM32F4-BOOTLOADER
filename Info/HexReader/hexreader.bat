@@ -1,1 +1,2 @@
-npm run start
+cd dist
+node index.js ../config.json

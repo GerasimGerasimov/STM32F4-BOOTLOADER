@@ -8,6 +8,7 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
+            "args": ["config.json"],
             "preLaunchTask": "npm: build",
             "program": "${workspaceFolder}\\src\\index.ts",
             "outFiles": [
