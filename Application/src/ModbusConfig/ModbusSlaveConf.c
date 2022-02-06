@@ -7,6 +7,8 @@
 #include "RAMData.h"
 #include "crc16.h"
 #include "CalibrationData.h"
+#include "resources.h"
+#include "str.h"
 
 //структуры драйверов UART и слейвов
 Intmash_Usart UARTtoUSB; // св€зь по USB
@@ -21,13 +23,16 @@ ModbusSlaveType OptRS485slave;
 tU16 ModbusMemWrite_VTEG(ModbusSlaveType* Slave);
 tU16 ModbusMemRead_VTEG(ModbusSlaveType* Slave);
 tU16 StartBootLoader(ModbusSlaveType* Slave);
+tU16 getResurceItemName(ModbusSlaveType* Slave);
+
 
 //число используемых команд +1
-ModbusCommandHandlerType ModbusCommands[5]={
+ModbusCommandHandlerType ModbusCommands[6]={
   {ModbusMemRead_VTEG, 0x03},
   {ModbusMemWrite_VTEG, 0x10},
   {GetDeviceID, 0x11},
   {StartBootLoader, 0xB0},
+  {getResurceItemName, 0xB1},
   {0, 0},
 }; 
 
@@ -277,8 +282,6 @@ tU16 ModbusMemWrite_VTEG(ModbusSlaveType* Slave){
   else if(Error) DataLength = ModbusError(Slave,MB_ERR_CODE_ILLEGAL_ADDR); 
   
   return (DataLength);
-  
-
 }
 
 
@@ -345,7 +348,60 @@ void BootLoadCmdFillZero(void) {
   BootLoaderStart[5] = 0x00;   
 }
 
+tU16 getResourceHeader(ModbusSlaveType* Slave) { 
+  tU8 DataLength = 0; //длинна отправл€емой посылки
+  u16 ResSize = getResourcesSize();
+  u16 NumberOfItems = getResourcesNumberOfItems();
+  DataLength = 4;  
+  Slave->Buffer[MB_DATA_BYTE_CNT_CMD_11]=DataLength;
+  
+  Slave->Buffer[MB_DATA_SECTION_CMD_11+0]= (ResSize >> 0) & 0x00FF;
+  Slave->Buffer[MB_DATA_SECTION_CMD_11+1]= (ResSize >> 8) & 0x00FF;
+  
+  Slave->Buffer[MB_DATA_SECTION_CMD_11+2]= (NumberOfItems >> 0) & 0x00FF;
+  Slave->Buffer[MB_DATA_SECTION_CMD_11+3]= (NumberOfItems >> 8) & 0x00FF;
+  
+  //DataLength += 2;
+  DataLength += MB_DATA_SECTION_CMD_11;//прибавить длину заголовка   
+  DataLength += CRC_SIZE;//прибавить длину crc 
+  FrameEndCrc16((tU8*)Slave->Buffer, DataLength);
 
+  return DataLength;
+}
+
+tU16 getResurceItemName(ModbusSlaveType* Slave) {
+  tU8 i=0;  
+  tU8 DataLength = 0;
+  u16 idx = (u16)Slave->Buffer[2];
+  char * data = getItemName(idx);
+  DataLength = getStrLenght(data);  
+  Slave->Buffer[MB_DATA_BYTE_CNT_CMD_11]=DataLength;
+  do
+    Slave->Buffer[MB_DATA_SECTION_CMD_11+i]=data[i];
+  while ((i++)!=DataLength);
+  DataLength += MB_DATA_SECTION_CMD_11;//прибавить длину заголовка   
+  DataLength += CRC_SIZE;//прибавить длину crc 
+  FrameEndCrc16((tU8*)Slave->Buffer, DataLength);
+
+  return DataLength;
+}
+
+//gets the Resources Header and Table
+tU16 getResourcesHeaderAndTable(ModbusSlaveType* Slave) {
+  tU8 i=0;  
+  tU8 DataLength = 0; //длинна отправл€емой посылки
+  u8 * data = getRes();
+  DataLength = 60;  
+  Slave->Buffer[MB_DATA_BYTE_CNT_CMD_11]=DataLength;
+  do
+  Slave->Buffer[MB_DATA_SECTION_CMD_11+i]=data[i];
+  while ((i++)!=DataLength);
+  DataLength += MB_DATA_SECTION_CMD_11;//прибавить длину заголовка   
+  DataLength += CRC_SIZE;//прибавить длину crc 
+  FrameEndCrc16((tU8*)Slave->Buffer, DataLength);
+
+  return DataLength;
+}
 
 
 

@@ -2952,6 +2952,9 @@
         <file>
             <name>$PROJ_DIR$\..\Storages\ramdata.c</name>
         </file>
+        <file>
+            <name>$PROJ_DIR$\..\Storages\resources.cpp</name>
+        </file>
     </group>
     <group>
         <name>Utilities</name>

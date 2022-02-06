@@ -12,10 +12,6 @@
                          
 const char * IDtext = "Application v1.0.0 07.01.2022 www.intmash.ru";
 
-/*TODO 
-full reinitialize periferials before starting
-*/
-
 int main(void) {
   BootLoadCmdFillZero();
   IDinit(CD_DATA.serial_number, (char *) IDtext);

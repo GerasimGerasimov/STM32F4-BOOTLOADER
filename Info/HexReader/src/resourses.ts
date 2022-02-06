@@ -11,13 +11,13 @@ Result is structure from StartAddres:
     [
       [ u32 Addr of Item_0
         u32 Size of Item_0
-        [16] Name of Item_0, null-terminated string, not more than 15 simbols.
-        crc
+        [14] Name of Item_0, null-terminated string, not more than 15 simbols.
+        u16 crc
       ],
       [ u32 Addr of Item_1
         u32 Size of Item_1
-        [16] Name of Item_1, null-terminated string, not more than 15 simbols.
-        crc
+        [14] Name of Item_1, null-terminated string, not more than 15 simbols.
+        u16 crc
       ]
     ]
   #Control
@@ -54,8 +54,9 @@ const SIZE_OF_TOTAL_CRC: number = 2;
 
 const SIZE_FIELD_OF_RESOURCE_ADDR: number = 4;
 const SIZE_FILED_OF_RESOURCE_SIZE: number = 4;
-const SIZE_FIELD_OF_RESOURCE_NAME: number = 16;
+const SIZE_FIELD_OF_RESOURCE_NAME: number = 14; 
 const SIZE_FIELD_OF_RESOURCE_CRC: number = 2;
+//the sum of the bytes is a multiple of 4 !!!
 const SIZE_OF_RESOURCE_TABLE_ITEM = 
                           SIZE_FIELD_OF_RESOURCE_ADDR +
                             SIZE_FILED_OF_RESOURCE_SIZE +

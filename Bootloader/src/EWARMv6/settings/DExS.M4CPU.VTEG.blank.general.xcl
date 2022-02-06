@@ -2,7 +2,7 @@
 
 "C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.4\arm\bin\armsim2.dll" 
 
-"D:\Project\Projects\STM32F4-BOOTLOADER\Bootloader\EWARMv6\blank\Exe\Project.out" 
+"D:\Project\Projects\STM32F4-BOOTLOADER\Bootloader\src\EWARMv6\blank\Exe\Project.out" 
 
 --plugin="C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.4\arm\bin\armbat.dll" 
 

@@ -23,9 +23,9 @@
 
 if ($debugfile -eq "")
 {
-& "C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.4\common\bin\cspybat" -f "D:\Project\Projects\STM32F4-BOOTLOADER\Bootloader\EWARMv6\settings\DExS.M4CPU.VTEG.blank.general.xcl" --backend -f "D:\Project\Projects\STM32F4-BOOTLOADER\Bootloader\EWARMv6\settings\DExS.M4CPU.VTEG.blank.driver.xcl" 
+& "C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.4\common\bin\cspybat" -f "D:\Project\Projects\STM32F4-BOOTLOADER\Bootloader\src\EWARMv6\settings\DExS.M4CPU.VTEG.blank.general.xcl" --backend -f "D:\Project\Projects\STM32F4-BOOTLOADER\Bootloader\src\EWARMv6\settings\DExS.M4CPU.VTEG.blank.driver.xcl" 
 }
 else
 {
-& "C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.4\common\bin\cspybat" -f "D:\Project\Projects\STM32F4-BOOTLOADER\Bootloader\EWARMv6\settings\DExS.M4CPU.VTEG.blank.general.xcl" --debug_file=$debugfile --backend -f "D:\Project\Projects\STM32F4-BOOTLOADER\Bootloader\EWARMv6\settings\DExS.M4CPU.VTEG.blank.driver.xcl" 
+& "C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.4\common\bin\cspybat" -f "D:\Project\Projects\STM32F4-BOOTLOADER\Bootloader\src\EWARMv6\settings\DExS.M4CPU.VTEG.blank.general.xcl" --debug_file=$debugfile --backend -f "D:\Project\Projects\STM32F4-BOOTLOADER\Bootloader\src\EWARMv6\settings\DExS.M4CPU.VTEG.blank.driver.xcl" 
 }
