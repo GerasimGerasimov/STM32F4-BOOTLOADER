@@ -2848,7 +2848,7 @@
     <group>
         <name>DExS.M4CPU_Driver</name>
         <file>
-            <name>$PROJ_DIR$\..\DExS_M4CPU\init.c</name>
+            <name>$PROJ_DIR$\..\DExS_M4CPU\init.cpp</name>
         </file>
     </group>
     <group>
