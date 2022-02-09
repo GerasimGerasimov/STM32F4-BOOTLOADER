@@ -2161,9 +2161,6 @@
             <name>$PROJ_DIR$\..\IntmashLib\id.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Utilities\mmach.c</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\..\IntmashLib\ModbusSlave.c</name>
         </file>
     </group>

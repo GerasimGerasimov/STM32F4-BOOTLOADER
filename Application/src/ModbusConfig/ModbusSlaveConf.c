@@ -338,7 +338,6 @@ tU16 StartBootLoader(ModbusSlaveType* Slave) {
   BootLoaderStart[3] = 0x5A; 
   //FrameEndCrc16((tU8*)BootLoaderStart, 4);
   NVIC_SystemReset();
-  return 4;
 }
 
 void BootLoadCmdFillZero(void) {
