@@ -131,24 +131,46 @@ Ret:
   размер отправляемой посылки в байтах
 Comment:
 */
-tU16 ModbusCommandDecode(ModbusSlaveType* Slave, tU8 MesageSize, ModbusCommandHandlerType* HandlerTable);
-//функции копирования данных с расстановкой данных по протоколу Modbus
-void ModbusSwapCopy(tU8* Src, tU16* Dst, tU16 RegNum);
-//обработка ошибок по modbus
-tU8 ModbusError(ModbusSlaveType* Slave,tU8 ModbusErrorType);
-//функции базовых команд Modbus
-tU8 ModbusReadCoils(ModbusSlaveType* Slave);
-tU8 ModbusReadDiscreteInputs(ModbusSlaveType* Slave);
-tU8 ModbusReadHoldingRegisters(ModbusSlaveType* Slave);
-tU8 ModbusReadInputRegisters(ModbusSlaveType* Slave);
-tU8 ModbusWriteSingleCoil(ModbusSlaveType* Slave);
-tU8 ModbusWriteSingleRegister(ModbusSlaveType* Slave);
-tU8 ModbusWriteMultipleCoils(ModbusSlaveType* Slave);
-tU8 ModbusWriteMultipleRegisters(ModbusSlaveType* Slave);
-tU8 ModbusReportSlaveID(ModbusSlaveType* Slave);
-//изменение одного регистра хранения по маске AND,OR - 0x16
-tU8 ModbusMaskWriteRegister(ModbusSlaveType* Slave);
 
+
+  #ifdef __cplusplus
+    extern "C" tU16 ModbusCommandDecode(ModbusSlaveType* Slave, tU8 MesageSize, ModbusCommandHandlerType* HandlerTable);
+    //функции копирования данных с расстановкой данных по протоколу Modbus
+    extern "C" void ModbusSwapCopy(tU8* Src, tU16* Dst, tU16 RegNum);
+    //обработка ошибок по modbus
+    extern "C" tU8 ModbusError(ModbusSlaveType* Slave,tU8 ModbusErrorType);
+    //функции базовых команд Modbus
+    extern "C" tU8 ModbusReadCoils(ModbusSlaveType* Slave);
+    extern "C" tU8 ModbusReadDiscreteInputs(ModbusSlaveType* Slave);
+    extern "C" tU8 ModbusReadHoldingRegisters(ModbusSlaveType* Slave);
+    extern "C" tU8 ModbusReadInputRegisters(ModbusSlaveType* Slave);
+    extern "C" tU8 ModbusWriteSingleCoil(ModbusSlaveType* Slave);
+    extern "C" tU8 ModbusWriteSingleRegister(ModbusSlaveType* Slave);
+    extern "C" tU8 ModbusWriteMultipleCoils(ModbusSlaveType* Slave);
+    extern "C" tU8 ModbusWriteMultipleRegisters(ModbusSlaveType* Slave);
+    extern "C" tU8 ModbusReportSlaveID(ModbusSlaveType* Slave);
+    //изменение одного регистра хранения по маске AND,OR - 0x16
+    extern "C" tU8 ModbusMaskWriteRegister(ModbusSlaveType* Slave);
+  #else
+    extern tU16 ModbusCommandDecode(ModbusSlaveType* Slave, tU8 MesageSize, ModbusCommandHandlerType* HandlerTable);
+    //функции копирования данных с расстановкой данных по протоколу Modbus
+    extern void ModbusSwapCopy(tU8* Src, tU16* Dst, tU16 RegNum);
+    //обработка ошибок по modbus
+    extern tU8 ModbusError(ModbusSlaveType* Slave,tU8 ModbusErrorType);
+    //функции базовых команд Modbus
+    extern tU8 ModbusReadCoils(ModbusSlaveType* Slave);
+    extern tU8 ModbusReadDiscreteInputs(ModbusSlaveType* Slave);
+    extern tU8 ModbusReadHoldingRegisters(ModbusSlaveType* Slave);
+    extern tU8 ModbusReadInputRegisters(ModbusSlaveType* Slave);
+    extern tU8 ModbusWriteSingleCoil(ModbusSlaveType* Slave);
+    extern tU8 ModbusWriteSingleRegister(ModbusSlaveType* Slave);
+    extern tU8 ModbusWriteMultipleCoils(ModbusSlaveType* Slave);
+    extern tU8 ModbusWriteMultipleRegisters(ModbusSlaveType* Slave);
+    extern tU8 ModbusReportSlaveID(ModbusSlaveType* Slave);
+    //изменение одного регистра хранения по маске AND,OR - 0x16
+    extern tU8 ModbusMaskWriteRegister(ModbusSlaveType* Slave);
+  #endif
+    
 #endif
 
 
