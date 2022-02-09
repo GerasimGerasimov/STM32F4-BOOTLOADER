@@ -7,7 +7,7 @@
 #include "RAMData.h"
 #include "crc16.h"
 #include "CalibrationData.h"
-#include "resources.h"
+//#include "resources.h"
 #include "str.h"
 
 //структуры драйверов UART и слейвов
@@ -49,8 +49,10 @@ void ModbusClientInit(void) //фукция инициализации структуры, пример
     USBslave.SlaveAddress = 0x01;
   }
   else {
-    UARTtoUSB.USART_BaudRate = USARTbaudRate[CD_DATA.Modbus_USB.B[1]];;
-    USBslave.SlaveAddress = CD_DATA.Modbus_USB.B[0];;
+    //UARTtoUSB.USART_BaudRate = USARTbaudRate[CD_DATA.Modbus_USB.B[1]];;
+    //USBslave.SlaveAddress = CD_DATA.Modbus_USB.B[0];
+    UARTtoUSB.USART_BaudRate = 115200;
+    USBslave.SlaveAddress = 0x01;
   }   
   UARTtoUSB.DMAy_StreamRX = DMA1_Stream1;
   UARTtoUSB.DMAy_StreamTX = DMA1_Stream3;
@@ -65,8 +67,8 @@ void ModbusClientInit(void) //фукция инициализации структуры, пример
   
   //USART2
   UARTtoRS485.USARTx = USART2;
-  UARTtoRS485.USART_BaudRate = USARTbaudRate[CD_DATA.Modbus_RS485.B[1]];
-  RS485slave.SlaveAddress = CD_DATA.Modbus_RS485.B[0];
+  UARTtoRS485.USART_BaudRate = 115200;//USARTbaudRate[CD_DATA.Modbus_RS485.B[1]];
+  RS485slave.SlaveAddress = 1;//CD_DATA.Modbus_RS485.B[0];
   UARTtoRS485.DMAy_StreamRX = DMA1_Stream5;
   UARTtoRS485.DMAy_StreamTX = DMA1_Stream6;
   UARTtoRS485.DMA_channel = DMA_Channel_4;
@@ -82,8 +84,8 @@ void ModbusClientInit(void) //фукция инициализации структуры, пример
   
   //USART1
   UARTtoOptRS485.USARTx = USART1;
-  UARTtoOptRS485.USART_BaudRate = USARTbaudRate[CD_DATA.Modbus_option.B[1]];
-  OptRS485slave.SlaveAddress = CD_DATA.Modbus_option.B[0];
+  UARTtoOptRS485.USART_BaudRate = 115200;//USARTbaudRate[CD_DATA.Modbus_option.B[1]];
+  OptRS485slave.SlaveAddress = 1;//CD_DATA.Modbus_option.B[0];
   UARTtoOptRS485.DMAy_StreamRX = DMA2_Stream2;
   UARTtoOptRS485.DMAy_StreamTX = DMA2_Stream7;
   UARTtoOptRS485.USART_StopBits=0;
@@ -348,6 +350,7 @@ void BootLoadCmdFillZero(void) {
   BootLoaderStart[5] = 0x00;   
 }
 
+/*
 tU16 getResourceHeader(ModbusSlaveType* Slave) { 
   tU8 DataLength = 0; //длинна отправляемой посылки
   u16 ResSize = getResourcesSize();
@@ -368,12 +371,12 @@ tU16 getResourceHeader(ModbusSlaveType* Slave) {
 
   return DataLength;
 }
-
+*/
 tU16 getResurceItemName(ModbusSlaveType* Slave) {
   tU8 i=0;  
   tU8 DataLength = 0;
   u16 idx = (u16)Slave->Buffer[2];
-  char * data = getItemName(idx);
+  char * data = 0;//TIntResources::getItemName(idx);
   DataLength = getStrLenght(data);  
   Slave->Buffer[MB_DATA_BYTE_CNT_CMD_11]=DataLength;
   do
@@ -387,6 +390,7 @@ tU16 getResurceItemName(ModbusSlaveType* Slave) {
 }
 
 //gets the Resources Header and Table
+/*
 tU16 getResourcesHeaderAndTable(ModbusSlaveType* Slave) {
   tU8 i=0;  
   tU8 DataLength = 0; //длинна отправляемой посылки
@@ -404,7 +408,7 @@ tU16 getResourcesHeaderAndTable(ModbusSlaveType* Slave) {
 }
 
 
-
+*/
 
 
 

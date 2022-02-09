@@ -1,46 +1,18 @@
 #include "resources.h"
 
+//pResources TIntResources::ResAddr = (pResources) RESOURCES_ADDRESS;
+void TIntResources::init() {
 
-#define RESOURCES_ADDRESS 0x08080000
-
-
-
-typedef struct ResourceTableItem{
-  u32 BinaryDataAddr;
-  u32 BinaryDataSize;
-  char Name[14];
-  u16 crc;
-} TResourceTableItem;
-
-typedef TResourceTableItem* pItems;
-
-typedef struct Resources {
-  u16 Size;
-  u16 NumberOfItems;
-  TResourceTableItem Items[];
-} TResources;
-
-typedef TResources* pResources;
-
-pResources Res = (pResources) RESOURCES_ADDRESS;
-
-char * getItemName(u16 idx) {
-  return Res->Items[idx].Name;
 }
 
-u8* getRes(void) {
-  return (u8*) Res;
+pResources TIntResources::getRes() {
+  return TIntResources::ResAddr;
 }
 
-void getResorcesTable(void) {
-  Res->Size = 0;
-  Res->Items[1].crc = 0;
+u32 TIntResources::getID() {
+  return (u32)TIntResources::ResAddr;//ID;//12345678;
 }
 
-u16 getResourcesSize(void) {
-  return Res->Size;
-}
-
-u16 getResourcesNumberOfItems(void) {
-  return Res->NumberOfItems;
+char * TIntResources::getItemName(u16 idx) {
+  return ResAddr->Items[idx].Name;
 }

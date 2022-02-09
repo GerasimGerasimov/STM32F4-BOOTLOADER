@@ -48,12 +48,18 @@ typedef struct
 } Intmash_Usart;  
 
 
-
-void UsartDriverInit (Intmash_Usart *UserUsartStr);
-void UsartTransmit(Intmash_Usart *UserUsartStr, tU8* Buffer, tU16 Cnt);
-void UsartRecieve (Intmash_Usart *UserUsartStr, tU8* Buffer);
-tU16 UsartTxRxFinish(Intmash_Usart *UserUsartStr);
-
+#ifdef __cplusplus
+  extern "C" void UsartDriverInit (Intmash_Usart *UserUsartStr);
+  extern "C" void UsartTransmit(Intmash_Usart *UserUsartStr, tU8* Buffer, tU16 Cnt);
+  extern "C" void UsartRecieve (Intmash_Usart *UserUsartStr, tU8* Buffer);
+  extern "C" tU16 UsartTxRxFinish(Intmash_Usart *UserUsartStr);
+#else
+  extern void UsartDriverInit (Intmash_Usart *UserUsartStr);
+  extern void UsartTransmit(Intmash_Usart *UserUsartStr, tU8* Buffer, tU16 Cnt);
+  extern void UsartRecieve (Intmash_Usart *UserUsartStr, tU8* Buffer);
+  extern tU16 UsartTxRxFinish(Intmash_Usart *UserUsartStr);
+#endif
+    
 extern const tU32 USARTbaudRate[8];
 
 #endif /*STM32F4xx_Intmash_USART_H */

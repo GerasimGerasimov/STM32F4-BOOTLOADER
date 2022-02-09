@@ -4,6 +4,7 @@
   #ifdef __cplusplus
     extern "C" void Init(void);
   #else
-    extern void Init(void);;
+    extern void Init(void);
   #endif
+
 #endif
