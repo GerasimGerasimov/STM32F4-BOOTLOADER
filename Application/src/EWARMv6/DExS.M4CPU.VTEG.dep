@@ -428,7 +428,7 @@
             <inputs>
                 <tool>
                     <name>ICCARM</name>
-                    <file> 176 126 18 117</file>
+                    <file> 176 126 18 116 32 123 180 115 4 3 154 129 45 111 189 76 173 110 13 65 12 26 55 25 122 158 185 33 148 187 166 113 1 165 156 117</file>
                 </tool>
             </inputs>
         </file>
@@ -874,7 +874,7 @@
             <inputs>
                 <tool>
                     <name>ICCARM</name>
-                    <file> 18</file>
+                    <file> 18 116 32 123 180 115 4 3 154 129 45 111 189 76 173 110 13 65 12 26 55 25 122 158 185 33 148 187 166 113 1 165 156</file>
                 </tool>
             </inputs>
         </file>
@@ -994,14 +994,10 @@
             <inputs>
                 <tool>
                     <name>ILINK</name>
-                    <file> 119 11 170 118 48 14 16 191 35 193 41 112 39 17 183 125 179 133 124 194 169 190 127 64 164 31 15 168 63 83 184 38 79 51 172 195 137 160 50 143 19</file>
+                    <file> 119 11 170 118 48 14 16 35 193 41 112 39 17 183 125 179 133 124 194 169 190 127 64 164 31 15 168 63 83 184 38 79 51 172 195 137 160 50 143 19</file>
                 </tool>
             </inputs>
         </file>
-        <forcedrebuild>
-            <name>[MULTI_TOOL]</name>
-            <tool>ILINK</tool>
-        </forcedrebuild>
     </configuration>
     <configuration>
         <name>blank</name>

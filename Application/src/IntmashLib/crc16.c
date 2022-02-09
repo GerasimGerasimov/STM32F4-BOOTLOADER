@@ -1,6 +1,6 @@
 #include "crc16.h"
 
-const unsigned char CRC16Hi[]  = {
+const u8 CRC16Hi[]  = {
 0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41,
 0x01, 0xC0, 0x80, 0x41, 0x00, 0xC1, 0x81, 0x40,
 0x01, 0xC0, 0x80, 0x41, 0x00, 0xC1, 0x81, 0x40,
@@ -36,7 +36,7 @@ const unsigned char CRC16Hi[]  = {
 } ;
 
 /* CRC16 Table Low byte */
-const unsigned char CRC16Lo[] = {
+const u8 CRC16Lo[] = {
 0x00, 0xC0, 0xC1, 0x01, 0xC3, 0x03, 0x02, 0xC2,
 0xC6, 0x06, 0x07, 0xC7, 0x05, 0xC5, 0xC4, 0x04,
 0xCC, 0x0C, 0x0D, 0xCD, 0x0F, 0xCF, 0xCE, 0x0E,
@@ -71,11 +71,11 @@ const unsigned char CRC16Lo[] = {
 0x82, 0x42, 0x43, 0x83, 0x41, 0x81, 0x80, 0x40
 } ;
 
-unsigned short crc16(unsigned char *puchMsg, int DataLen)
+u16 crc16(u8 *puchMsg, u16 DataLen)
 {
-  unsigned char CRCHi ; /* high byte of CRC initialized */
-  unsigned char CRCLo ; /* low byte of CRC initialized */
-  unsigned Index ; /* will index into CRC16 lookup table */
+  u8 CRCHi ; /* high byte of CRC initialized */
+  u8 CRCLo ; /* low byte of CRC initialized */
+  u16 Index ; /* will index into CRC16 lookup table */
 
   CRCHi = 0xFF ; /* high byte of CRC16 initialized */
   CRCLo = 0xFF ; /* low byte of CRC16 initialized */
@@ -84,7 +84,7 @@ unsigned short crc16(unsigned char *puchMsg, int DataLen)
     CRCHi = CRCLo ^ CRC16Hi[Index] ;
     CRCLo = CRC16Lo[Index] ;
   }
-  return ((unsigned short)CRCHi << 8 | CRCLo) ;
+  return ((u16)CRCHi << 8 | CRCLo) ;
 }
 
 /*Name: FrameEndCrc16
@@ -95,14 +95,11 @@ Ret:
 Comment:
 */
 
-void FrameEndCrc16(unsigned char *Frame, unsigned int FrameSize)
+void FrameEndCrc16(u8 *Frame, u16 FrameSize)
 {
-  unsigned int  crc;
+  u16  crc;
   crc = crc16(Frame, FrameSize-2);//подсчет CRC буфера
-
-     //запись CRC в конец буфера
-   Frame[FrameSize-2] = (unsigned char)(crc >> 8);
-   Frame[FrameSize-1] = (unsigned char)(crc & 0xff); 
-  
-
+  //запись CRC в конец буфера
+  Frame[FrameSize-2] = (u8)(crc >> 8);
+  Frame[FrameSize-1] = (u8)(crc & 0xff); 
 }

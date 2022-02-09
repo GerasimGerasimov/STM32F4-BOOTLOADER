@@ -1,12 +1,14 @@
 #ifndef CRC16_H
 #define CRC16_H
 
+#include "stm32f4xx.h"
+
   #ifdef __cplusplus
-    extern "C" unsigned short crc16(unsigned char *puchMsg, int DataLen);
-    extern "C" void FrameEndCrc16(unsigned char *Frame, unsigned int FrameSize);
+    extern "C" u16 crc16(u8 *puchMsg, u16 DataLen);
+    extern "C" void FrameEndCrc16(u8 *Frame, u16 FrameSize);
   #else
-    extern unsigned short crc16(unsigned char *puchMsg, int DataLen);
-    extern void FrameEndCrc16(unsigned char *Frame, unsigned int FrameSize);
+    extern u16 crc16(u8 *puchMsg, u16 DataLen);
+    extern void FrameEndCrc16(u8 *Frame, u16 FrameSize);
   #endif
 
 #endif 
