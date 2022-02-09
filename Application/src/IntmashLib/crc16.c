@@ -1,3 +1,4 @@
+#include "crc16.h"
 /*arm-elf-gcc -c -O3 -o crc16.o crc16.c
  * OpenMODBUS/TCP to RS-232/485 MODBUS RTU gateway
  *

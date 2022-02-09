@@ -739,6 +739,12 @@
                     <file> 50</file>
                 </tool>
             </outputs>
+            <inputs>
+                <tool>
+                    <name>ICCARM</name>
+                    <file> 165</file>
+                </tool>
+            </inputs>
         </file>
         <file>
             <name>$PROJ_DIR$\..\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_flash.c</name>
