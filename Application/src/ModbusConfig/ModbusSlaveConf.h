@@ -1,6 +1,5 @@
 #ifndef MODBUSSLAVECONF_H
 #define MODBUSSLAVECONF_H
-
    
   #ifdef __cplusplus
     extern "C" void ModbusClientInit(void);
