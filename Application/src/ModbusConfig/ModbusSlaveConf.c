@@ -1,6 +1,7 @@
+#include "ModbusSlaveConf.h"
+#include "ModbusSlave.h"
 #include "STM32F4xx_intmash_MBbasicCommands.h"
 #include "STM32F4xx_Intmash_USART.h"
-#include "ModbusSlave.h"
 #include "Intmash_bastypes.h" 
 #include "DExS.M4CPU_BoardLEDs.h"
 #include "STM32F4xx_Intmash_Flash.h"
