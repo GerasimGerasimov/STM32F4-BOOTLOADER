@@ -1,5 +1,4 @@
 #include "ModbusSlaveConf.h"
-#include "ModbusSlave.h"
 #include "STM32F4xx_intmash_MBbasicCommands.h"
 #include "STM32F4xx_Intmash_USART.h"
 #include "Intmash_bastypes.h" 
