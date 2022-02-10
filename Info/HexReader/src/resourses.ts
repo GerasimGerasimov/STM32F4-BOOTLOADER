@@ -1,6 +1,6 @@
 import { TFlashSegmen } from "./hextypes";
 import fs = require ("fs");
-import { U16ToU8Array, U32ToU8Array } from "./mcu";
+import { U16ToU8Array, U16ToU8ArrayLE, U32ToU8Array, U32ToU8ArrayLE } from "./mcu";
 import { getCRC16 } from "./crc/crc16";
 /*TODO
 Result is structure from StartAddres:
@@ -96,8 +96,8 @@ function getFlashAreaFromBinaryResource(bin: Uint8Array, startAddr: string, Reso
 
 function convertResourcesToBinary(Resources: TResourcesData):Uint8Array {
   const src: Uint8Array = new Uint8Array([
-    ...U16ToU8Array(Resources.Size),
-    ...U16ToU8Array(Resources.NumberOfItems),
+    ...U16ToU8ArrayLE(Resources.Size),
+    ...U16ToU8ArrayLE(Resources.NumberOfItems),
     ...resourceTableToBinary(Resources.Table),
     ...resourceDataToBinary(Resources.BinaryData)
   ]);
@@ -118,8 +118,8 @@ function resourceTableToBinary(Table: Array<TResourceProps>): Uint8Array {
   let offset: number = 0;
   Table.forEach((item)=> {
     let bin: Uint8Array = new Uint8Array([
-      ...U32ToU8Array(item.Addr),
-      ...U32ToU8Array(item.SizeOfData),
+      ...U32ToU8ArrayLE(item.Addr),
+      ...U32ToU8ArrayLE(item.SizeOfData),
       ...NullTermStrToU8Array(item.Name, SIZE_FIELD_OF_RESOURCE_NAME)
     ]);
     res.set([...bin, ...U16ToU8Array(getCRC16(bin))], offset);

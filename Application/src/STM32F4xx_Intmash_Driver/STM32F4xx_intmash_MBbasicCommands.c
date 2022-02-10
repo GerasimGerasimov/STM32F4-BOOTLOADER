@@ -18,7 +18,7 @@
 tU16 GetDeviceID(ModbusSlaveType* Slave){
   tU8 i=0;  
   tU8 DataLength = 0; //длинна отправляемой посылки
-  
+  IDinit();
   DataLength = getStrLenght(DeviceID);  
   Slave->Buffer[MB_DATA_BYTE_CNT_CMD_11]=DataLength;
   do
@@ -30,8 +30,6 @@ tU16 GetDeviceID(ModbusSlaveType* Slave){
 
   return DataLength;
 }
-
-
 
 //функция чтения данных из разных секторов памяти
 //раньше называлась ModbusRamRead, что не есть правильно - тк читает она из любого сектора в зависимости от адреса

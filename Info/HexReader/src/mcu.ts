@@ -63,10 +63,28 @@ export function U32ToU8Array(u32:number): Uint8Array {
   return res;
 }
 
+export function U32ToU8ArrayLE(u32:number): Uint8Array {
+  const res: Uint8Array = new Uint8Array([
+    (u32 >>  0) & 0x000000FF,
+    (u32 >>  8) & 0x000000FF,
+    (u32 >> 16) & 0x000000FF,
+    (u32 >> 24) & 0x000000FF,
+  ]);
+  return res;
+}
+
 export function U16ToU8Array(u16:number): Uint8Array {
   const res: Uint8Array = new Uint8Array([
     (u16 >>  8) & 0x000000FF,
     (u16 >>  0) & 0x000000FF,
+  ]);
+  return res;
+}
+
+export function U16ToU8ArrayLE(u16:number): Uint8Array {
+  const res: Uint8Array = new Uint8Array([
+    (u16 >>  0) & 0x000000FF,
+    (u16 >>  8) & 0x000000FF,
   ]);
   return res;
 }

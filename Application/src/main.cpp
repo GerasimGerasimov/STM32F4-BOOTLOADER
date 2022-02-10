@@ -11,20 +11,17 @@
 #include "id.h"
 #include "resources.h"
                          
-const char * IDtext = "Application v1.0.0 07.01.2022 www.intmash.ru";
-
 int main(void) {
   BootLoadCmdFillZero();
-  //IDinit(CD_DATA.serial_number, (char *) IDtext);
-  IDinit(TIntResources::getID(), (char *) IDtext);
   Init();
+  IDinit();  
   LED1_ON;
   LED2_ON;
   LED3_ON;
   LED4_OFF;
   __enable_irq(); 
   BkpSram_Configuration();
-  //TIntResources::init();
+  TIntResources::init();
   while (1)
   {    
     if (RAM_DATA.FLAGS0.bits.T1000Hz) {

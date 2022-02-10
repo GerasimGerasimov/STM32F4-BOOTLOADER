@@ -1,20 +1,11 @@
-/**
-  ******************************************************************************
-  * @file    ID.h
-  * @author  IMD
-  * @version V1.0.0
-  * @date    18-06-2013
-  * @brief  Модуль, формирующий ID-строку устройства
-  ******************************************************************************
-  */
 #ifndef ID_H
 #define ID_H
 
-extern char DeviceID[256];//объявление символьного массива для ID-строки
+extern char * DeviceID;
 
   #ifdef __cplusplus
-    extern "C" void IDinit(unsigned int SN, char* ID_text);//функция, формирующая ID-строку
+    extern "C" void IDinit();//функция, формирующая ID-строку
   #else
-    extern void IDinit(unsigned int SN, char* ID_text);//функция, формирующая ID-строку
+    extern void IDinit();//функция, формирующая ID-строку
   #endif
 #endif

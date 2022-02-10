@@ -1,7 +1,8 @@
 #ifndef RESOURCES_H
 #define RESOURCES_H
 
-#include "stm32f4xx.h"// basic types
+#include "stm32f4xx.h"
+#include <vector>
 
 typedef struct ResourceTableItem{
   u32 BinaryDataAddr;
@@ -10,7 +11,7 @@ typedef struct ResourceTableItem{
   u16 crc;
 } TResourceTableItem;
 
-typedef TResourceTableItem* pItems;
+typedef TResourceTableItem* pItem;
 
 typedef struct Resources {
   u16 Size;
@@ -24,24 +25,13 @@ typedef TResources* pResources;
 
 struct TIntResources {
   public:
-    static constexpr pResources ResAddr = (pResources) RESOURCES_ADDRESS;
-    void init();
-    pResources getRes();
+    static void init();
     static char * getItemName(u16 idx);
-    static u32 getID(); 
+    static char * getID(); 
+  private:
+    static constexpr pResources Root = (pResources) RESOURCES_ADDRESS;
+    static std::vector<pItem> ValidItems;
+    static pItem getItemByName(char* Name);
 };
 
-/*
-  #ifdef __cplusplus
-    extern "C" void getResorcesTable(void);
-    extern "C" u16 getResourcesSize(void);
-    extern "C" u16 getResourcesNumberOfItems(void);
-    extern "C" u8* getRes(void);
-  #else
-    extern void getResorcesTable(void);
-    extern u16 getResourcesSize(void);
-    extern u16 getResourcesNumberOfItems(void);
-    extern u8* getRes(void);
-  #endif
-*/
 #endif

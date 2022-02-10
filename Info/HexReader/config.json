@@ -17,8 +17,9 @@
     "start": "0x08080000",
     "items1": {},
     "items": {
-      "STRINGID" : "12345678 DExS.SMFCB v1.10.3.0 29.11.2021 MVK www.intmash.ru",
-      "QWE" : { 
+      "ID" : "12345678 DExS.SMFCB v1.10.3.0 29.11.2021 MVK www.intmash.ru",
+	  "URL" : "www.intmash.ru",
+      "INI" : { 
         "file":"D:/Project/Projects/!SMFCB/DExSys/FW/CM4/DExS-SMFCB/Devices/DExS SMFCB 1_10_2.ini"
       }
     }
