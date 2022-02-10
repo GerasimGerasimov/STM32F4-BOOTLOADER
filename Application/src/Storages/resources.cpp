@@ -1,6 +1,5 @@
 #include "resources.h"
-
-//pResources TIntResources::ResAddr = (pResources) RESOURCES_ADDRESS;
+//http://microsin.net/programming/pc/faq-how-to-mix-c-and-cpp.html
 void TIntResources::init() {
 
 }

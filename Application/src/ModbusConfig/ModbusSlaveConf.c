@@ -7,7 +7,7 @@
 #include "RAMData.h"
 #include "crc16.h"
 #include "CalibrationData.h"
-//#include "resources.h"
+#include "resources_wrapper.h"
 #include "str.h"
 
 //структуры драйверов UART и слейвов
@@ -375,7 +375,7 @@ tU16 getResurceItemName(ModbusSlaveType* Slave) {
   tU8 i=0;  
   tU8 DataLength = 0;
   u16 idx = (u16)Slave->Buffer[2];
-  char * data = 0;//TIntResources::getItemName(idx);
+  char * data = getItemName(idx);
   DataLength = getStrLenght(data);  
   Slave->Buffer[MB_DATA_BYTE_CNT_CMD_11]=DataLength;
   do

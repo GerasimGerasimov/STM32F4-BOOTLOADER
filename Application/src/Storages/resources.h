@@ -27,7 +27,7 @@ struct TIntResources {
     static constexpr pResources ResAddr = (pResources) RESOURCES_ADDRESS;
     void init();
     pResources getRes();
-    char * getItemName(u16 idx);
+    static char * getItemName(u16 idx);
     static u32 getID(); 
 };
 

@@ -2952,6 +2952,9 @@
         <file>
             <name>$PROJ_DIR$\..\Storages\resources.cpp</name>
         </file>
+        <file>
+            <name>$PROJ_DIR$\..\Storages\resources_wrapper.cpp</name>
+        </file>
     </group>
     <group>
         <name>Utilities</name>
