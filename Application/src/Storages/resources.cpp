@@ -18,12 +18,9 @@ void TIntResources::init() {
   RAM_DATA.r2 = Root->NumberOfItems;
   /*TODO если CRC любого ресурса не совпадает,то дропить весь список*/
   while (i < Root->NumberOfItems) {
-    TResourceTableItem item = Root->Items[i++];
-    if (crc16((u8*) &item, sizeof (TResourceTableItem)) == 0) {
-      pItem p = &item;
+    pItem p = &Root->Items[i++];
+    if (crc16((u8*) p, sizeof (TResourceTableItem)) == 0) {
       ValidItems.push_back(p);
-      //p = ValidItems.back();
-      //memcpy((char *)&RAM_DATA.a8[g++], p->Name, strlen(p->Name));
     }
   }
   g = 0;
@@ -52,10 +49,11 @@ pItem TIntResources::getItemByName(char* Name) {
 const char * unknown = "unknown";
 
 char * TIntResources::getID() {
-  pItem item = getItemByName((char*)"INI");
+  pItem item = getItemByName((char*)"ID");
   if (item != NULL) {
     RAM_DATA.r1 = 0xEEEE;
-    return item->Name;
+    /*TODO использовать размер ресурса*/
+    return (char *)item->BinaryDataAddr;
   }
   return (char *) unknown;
 }
