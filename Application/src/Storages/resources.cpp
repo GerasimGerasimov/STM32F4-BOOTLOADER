@@ -10,8 +10,6 @@ const char * IDtext = "Application v1.0.0 07.01.2022 www.intmash.ru";
 //иницифлизация статического чдена класса
 std::vector<pItem> TIntResources::ValidItems = std::vector<pItem>();
 
-u16 g = 0;
-
 void TIntResources::init() {
   u16 i = 0;
   RAM_DATA.r1 = Root->Size;
@@ -23,12 +21,6 @@ void TIntResources::init() {
       ValidItems.push_back(p);
     }
   }
-  g = 0;
-  pItem z;
-  for (auto e: ValidItems) {
-    z = ValidItems[g];
-    memcpy((char *)&RAM_DATA.a8[g++], z->Name, strlen(z->Name));
-  } 
 }
 
 bool isRequiredName(char * Name1, char * Name2) {
@@ -36,7 +28,6 @@ bool isRequiredName(char * Name1, char * Name2) {
 }
 
 pItem TIntResources::getItemByName(char* Name) {
-  RAM_DATA.r2 = 0xA5A5;
   pItem res = NULL;
   for (const pItem & item: ValidItems) {
     if (isRequiredName(item->Name, Name)) {
@@ -48,14 +39,19 @@ pItem TIntResources::getItemByName(char* Name) {
 
 const char * unknown = "unknown";
 
+std::string getStringFormResource(pItem item) {
+  const u32 Addr = item->BinaryDataAddr;
+  const u32 Size = item->BinaryDataSize;
+  std::string str;
+  str.assign((char*) Addr, Size);
+  return str;//(char *)str.c_str();
+}
+
 char * TIntResources::getID() {
   pItem item = getItemByName((char*)"ID");
-  if (item != NULL) {
-    RAM_DATA.r1 = 0xEEEE;
-    /*TODO использовать размер ресурса*/
-    return (char *)item->BinaryDataAddr;
-  }
-  return (char *) unknown;
+  return (item != NULL)
+    ? (char *)getStringFormResource(item).c_str() /*TODO использовать размер ресурса*/
+    : (char *) unknown;
 }
 
 char * TIntResources::getItemName(u16 idx) {
