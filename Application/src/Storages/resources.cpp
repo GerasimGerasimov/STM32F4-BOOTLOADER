@@ -44,13 +44,13 @@ std::string getStringFormResource(pItem item) {
   const u32 Size = item->BinaryDataSize;
   std::string str;
   str.assign((char*) Addr, Size);
-  return str;//(char *)str.c_str();
+  return str;
 }
 
 char * TIntResources::getID() {
   pItem item = getItemByName((char*)"ID");
   return (item != NULL)
-    ? (char *)getStringFormResource(item).c_str() /*TODO использовать размер ресурса*/
+    ? (char *)getStringFormResource(item).c_str()
     : (char *) unknown;
 }
 
