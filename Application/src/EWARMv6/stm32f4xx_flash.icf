@@ -47,6 +47,8 @@ place in BOOT_CMD_region { section BOOT_CMD };
 place in RAM_region   { readwrite,
                         block CSTACK, block HEAP };
 						
+/* place at address mem:__ICFEDIT_region_ROM_end__-1 { readonly section .checksum }; */				
+						
 place in FD_region    {section .fdsection};
 place in BKFD_region  {section .bkfdsection};
 place in CD_region    {section .cdsection};

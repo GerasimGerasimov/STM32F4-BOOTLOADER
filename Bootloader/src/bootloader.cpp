@@ -226,10 +226,12 @@ void jumpToApplication(void) {
 __no_init char BootLoaderStart[6] @ "BOOT_CMD";
 
 bool isBootLoaderMustBeStart(void) {
-  if ( (BootLoaderStart[0] == 0xA5) &&
-       (BootLoaderStart[1] == 0x5A) &&
-       (BootLoaderStart[2] == 0xA5) &&
-       (BootLoaderStart[3] == 0x5A))
+  if ( ((BootLoaderStart[0] == 0xA5)  &&
+       (BootLoaderStart[1]  == 0x5A)  &&
+       (BootLoaderStart[2]  == 0xA5)  &&
+       (BootLoaderStart[3]  == 0x5A)) &&
+       (crc16((unsigned char *) &BootLoaderStart, 6) == 0)
+      )
    {
      return true;
    } else {

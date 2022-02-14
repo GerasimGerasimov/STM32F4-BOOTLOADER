@@ -336,9 +336,11 @@ tU16 StartBootLoader(ModbusSlaveType* Slave) {
   BootLoaderStart[1] = 0x5A;
   BootLoaderStart[2] = 0xA5;
   BootLoaderStart[3] = 0x5A; 
-  //FrameEndCrc16((tU8*)BootLoaderStart, 4);
+  FrameEndCrc16((tU8*)BootLoaderStart, 6);
   NVIC_SystemReset();
 }
+
+//extern uint32_t __checksum;
 
 void BootLoadCmdFillZero(void) {
   BootLoaderStart[0] = 0x00;
@@ -349,28 +351,6 @@ void BootLoadCmdFillZero(void) {
   BootLoaderStart[5] = 0x00;   
 }
 
-/*
-tU16 getResourceHeader(ModbusSlaveType* Slave) { 
-  tU8 DataLength = 0; //длинна отправляемой посылки
-  u16 ResSize = getResourcesSize();
-  u16 NumberOfItems = getResourcesNumberOfItems();
-  DataLength = 4;  
-  Slave->Buffer[MB_DATA_BYTE_CNT_CMD_11]=DataLength;
-  
-  Slave->Buffer[MB_DATA_SECTION_CMD_11+0]= (ResSize >> 0) & 0x00FF;
-  Slave->Buffer[MB_DATA_SECTION_CMD_11+1]= (ResSize >> 8) & 0x00FF;
-  
-  Slave->Buffer[MB_DATA_SECTION_CMD_11+2]= (NumberOfItems >> 0) & 0x00FF;
-  Slave->Buffer[MB_DATA_SECTION_CMD_11+3]= (NumberOfItems >> 8) & 0x00FF;
-  
-  //DataLength += 2;
-  DataLength += MB_DATA_SECTION_CMD_11;//прибавить длину заголовка   
-  DataLength += CRC_SIZE;//прибавить длину crc 
-  FrameEndCrc16((tU8*)Slave->Buffer, DataLength);
-
-  return DataLength;
-}
-*/
 tU16 getResurceItemName(ModbusSlaveType* Slave) {
   tU8 i=0;  
   tU8 DataLength = 0;
@@ -387,27 +367,6 @@ tU16 getResurceItemName(ModbusSlaveType* Slave) {
 
   return DataLength;
 }
-
-//gets the Resources Header and Table
-/*
-tU16 getResourcesHeaderAndTable(ModbusSlaveType* Slave) {
-  tU8 i=0;  
-  tU8 DataLength = 0; //длинна отправляемой посылки
-  u8 * data = getRes();
-  DataLength = 60;  
-  Slave->Buffer[MB_DATA_BYTE_CNT_CMD_11]=DataLength;
-  do
-  Slave->Buffer[MB_DATA_SECTION_CMD_11+i]=data[i];
-  while ((i++)!=DataLength);
-  DataLength += MB_DATA_SECTION_CMD_11;//прибавить длину заголовка   
-  DataLength += CRC_SIZE;//прибавить длину crc 
-  FrameEndCrc16((tU8*)Slave->Buffer, DataLength);
-
-  return DataLength;
-}
-
-
-*/
 
 
 
