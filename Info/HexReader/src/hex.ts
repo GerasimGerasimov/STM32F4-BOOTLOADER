@@ -1,3 +1,4 @@
+import { getCRC16 } from "./crc/crc16";
 import { TFlashSegmen } from "./hextypes";
 
 class TAreaProps {
@@ -28,7 +29,13 @@ class TAreaProps {
 
 }
 
-export function getUsageMemoryAddresAndSize(content:Array<string>): Array<TFlashSegmen> {
+class TFirmwareCheckInfo {
+	info: number; //0x08008200;
+	chechkfrom: number; //0x08008208;
+	chechkto: number; //0x0800C4FF;
+}
+
+export function getUsageMemoryAddresAndSize(content:Array<string>, FirmwareCheckInfo : TFirmwareCheckInfo): Array<TFlashSegmen> {
   var Area: TAreaProps = new TAreaProps;
   const res:  Array<TFlashSegmen> = [];
   var SegAddr: number = 0;
@@ -57,7 +64,26 @@ export function getUsageMemoryAddresAndSize(content:Array<string>): Array<TFlash
         break;
     }
   }
+  addCRC16ToCodeArea(res, FirmwareCheckInfo);
   return res;
+}
+
+function addCRC16ToCodeArea(Areas: Array<TFlashSegmen>, FirmwareCheckInfo : TFirmwareCheckInfo) {
+  if (FirmwareCheckInfo === undefined) {
+    console.warn('FirmwareCheckInfo is out of settings')
+  }
+  /*TODO Find out, the Area is there an intersection with checked region*/
+  /*TODO To get the code from specified Area and to calculate the CRC of it. */
+  /*TODO Write a class of TAppCheckInfo (take it from Application src) and fill it of data:
+         - size of Application
+         - Application's CRC*/
+  /*TODO Calculate CRC of the TAppCheckInfo*/
+  /*TODO Convert the TAppCheckInfo to  Byte Array*/
+  /*TODO write the prepared Array of TAppCheckInfo to Area */
+  /*
+  const bin: Uint8Array = new Uint8Array([...Areas[0].code.slice(0, -2)]);
+  const crc: number = getCRC16(bin);
+  console.log(crc);*/
 }
 
 export function getMainAddr(str: string): string {

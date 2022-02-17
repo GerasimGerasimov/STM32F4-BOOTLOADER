@@ -242,8 +242,14 @@ bool isBootLoaderMustBeStart(void) {
 bool isApplicationReadyToStart(void) {
   /*TODO to check the signature
    Code from 0x08008000 not 0xFF.0xFF.0xFF.0xFF.0xFF.0xFF....*/
-  uint32_t jumpAddress = *(__IO uint32_t*) (APPLICATION_ADDRESS + 4); 
-  return (bool) (jumpAddress != 0xFFFFFFFF);
+  //uint32_t jumpAddress = *(__IO uint32_t*) (APPLICATION_ADDRESS + 4); 
+  //return (bool) (jumpAddress != 0xFFFFFFFF);
+  uint32_t AppStartAddr = APPLICATION_ADDRESS;//0x08008000
+  uint32_t AppEndAddr   = 0x0800FFFF;
+  uint32_t AppSize = AppEndAddr - AppStartAddr+1;
+  //return true;
+  unsigned char * p = (unsigned char *)AppStartAddr;
+  return (crc16(p, AppSize) == 0);
 }
 
 //01.B0.02.CRC

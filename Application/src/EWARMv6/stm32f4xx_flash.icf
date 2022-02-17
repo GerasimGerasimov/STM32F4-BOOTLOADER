@@ -5,7 +5,7 @@
 define symbol __ICFEDIT_intvec_start__ = 0x08008000;
 /*-Memory Regions-*/
 define symbol __ICFEDIT_region_ROM_start__  = 0x08008000;
-define symbol __ICFEDIT_region_ROM_end__    = 0x0809FFFF;
+define symbol __ICFEDIT_region_ROM_end__    = 0x0800C4FF;
 define symbol __ICFEDIT_region_FD_start__   = 0x080A0000;
 define symbol __ICFEDIT_region_FD_end__     = 0x080BFFFF;
 define symbol __ICFEDIT_region_BKFD_start__ = 0x080C0000;
@@ -47,7 +47,7 @@ place in BOOT_CMD_region { section BOOT_CMD };
 place in RAM_region   { readwrite,
                         block CSTACK, block HEAP };
 						
-/* place at address mem:__ICFEDIT_region_ROM_end__-1 { readonly section .checksum }; */				
+/*place at address mem:__ICFEDIT_region_ROM_end__-1 { readonly section .checksum };*/				
 						
 place in FD_region    {section .fdsection};
 place in BKFD_region  {section .bkfdsection};

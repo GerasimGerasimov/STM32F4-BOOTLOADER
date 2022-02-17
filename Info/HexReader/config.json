@@ -1,6 +1,6 @@
 {
   "App1": "D:/Project/Projects/!SMFCB/DExSys/FW/CM4/DExS-SMFCB/EWARMv6/STM32F407IGT6/Exe/DExS.M4CPU.SMFCB.hex",
-  "App":"D:/Project/Projects/STM32F4-BOOTLOADER/Application/src/EWARMv6/STM32F407IGT6/Exe/STM32-APP.hex",
+  "App":"D:/Project/Projects/STM32F4-BOOTLOADER/Application/src_crc/EWARMv6/STM32F407IGT6/Exe/STM32-APP.hex",
   "SkipSectors":["0x080A0000", "0x080C0000", "0x080E0000","0x08080000"],
   "SkipSectors1":[],
   "COM":{
@@ -12,6 +12,11 @@
         "stopBits": 1,
         "flowControl": false
     }
+  },
+  "appcheck": {
+	"info": 0x08008200,
+	"chechkfrom": 0x08008208,
+	"chechkto": 0x0800C4FF
   },
   "resources": {
     "start": "0x08080000",

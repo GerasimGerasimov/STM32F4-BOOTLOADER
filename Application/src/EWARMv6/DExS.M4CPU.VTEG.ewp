@@ -1882,11 +1882,11 @@
                 </option>
                 <option>
                     <name>IlinkUseExtraOptions</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>IlinkExtraOptions</name>
-                    <state>--keep __checksum</state>
+                    <state></state>
                 </option>
                 <option>
                     <name>IlinkLowLevelInterfaceSlave</name>
@@ -1914,7 +1914,7 @@
                 </option>
                 <option>
                     <name>DoFill</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>FillerByte</name>
@@ -1926,7 +1926,7 @@
                 </option>
                 <option>
                     <name>FillerEnd</name>
-                    <state>0x0809FFFE</state>
+                    <state>0x0800C4FF</state>
                 </option>
                 <option>
                     <name>CrcSize</name>
@@ -1935,11 +1935,11 @@
                 </option>
                 <option>
                     <name>CrcAlign</name>
-                    <state>1</state>
+                    <state>2</state>
                 </option>
                 <option>
                     <name>CrcPoly</name>
-                    <state>0x11021</state>
+                    <state>0xA001</state>
                 </option>
                 <option>
                     <name>CrcCompl</name>
@@ -1949,15 +1949,15 @@
                 <option>
                     <name>CrcBitOrder</name>
                     <version>0</version>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>CrcInitialValue</name>
-                    <state>0xFFFF</state>
+                    <state>#0xFFFF</state>
                 </option>
                 <option>
                     <name>DoCrc</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>IlinkBE8Slave</name>
@@ -1993,7 +1993,7 @@
                 </option>
                 <option>
                     <name>IlinkCrcReverseByteOrder</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>IlinkCrcUseAsInput</name>
@@ -2042,7 +2042,7 @@
                 <option>
                     <name>CrcAlgorithm</name>
                     <version>1</version>
-                    <state>1</state>
+                    <state>3</state>
                 </option>
                 <option>
                     <name>CrcUnitSize</name>
