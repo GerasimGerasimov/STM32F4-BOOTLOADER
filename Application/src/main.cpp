@@ -18,11 +18,12 @@ typedef struct appCheckInfo {
   u16 AppInfoCrc;
 } TAppCheckInfo;
 
+
 #pragma location = 0x08008200
 __root const TAppCheckInfo AppCheckInfo = {
-  .AppSize = 0x00000000,
-  .Crc = 0,
-  .AppInfoCrc = 0
+  .AppSize = 0xAAAAAAAA,
+  .Crc = 0xBBBB,
+  .AppInfoCrc = 0xCCCC
 };
 
 int main(void) {

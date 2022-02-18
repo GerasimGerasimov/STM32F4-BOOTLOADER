@@ -89,7 +89,7 @@ export function U16ToU8ArrayLE(u16:number): Uint8Array {
   return res;
 }
 
-function intersection(A: {start:number, end: number}, B:{start: number, end: number}): boolean {
+export function intersection(A: {start:number, end: number}, B:{start: number, end: number}): boolean {
   let [a,b] = (A.start <= B.start) //сортировка по младшим значениям начал
               ? [A, B]
               : [B, A];

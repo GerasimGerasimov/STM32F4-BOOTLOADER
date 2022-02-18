@@ -239,17 +239,20 @@ bool isBootLoaderMustBeStart(void) {
    }
 }
 
+typedef struct appCheckInfo {
+  u32 AppSize;
+  u16 Crc;
+  u16 AppInfoCrc;
+} TAppCheckInfo;
+
+typedef TAppCheckInfo* pAppCheckInfo;
+
+#define APP_INFO_LOCATION 0x08008200
+#define APP_INFO_SIZE 8
+
 bool isApplicationReadyToStart(void) {
-  /*TODO to check the signature
-   Code from 0x08008000 not 0xFF.0xFF.0xFF.0xFF.0xFF.0xFF....*/
-  //uint32_t jumpAddress = *(__IO uint32_t*) (APPLICATION_ADDRESS + 4); 
-  //return (bool) (jumpAddress != 0xFFFFFFFF);
-  uint32_t AppStartAddr = APPLICATION_ADDRESS;//0x08008000
-  uint32_t AppEndAddr   = 0x0800FFFF;
-  uint32_t AppSize = AppEndAddr - AppStartAddr+1;
-  //return true;
-  unsigned char * p = (unsigned char *)AppStartAddr;
-  return (crc16(p, AppSize) == 0);
+  const pAppCheckInfo AppCheckInfo = (pAppCheckInfo) APP_INFO_LOCATION;
+  return (bool)(crc16((unsigned char *) AppCheckInfo, APP_INFO_SIZE) == 0);
 }
 
 //01.B0.02.CRC
@@ -261,5 +264,4 @@ tU16 startApplication(ModbusSlaveType* Slave) {
   BootLoaderStart[4] = 0x00;
   BootLoaderStart[5] = 0x00;   
   NVIC_SystemReset();
-  return 0;
 }
