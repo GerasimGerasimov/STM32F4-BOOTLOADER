@@ -1,8 +1,8 @@
 {
   "App1": "D:/Project/Projects/!SMFCB/DExSys/FW/CM4/DExS-SMFCB/EWARMv6/STM32F407IGT6/Exe/DExS.M4CPU.SMFCB.hex",
   "App":"D:/Project/Projects/STM32F4-BOOTLOADER/Application/src/EWARMv6/STM32F407IGT6/Exe/STM32-APP.hex",
-  "SkipSectors1":["0x080A0000", "0x080C0000", "0x080E0000","0x08080000"],
-  "SkipSectors":[],
+  "SkipSectors":["0x080A0000", "0x080C0000", "0x080E0000","0x08080000"],
+  "SkipSectors1":[],
   "COM":{
     "port":"COM3",
   "settings": {
@@ -15,6 +15,7 @@
   },
   "FirmwareCheckInfo": {
     "info": "0x08008200",
+	"infoSize": 8,
     "CheckFrom": "0x08008208",
     "CheckTo": "0x0800C4FF"
   },

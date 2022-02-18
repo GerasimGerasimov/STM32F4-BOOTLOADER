@@ -241,7 +241,7 @@ bool isBootLoaderMustBeStart(void) {
 
 typedef struct appCheckInfo {
   u32 AppSize;
-  u16 Crc;
+  u16 AppCrc;
   u16 AppInfoCrc;
 } TAppCheckInfo;
 
@@ -249,10 +249,14 @@ typedef TAppCheckInfo* pAppCheckInfo;
 
 #define APP_INFO_LOCATION 0x08008200
 #define APP_INFO_SIZE 8
+#define APP_LOCATION APP_INFO_LOCATION + APP_INFO_SIZE
 
 bool isApplicationReadyToStart(void) {
   const pAppCheckInfo AppCheckInfo = (pAppCheckInfo) APP_INFO_LOCATION;
-  return (bool)(crc16((unsigned char *) AppCheckInfo, APP_INFO_SIZE) == 0);
+  return (bool)(crc16((unsigned char *) AppCheckInfo, APP_INFO_SIZE) == 0)
+         ? (bool)(crc16((unsigned char *) APP_LOCATION, AppCheckInfo->AppSize) 
+                   == AppCheckInfo->AppCrc)
+         : false; //header is not valid
 }
 
 //01.B0.02.CRC
