@@ -2944,6 +2944,9 @@
     <group>
         <name>Storages</name>
         <file>
+            <name>$PROJ_DIR$\..\Storages\app_check_info.c</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\Storages\CalibrationData.c</name>
         </file>
         <file>

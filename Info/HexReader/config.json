@@ -1,8 +1,8 @@
 {
-  "App1": "D:/Project/Projects/!SMFCB/DExSys/FW/CM4/DExS-SMFCB/EWARMv6/STM32F407IGT6/Exe/DExS.M4CPU.SMFCB.hex",
-  "App":"D:/Project/Projects/STM32F4-BOOTLOADER/Application/src/EWARMv6/STM32F407IGT6/Exe/STM32-APP.hex",
-  "SkipSectors":["0x080A0000", "0x080C0000", "0x080E0000","0x08080000"],
-  "SkipSectors1":[],
+  "App": "D:/Project/Projects/!SMFCB/DExSys/FW/CM4/DExS-SMFCB/EWARMv6/STM32F407IGT6/Exe/DExS.M4CPU.SMFCB.hex",
+  "App1":"D:/Project/Projects/STM32F4-BOOTLOADER/Application/src/EWARMv6/STM32F407IGT6/Exe/STM32-APP.hex",
+  "SkipSectors1":["0x080A0000", "0x080C0000", "0x080E0000","0x08080000"],
+  "SkipSectors":[],
   "COM":{
     "port":"COM3",
   "settings": {
@@ -17,12 +17,13 @@
     "info": "0x08008200",
 	"infoSize": 8,
     "CheckFrom": "0x08008208",
-    "CheckTo": "0x0800C4FF"
+    "CheckTo_App": "0x0800C4FF",
+    "CheckTo": "0x08019000"
   },
   "resources": {
     "start": "0x08080000",
-    "items1": {},
-    "items": {
+    "items": {},
+    "items1": {
       "ID" : "12345678 DExS.SMFCB v1.10.3.0 29.11.2021 MVK www.intmash.ru",
 	  "URL" : "www.intmash.ru",
       "INI" : { 
