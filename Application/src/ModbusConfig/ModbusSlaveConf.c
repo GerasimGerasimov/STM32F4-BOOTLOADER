@@ -340,8 +340,6 @@ tU16 StartBootLoader(ModbusSlaveType* Slave) {
   NVIC_SystemReset();
 }
 
-extern uint32_t __checksum;
-
 void BootLoadCmdFillZero(void) {
   BootLoaderStart[0] = 0x00;
   BootLoaderStart[1] = 0x00;

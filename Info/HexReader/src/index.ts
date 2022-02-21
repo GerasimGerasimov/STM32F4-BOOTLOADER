@@ -10,6 +10,7 @@ import { delay } from "./utils/delay";
 
 console.log('Start Hex Reader');
 
+console.log(`App: ${Settings.App}`);
 const fileContent: Array<string> = fs.readFileSync(Settings.App).toString().split("\n");
 const Areas: Array<TFlashSegmen> = [...getUsageMemoryAddresAndSize(fileContent, Settings.FirmwareCheckInfo || undefined),
                                     ...getResourses(Settings.resources || undefined)];
