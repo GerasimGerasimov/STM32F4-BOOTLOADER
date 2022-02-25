@@ -13,8 +13,7 @@
 
 int main(void) {
   BootLoadCmdFillZero();
-  Init();
-  IDinit();  
+  Init(); 
   LED1_ON;
   LED2_ON;
   LED3_ON;
@@ -22,6 +21,7 @@ int main(void) {
   __enable_irq(); 
   BkpSram_Configuration();
   TIntResources::init();
+  IDinit(); 
   while (1)
   {    
     if (RAM_DATA.FLAGS0.bits.T1000Hz) {

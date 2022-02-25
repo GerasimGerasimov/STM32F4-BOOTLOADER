@@ -15,9 +15,8 @@
   },
   "FirmwareCheckInfo": {
     "info": "0x08008200",
-	"infoSize": 8,
+	  "infoSize": 8,
     "CheckFrom": "0x08008208",
-    "CheckTo_App": "0x0800C4FF",
     "CheckTo": "0x08019000"
   },
   "resources": {
