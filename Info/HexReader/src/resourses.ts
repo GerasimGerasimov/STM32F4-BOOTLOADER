@@ -69,8 +69,9 @@ export function getResourses(resources: any):Array<TFlashSegmen> {
   const {items, start} = resources;
   const src: Array<TResourcePropsAndData> = getResoursesData(items);
 
-  const AddrOfResourceTable: number = parseInt(start) +
-                                        SizeOfFieldSizeofResourcesRecord +
+  /*TODO так как в таблице ресурсов теперь указывается смещение ресурсу относительно Root а не абсолютный адрес,
+  то надо это изменение распространить на примеры App и Bootloader*/
+  const AddrOfResourceTable: number = SizeOfFieldSizeofResourcesRecord + //убрал start чтобы данные адресовались от начала таблицы
                                           SIZE_OF_TOTAL_NUMBER_OF_ITEMS;
   const StartAddrOfBinaryData: number = AddrOfResourceTable + 
                                           getSizeOfResourcesTable(src);
