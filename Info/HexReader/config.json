@@ -21,8 +21,8 @@
   },
   "resources": {
     "start": "0x08080000",
-    "items": {},
-    "items1": {
+    "items1": {},
+    "items": {
       "ID" : "00000771 DExS.SMFCB v1.10.5.0 21.05.2022 www.intmash.ru",
 	  "URL" : "www.intmash.ru",
       "INI" : { 

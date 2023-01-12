@@ -5,8 +5,9 @@ import { getCRC16 } from "./crc/crc16";
 /*TODO
 Result is structure from StartAddres:
   #Header
-  u16 Size of Resources record
+  u32 Size of Resources record
   u16 Number of Items in Resources
+  u16 CRC //для проверки валидности заголовка
   #Resource Table
     [
       [ u32 Addr of Item_0
@@ -42,14 +43,16 @@ class TResourcePropsAndData extends TResourceProps {
 class TResourcesData {
   Size: number = 0;
   NumberOfItems: number = 0;
+  HeaderCRC: number = 0;
   Table: Array<TResourceProps> = [];
   BinaryData: Array<number> = [];
-  CRC16: number;
+  TotalCRC16: number;
 }
 
 /*TODO size of resources may be over of 64K, must be use 32-bit value here*/
-const SizeOfFieldSizeofResourcesRecord: number = 2;
+const SizeOfFieldSizeofResourcesRecord: number = 4;
 const SIZE_OF_TOTAL_NUMBER_OF_ITEMS: number = 2;
+const SIZE_OF_HEADER_CRC: number = 2;
 const SIZE_OF_TOTAL_CRC: number = 2;
 
 const SIZE_FIELD_OF_RESOURCE_ADDR: number = 4;
