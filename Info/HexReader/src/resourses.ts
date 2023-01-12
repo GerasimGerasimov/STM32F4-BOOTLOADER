@@ -1,6 +1,6 @@
 import { TFlashSegmen } from "./hextypes";
 import fs = require ("fs");
-import { U16ToU8Array, U16ToU8ArrayLE, U32ToU8Array, U32ToU8ArrayLE } from "./mcu";
+import { U16ToU8Array, U16ToU8ArrayLE, U32ToU8ArrayLE } from "./mcu";
 import { getCRC16 } from "./crc/crc16";
 /*TODO
 Result is structure from StartAddres:
@@ -29,6 +29,17 @@ Result is structure from StartAddres:
       ...
 */
 
+const SIZE_FIELD_OF_RESOURCE_ADDR: number = 4;
+const SIZE_FILED_OF_RESOURCE_SIZE: number = 4;
+const SIZE_FIELD_OF_RESOURCE_NAME: number = 14; 
+const SIZE_FIELD_OF_RESOURCE_CRC: number = 2;
+//the sum of the bytes is a multiple of 4 !!!
+const SIZE_OF_RESOURCE_TABLE_ITEM = 
+                          SIZE_FIELD_OF_RESOURCE_ADDR +
+                            SIZE_FILED_OF_RESOURCE_SIZE +
+                              SIZE_FIELD_OF_RESOURCE_NAME + 
+                                SIZE_FIELD_OF_RESOURCE_CRC;
+
 class TResourceProps {
   DataOffset: Uint8Array;//4 байта
   SizeOfData: Uint8Array;//4 байта
@@ -41,28 +52,19 @@ class TResourcePropsAndData extends TResourceProps {
 }
 
 class TResourcesData {
-  Size: number = 0;
+  TotalResourceSize : number = 0;//4 байта
   NumberOfItems: number = 0;
+  HeaderCRC: Uint8Array;//2 байта
   Table: Array<TResourceProps> = [];
   BinaryData: Array<number> = [];
-  CRC16: number;
+  TOTALCRC16: number;
 }
 
 /*TODO size of resources may be over of 64K, must be use 32-bit value here*/
-const SizeOfFieldSizeofResourcesRecord: number = 2;
 const SIZE_OF_TOTAL_NUMBER_OF_ITEMS: number = 2;
+const SizeOfFieldSizeofResourcesRecord: number = 4;
+const SIZE_OF_HEADER_CRC: number = 2;
 const SIZE_OF_TOTAL_CRC: number = 2;
-
-const SIZE_FIELD_OF_RESOURCE_ADDR: number = 4;
-const SIZE_FILED_OF_RESOURCE_SIZE: number = 4;
-const SIZE_FIELD_OF_RESOURCE_NAME: number = 14; 
-const SIZE_FIELD_OF_RESOURCE_CRC: number = 2;
-//the sum of the bytes is a multiple of 4 !!!
-const SIZE_OF_RESOURCE_TABLE_ITEM = 
-                          SIZE_FIELD_OF_RESOURCE_ADDR +
-                            SIZE_FILED_OF_RESOURCE_SIZE +
-                              SIZE_FIELD_OF_RESOURCE_NAME + 
-                                SIZE_FIELD_OF_RESOURCE_CRC;
 
 export function getResourses(resources: any):Array<TFlashSegmen> {
   const Resources: TResourcesData =  new TResourcesData();
@@ -73,18 +75,29 @@ export function getResourses(resources: any):Array<TFlashSegmen> {
   /*TODO так как в таблице ресурсов теперь указывается смещение ресурсу относительно Root а не абсолютный адрес,
   то надо это изменение распространить на примеры App и Bootloader*/
   const AddrOfResourceTable: number = SizeOfFieldSizeofResourcesRecord + //убрал start чтобы данные адресовались от начала таблицы
-                                          SIZE_OF_TOTAL_NUMBER_OF_ITEMS;
+                                          SIZE_OF_TOTAL_NUMBER_OF_ITEMS +
+                                            SIZE_OF_HEADER_CRC;
   const StartAddrOfBinaryData: number = AddrOfResourceTable + 
                                           getSizeOfResourcesTable(src);
 
   calculateAddressOfData(src, StartAddrOfBinaryData);
-  Resources.Size = getResoursesSize(src);
+  Resources.TotalResourceSize = getResoursesSize(src);
   Resources.NumberOfItems = src.length;
+  Resources.HeaderCRC =  getHeaderCRC(Resources);
   Resources.Table = getResoursesTable(src); 
   Resources.BinaryData = getBinaryData(src);
   const Binary: Uint8Array = convertResourcesToBinary(Resources);
   const result: Array<TFlashSegmen> = getFlashAreaFromBinaryResource(Binary, start, Resources);
   return result;
+}
+
+function getHeaderCRC(Resources: TResourcesData): Uint8Array {
+  let bin: Uint8Array = new Uint8Array([
+    ...U32ToU8ArrayLE(Resources.TotalResourceSize),
+    ...U16ToU8ArrayLE(Resources.NumberOfItems),
+  ]);
+  let CRC: Uint8Array = U16ToU8Array(getCRC16(bin));
+  return CRC;
 }
 
 function getFlashAreaFromBinaryResource(bin: Uint8Array, startAddr: string, Resources: TResourcesData): Array<TFlashSegmen> {
@@ -98,8 +111,9 @@ function getFlashAreaFromBinaryResource(bin: Uint8Array, startAddr: string, Reso
 
 function convertResourcesToBinary(Resources: TResourcesData):Uint8Array {
   const src: Uint8Array = new Uint8Array([
-    ...U16ToU8ArrayLE(Resources.Size),
+    ...U32ToU8ArrayLE(Resources.TotalResourceSize),
     ...U16ToU8ArrayLE(Resources.NumberOfItems),
+    ...Resources.HeaderCRC,
     ...resourceTableToBinary(Resources.Table),
     ...resourceDataToBinary(Resources.BinaryData)
   ]);
@@ -173,6 +187,7 @@ function getResoursesSize(src: Array<TResourcePropsAndData>): number {
   size += getSizeOfResourcesTable(src);
   size += SizeOfFieldSizeofResourcesRecord;
   size += SIZE_OF_TOTAL_NUMBER_OF_ITEMS;
+  size += SIZE_OF_HEADER_CRC;
   size += SIZE_OF_TOTAL_CRC;
   return size;
 }
