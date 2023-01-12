@@ -32,7 +32,7 @@ Result is structure from StartAddres:
 class TResourceProps {
   DataOffset: Uint8Array;//4 байта
   SizeOfData: Uint8Array;//4 байта
-  Name: string = '';
+  Name: Uint8Array;// 14 байт, прописано в SIZE_FIELD_OF_RESOURCE_NAME
   CRC: Uint8Array;//2 байта
 }
 
@@ -122,7 +122,7 @@ function resourceTableToBinary(Table: Array<TResourceProps>): Uint8Array {
     let bin: Uint8Array = new Uint8Array([
       ...item.DataOffset,
       ...item.SizeOfData,
-      ...NullTermStrToU8Array(item.Name, SIZE_FIELD_OF_RESOURCE_NAME),
+      ...item.Name,
       ...item.CRC
     ]);
     res.set([...bin], offset);
@@ -156,7 +156,7 @@ function getResoursesTable(src: Array<TResourcePropsAndData>): Array<TResourcePr
     let bin: Uint8Array = new Uint8Array([
       ...DataOffset,
       ...SizeOfData,
-      ...NullTermStrToU8Array(item.Name, SIZE_FIELD_OF_RESOURCE_NAME)
+      ...Name
     ]);
     let CRC: Uint8Array = U16ToU8Array(getCRC16(bin));
     return {DataOffset, SizeOfData, Name, CRC};
@@ -204,7 +204,7 @@ function getResourceProperties(name: string, items: any): TResourcePropsAndData 
   const res: TResourcePropsAndData = new TResourcePropsAndData();
   const item: any = items[name];
   const data: Array<number> = getDataByType(item);
-  res.Name = name;
+  res.Name = NullTermStrToU8Array(name, SIZE_FIELD_OF_RESOURCE_NAME);
   res.SizeOfData = U32ToU8ArrayLE(data.length);
   res.Data = [...data];
   return res;
