@@ -30,10 +30,10 @@ Result is structure from StartAddres:
 */
 
 class TResourceProps {
-  Addr: Uint8Array;
-  SizeOfData: number = 0;
+  DataOffset: Uint8Array;//4 байта
+  SizeOfData: Uint8Array;//4 байта
   Name: string = '';
-  CRC: Uint8Array;
+  CRC: Uint8Array;//2 байта
 }
 
 class TResourcePropsAndData extends TResourceProps {
@@ -120,8 +120,8 @@ function resourceTableToBinary(Table: Array<TResourceProps>): Uint8Array {
   let offset: number = 0;
   Table.forEach((item)=> {
     let bin: Uint8Array = new Uint8Array([
-      ...item.Addr,
-      ...U32ToU8ArrayLE(item.SizeOfData),
+      ...item.DataOffset,
+      ...item.SizeOfData,
       ...NullTermStrToU8Array(item.Name, SIZE_FIELD_OF_RESOURCE_NAME),
       ...item.CRC
     ]);
@@ -152,14 +152,14 @@ function getBinaryData(src: Array<TResourcePropsAndData>):Array<number> {
 
 function getResoursesTable(src: Array<TResourcePropsAndData>): Array<TResourceProps> {
   const res: Array<TResourceProps> = src.map((item)=>{
-    let {Addr, SizeOfData, Name} = {...item};
+    let {DataOffset, SizeOfData, Name} = {...item};
     let bin: Uint8Array = new Uint8Array([
-      ...item.Addr,
-      ...U32ToU8ArrayLE(item.SizeOfData),
+      ...DataOffset,
+      ...SizeOfData,
       ...NullTermStrToU8Array(item.Name, SIZE_FIELD_OF_RESOURCE_NAME)
     ]);
     let CRC: Uint8Array = U16ToU8Array(getCRC16(bin));
-    return {Addr, SizeOfData, Name, CRC};
+    return {DataOffset, SizeOfData, Name, CRC};
   })
   return res;
 }
@@ -167,7 +167,8 @@ function getResoursesTable(src: Array<TResourcePropsAndData>): Array<TResourcePr
 function getResoursesSize(src: Array<TResourcePropsAndData>): number {
   var size: number = 0;
   src.forEach((item)=>{
-    size += item.SizeOfData;
+    let buffer = Buffer.from(item.SizeOfData);
+    size += buffer.readUInt32LE(0);//item.SizeOfData;
   });
   size += getSizeOfResourcesTable(src);
   size += SizeOfFieldSizeofResourcesRecord;
@@ -183,8 +184,9 @@ function getSizeOfResourcesTable(src: Array<TResourcePropsAndData>): number {
 function calculateAddressOfData(src: Array<TResourcePropsAndData>, StartAddr: number) {
   var startAddr: number = StartAddr;
   src.forEach((item)=>{
-    item.Addr = U32ToU8ArrayLE(startAddr);
-    startAddr += item.SizeOfData;
+    item.DataOffset = U32ToU8ArrayLE(startAddr);
+    let buffer = Buffer.from(item.SizeOfData);
+    startAddr += buffer.readUInt32LE(0);//item.SizeOfData;
   });
 }
 
@@ -203,7 +205,7 @@ function getResourceProperties(name: string, items: any): TResourcePropsAndData 
   const item: any = items[name];
   const data: Array<number> = getDataByType(item);
   res.Name = name;
-  res.SizeOfData = data.length;
+  res.SizeOfData = U32ToU8ArrayLE(data.length);
   res.Data = [...data];
   return res;
 }
