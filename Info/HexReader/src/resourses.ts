@@ -5,9 +5,8 @@ import { getCRC16 } from "./crc/crc16";
 /*TODO
 Result is structure from StartAddres:
   #Header
-  u32 Size of Resources record
+  u16 Size of Resources record
   u16 Number of Items in Resources
-  u16 CRC //для проверки валидности заголовка
   #Resource Table
     [
       [ u32 Addr of Item_0
@@ -34,6 +33,7 @@ class TResourceProps {
   Addr: number = 0;
   SizeOfData: number = 0;
   Name: string = '';
+  CRC: Uint8Array;
 }
 
 class TResourcePropsAndData extends TResourceProps {
@@ -43,16 +43,14 @@ class TResourcePropsAndData extends TResourceProps {
 class TResourcesData {
   Size: number = 0;
   NumberOfItems: number = 0;
-  HeaderCRC: number = 0;
   Table: Array<TResourceProps> = [];
   BinaryData: Array<number> = [];
-  TotalCRC16: number;
+  CRC16: number;
 }
 
 /*TODO size of resources may be over of 64K, must be use 32-bit value here*/
-const SizeOfFieldSizeofResourcesRecord: number = 4;
+const SizeOfFieldSizeofResourcesRecord: number = 2;
 const SIZE_OF_TOTAL_NUMBER_OF_ITEMS: number = 2;
-const SIZE_OF_HEADER_CRC: number = 2;
 const SIZE_OF_TOTAL_CRC: number = 2;
 
 const SIZE_FIELD_OF_RESOURCE_ADDR: number = 4;
@@ -124,9 +122,10 @@ function resourceTableToBinary(Table: Array<TResourceProps>): Uint8Array {
     let bin: Uint8Array = new Uint8Array([
       ...U32ToU8ArrayLE(item.Addr),
       ...U32ToU8ArrayLE(item.SizeOfData),
-      ...NullTermStrToU8Array(item.Name, SIZE_FIELD_OF_RESOURCE_NAME)
+      ...NullTermStrToU8Array(item.Name, SIZE_FIELD_OF_RESOURCE_NAME),
+      ...item.CRC
     ]);
-    res.set([...bin, ...U16ToU8Array(getCRC16(bin))], offset);
+    res.set([...bin], offset);
     offset += SIZE_OF_RESOURCE_TABLE_ITEM;
   });
   return res;
@@ -154,7 +153,13 @@ function getBinaryData(src: Array<TResourcePropsAndData>):Array<number> {
 function getResoursesTable(src: Array<TResourcePropsAndData>): Array<TResourceProps> {
   const res: Array<TResourceProps> = src.map((item)=>{
     let {Addr, SizeOfData, Name} = {...item};
-    return {Addr, SizeOfData, Name};
+    let bin: Uint8Array = new Uint8Array([
+      ...U32ToU8ArrayLE(item.Addr),
+      ...U32ToU8ArrayLE(item.SizeOfData),
+      ...NullTermStrToU8Array(item.Name, SIZE_FIELD_OF_RESOURCE_NAME)
+    ]);
+    let CRC: Uint8Array = U16ToU8Array(getCRC16(bin));
+    return {Addr, SizeOfData, Name, CRC};
   })
   return res;
 }
