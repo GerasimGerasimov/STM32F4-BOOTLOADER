@@ -52,12 +52,14 @@ class TResourcePropsAndData extends TResourceProps {
 }
 
 class TResourcesData {
-  TotalResourceSize : number = 0;//4 байта
-  NumberOfItems: number = 0;
-  HeaderCRC: Uint8Array;//2 байта
+  Header : {
+    TotalResourceSize : number;//4 байта
+    NumberOfItems: number;
+    CRC: Uint8Array;//2 байта
+  } = {TotalResourceSize:0, NumberOfItems:0, CRC:undefined};
   Table: Array<TResourceProps> = [];
   BinaryData: Array<number> = [];
-  TOTALCRC16: number;
+  TOTALCRC16: number = 0;
 }
 
 /*TODO size of resources may be over of 64K, must be use 32-bit value here*/
@@ -81,9 +83,9 @@ export function getResourses(resources: any):Array<TFlashSegmen> {
                                           getSizeOfResourcesTable(src);
 
   calculateAddressOfData(src, StartAddrOfBinaryData);
-  Resources.TotalResourceSize = getResoursesSize(src);
-  Resources.NumberOfItems = src.length;
-  Resources.HeaderCRC =  getHeaderCRC(Resources);
+  Resources.Header.TotalResourceSize = getResoursesSize(src);
+  Resources.Header.NumberOfItems = src.length;
+  Resources.Header.CRC =  getHeaderCRC(Resources);
   Resources.Table = getResoursesTable(src); 
   Resources.BinaryData = getBinaryData(src);
   const Binary: Uint8Array = convertResourcesToBinary(Resources);
@@ -93,8 +95,8 @@ export function getResourses(resources: any):Array<TFlashSegmen> {
 
 function getHeaderCRC(Resources: TResourcesData): Uint8Array {
   let bin: Uint8Array = new Uint8Array([
-    ...U32ToU8ArrayLE(Resources.TotalResourceSize),
-    ...U16ToU8ArrayLE(Resources.NumberOfItems),
+    ...U32ToU8ArrayLE(Resources.Header.TotalResourceSize),
+    ...U16ToU8ArrayLE(Resources.Header.NumberOfItems),
   ]);
   let CRC: Uint8Array = U16ToU8Array(getCRC16(bin));
   return CRC;
@@ -111,9 +113,9 @@ function getFlashAreaFromBinaryResource(bin: Uint8Array, startAddr: string, Reso
 
 function convertResourcesToBinary(Resources: TResourcesData):Uint8Array {
   const src: Uint8Array = new Uint8Array([
-    ...U32ToU8ArrayLE(Resources.TotalResourceSize),
-    ...U16ToU8ArrayLE(Resources.NumberOfItems),
-    ...Resources.HeaderCRC,
+    ...U32ToU8ArrayLE(Resources.Header.TotalResourceSize),
+    ...U16ToU8ArrayLE(Resources.Header.NumberOfItems),
+    ...Resources.Header.CRC,
     ...resourceTableToBinary(Resources.Table),
     ...resourceDataToBinary(Resources.BinaryData)
   ]);
