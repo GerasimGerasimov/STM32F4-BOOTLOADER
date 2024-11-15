@@ -10,7 +10,7 @@ export default class ComPort {
     private ReConnectTimerID: any = null;
     private PortSettings: any;
     private ChunkEndTimer: any = null;
-    private ChunkEndTime: number = 10;
+    private ChunkEndTime: number = 100;
     private Respond: Array<number> = [];
 
     constructor(settings: any){
@@ -143,14 +143,14 @@ export default class ComPort {
     }
 
     private getValidCmd (req: any): iCmd {
-        let result: iCmd = {cmd: [], timeOut: 1000, ChunksEndTime:10 ,NotRespond: false};
+        let result: iCmd = {cmd: [], timeOut: 10000, ChunksEndTime:100 ,NotRespond: false};
         if (!req.cmd)
             throw new Error ('cmd field is missing');
         if (req.cmd.length == 0 )
             throw new Error ('cmd field is empty');
         result.cmd = req.cmd;
-        result.timeOut = req.timeOut || 1000;
-        result.ChunksEndTime = req.ChunksEndTime || 10;
+        result.timeOut = req.timeOut || 10000;
+        result.ChunksEndTime = req.ChunksEndTime || 100;
         result.NotRespond = (typeof req.NotRespond !== 'undefined') ? req.NotRespond : false ;
         return result;
     }

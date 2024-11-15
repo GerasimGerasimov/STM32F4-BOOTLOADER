@@ -12,7 +12,7 @@ console.log('Start Hex Reader');
 const settings: any = getSettingsFormConfigFile();
 
 const fileContent: Array<string> = fs.readFileSync(settings.App).toString().split("\n");
-const Areas: Array<TFlashSegmen> = [...getUsageMemoryAddresAndSize(fileContent),
+const Areas: Array<TFlashSegmen> = [...getUsageMemoryAddresAndSize(fileContent, settings.FirmwareCheckInfo),
                                     ...getResourses(settings.resources || undefined)];
 
 const COMx: ComPort = new ComPort(settings.COM);
@@ -54,9 +54,12 @@ async function getAvailablePagesList(): Promise< Array<TFlashSegmen>> {
   const cmdSource = new Uint8Array([FieldBusAddr, 0xB0, 0x00]);
   const cmd: Array<number> = Array.from(appendCRC16toArray(cmdSource));
   const answer: any = await  COMx.getCOMAnswer({cmd});
+  console.log(answer);
   const msg: Array<number> = validateAnswer(answer);
+  console.log(Buffer.from(msg).toString('ascii'));
   const buff: Array<number> = msg.slice(3,-2);
   const str = Buffer.from(buff).toString('ascii');
+  console.log(str);
   const res: Array<TFlashSegmen> = JSON.parse(str);
   return res;
 }
@@ -134,7 +137,7 @@ function isItApplication(ID: string): boolean {
 async function downloadCodeToMCU(SkipSectors:Array<string>) {
   const skipArea: Array<number> = SkipSectors.map((value)=>parseInt(value));
   try {
-    const chunkSize: number = 8192;
+    const chunkSize: number = 1024;
     for (const area of Areas) {
       let StartAddr: number = parseInt(area.start);
       if (skipArea.includes(StartAddr)) continue;

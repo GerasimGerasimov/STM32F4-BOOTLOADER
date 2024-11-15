@@ -13,6 +13,12 @@
         "flowControl": false
     }
   },
+  "FirmwareCheckInfo": {
+    "info": "0x08008200",
+    "infoSize": 8,
+    "CheckFrom": "0x08008208",
+    "CheckTo":   "0x0800D000"
+  },
   "resources": {
     "start": "0x08080000",
     "items1": {},

@@ -1,3 +1,4 @@
+import { addCRC16ToCodeArea, TFirmwareCheckInfo } from "./FirmwareCheckInfo";
 import { TFlashSegmen } from "./hextypes";
 
 class TAreaProps {
@@ -6,9 +7,9 @@ class TAreaProps {
   PrevOffset: number = 0;
   segSize: number = 0;
 
-  public isNewArea(Addr: number): boolean {
+  public isNewArea(Addr: number, size: number): boolean {
     const addr: number = Addr;
-    const res: boolean =  (((addr - this.segSize) > this.PrevOffset) && (this.segSize !== 0));
+    const res: boolean =  (((addr - size) > this.PrevOffset) && (this.segSize !== 0));
     return res;
   }
 
@@ -28,7 +29,7 @@ class TAreaProps {
 
 }
 
-export function getUsageMemoryAddresAndSize(content:Array<string>): Array<TFlashSegmen> {
+export function getUsageMemoryAddresAndSize(content:Array<string>, FirmwareCheckInfo : TFirmwareCheckInfo): Array<TFlashSegmen> {
   var Area: TAreaProps = new TAreaProps;
   const res:  Array<TFlashSegmen> = [];
   var SegAddr: number = 0;
@@ -38,7 +39,7 @@ export function getUsageMemoryAddresAndSize(content:Array<string>): Array<TFlash
     switch (cmd) {
       case '00'://данные
         const {Addr, size, code} = getStartAddrSizeAndDataOfCodeStr(hexstr);
-        if (Area.isNewArea(Addr+SegAddr)) {
+        if (Area.isNewArea(Addr+SegAddr, size)) {
           res.push(Area.getAreaData());
           Area = new TAreaProps;
         } 
@@ -57,6 +58,7 @@ export function getUsageMemoryAddresAndSize(content:Array<string>): Array<TFlash
         break;
     }
   }
+  addCRC16ToCodeArea(res, FirmwareCheckInfo);
   return res;
 }
 
