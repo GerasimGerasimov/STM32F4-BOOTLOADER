@@ -2,10 +2,10 @@ import SerialPort = require('serialport');
 import { iCmd } from './netports';
 
 export default class ComPort {
-    private portName:string;
+    private portName: string;
     private isopen: boolean = false; // индикатор открытия для работы
     private Port: any = undefined;   // ссылка на объект порта
-    private onReadEvent:  Function = null;
+    private onReadEvent: Function = null;
     private onErrorEvent: Function = null;
     private ReConnectTimerID: any = null;
     private PortSettings: any;
@@ -13,7 +13,7 @@ export default class ComPort {
     private ChunkEndTime: number = 100;
     private Respond: Array<number> = [];
 
-    constructor(settings: any){
+    constructor(settings: any) {
         this.PortSettings = settings;
         this.configure(settings);
     }
@@ -23,21 +23,26 @@ export default class ComPort {
         this.Port = new SerialPort(settings.port, settings.settings);
         let self = this;
         //установить обработчики событий
-        this.Port.on('open',  this.onOpen.bind(self));
+        this.Port.on('open', this.onOpen.bind(self));
         this.Port.on('close', this.onClose.bind(self));
         this.Port.on('error', this.onError.bind(self));
-        this.Port.on('data',  this.onRead.bind(self));
+        this.Port.on('data', this.onRead.bind(self));
     }
 
-    public async waitForOpen(): Promise<string> {
-        return new Promise((resolve, reject)=>{
-            const timer = setTimeout(() => {
+    public async waitForOpen(timeout: number = 5000): Promise<string> {
+        return new Promise((resolve, reject) => {
+            const startTime = Date.now();
+            const timer = setInterval(() => {
                 if (this.isOpen) {
-                    clearTimeout(timer);
+                    clearInterval(timer);
                     return resolve('Port has opened');
                 }
+                if (Date.now() - startTime > timeout) {
+                    clearInterval(timer);
+                    return reject(new Error('Timeout waiting for port to open'));
+                }
             }, 250);
-        })
+        });
     }
 
     public async getCOMAnswer(cmd: Object): Promise<any> {
@@ -46,35 +51,37 @@ export default class ComPort {
             const command: iCmd = this.getValidCmd(cmd);
             const start = new Date().getTime();
             const msg = await this.write(command);
-            const stop = new Date().getTime(); 
-            return {status:'OK',
-                    duration:(stop-start),
-                    time: new Date().toISOString(),
-                    msg:msg}
+            const stop = new Date().getTime();
+            return {
+                status: 'OK',
+                duration: (stop - start),
+                time: new Date().toISOString(),
+                msg: msg
+            }
         } catch (e) {
-            throw new Error (e);
+            throw new Error(e);
         };
     }
 
-    private onChunkEndTime():void {
+    private onChunkEndTime(): void {
         //console.log(`respond: ${this.Respond}`);//String.fromCharCode(...this.Respond));
         if (this.onReadEvent) this.onReadEvent(this.Respond);
     }
 
-    private restartChunkEndTimer(frameEndTime: number):void {
+    private restartChunkEndTimer(frameEndTime: number): void {
         if (this.ChunkEndTimer) clearTimeout(this.ChunkEndTimer);
         this.ChunkEndTimer = setTimeout(() => {
             this.onChunkEndTime();
         }, frameEndTime);
     }
 
-    private onRead(data: any):void {
+    private onRead(data: any): void {
         //console.log(`${this.PortName} chunk:> ${data}`);
         this.Respond.push(...data);
         this.restartChunkEndTimer(this.ChunkEndTime)
     }
 
-    private onOpen():void {
+    private onOpen(): void {
         console.log(`ComPort ${this.PortName} is opened`);
         this.isopen = true;//порт открыт можно работать
         if (this.ReConnectTimerID) {
@@ -83,23 +90,23 @@ export default class ComPort {
         }
     }
 
-    private async write (cmd: iCmd): Promise<String> {
-        return new Promise ((resolve, reject) =>{
+    private async write(cmd: iCmd): Promise<String> {
+        return new Promise((resolve, reject) => {
             if (this.ChunkEndTimer) clearTimeout(this.ChunkEndTimer);
             this.Respond = [];
             this.ChunkEndTime = cmd.ChunksEndTime;
             this.Port.write(Buffer.from(cmd.cmd));
             this.Port.drain();
             if (cmd.NotRespond) return resolve(''); //не надо ждать ответа
-            
-            const TimeOutTimer = setTimeout(()=>{
+
+            const TimeOutTimer = setTimeout(() => {
                 clearTimeout(TimeOutTimer);
-                reject(new Error ('time out'))
-                }, cmd.timeOut)
+                reject(new Error('time out'))
+            }, cmd.timeOut)
 
             this.onReadEvent = (msg: any) => {
                 clearTimeout(TimeOutTimer);
-                return resolve(Array.prototype.slice.call(msg,0));
+                return resolve(Array.prototype.slice.call(msg, 0));
             }
 
             this.onErrorEvent = (msg: any) => {
@@ -111,48 +118,48 @@ export default class ComPort {
 
     private reConnect(): void {
         if (this.ReConnectTimerID) return;
-        this.ReConnectTimerID = setInterval(()=>{
+        this.ReConnectTimerID = setInterval(() => {
             console.log(`ComPort ${this.PortName} try to reconnect`)
             this.configure(this.PortSettings);
         }, 1000);
     }
 
-    private onClose():void {
+    private onClose(): void {
         console.log(`ComPort ${this.PortName} is closed`);
         this.reConnect();
         this.isopen = false;//порт закрыт, низя песать внего и четать из нево
     }
 
     //обработчики событий
-    private onError (err: any){
+    private onError(err: any) {
         console.log(`ComPort ${this.PortName} error ${err.message}`);
-        if (!this.ReConnectTimerID) this.reConnect();  
-        if (this.onErrorEvent) this.onErrorEvent(err.message); 
+        if (!this.ReConnectTimerID) this.reConnect();
+        if (this.onErrorEvent) this.onErrorEvent(err.message);
     }
 
-    private get isOpen():boolean {
+    private get isOpen(): boolean {
         return this.isopen;
     }
 
-    private get PortName():string {
+    private get PortName(): string {
         return this.portName;
     }
 
-    private isComPortOpen (): void{
+    private isComPortOpen(): void {
         if (!this.isOpen) throw new Error(`ComPort ${this.PortName} is not open`)
     }
 
-    private getValidCmd (req: any): iCmd {
-        let result: iCmd = {cmd: [], timeOut: 10000, ChunksEndTime:100 ,NotRespond: false};
+    private getValidCmd(req: any): iCmd {
+        let result: iCmd = { cmd: [], timeOut: 10000, ChunksEndTime: 100, NotRespond: false };
         if (!req.cmd)
-            throw new Error ('cmd field is missing');
-        if (req.cmd.length == 0 )
-            throw new Error ('cmd field is empty');
+            throw new Error('cmd field is missing');
+        if (req.cmd.length == 0)
+            throw new Error('cmd field is empty');
         result.cmd = req.cmd;
         result.timeOut = req.timeOut || 10000;
         result.ChunksEndTime = req.ChunksEndTime || 100;
-        result.NotRespond = (typeof req.NotRespond !== 'undefined') ? req.NotRespond : false ;
+        result.NotRespond = (typeof req.NotRespond !== 'undefined') ? req.NotRespond : false;
         return result;
     }
-    
+
 }
