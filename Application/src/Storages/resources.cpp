@@ -14,11 +14,13 @@ void TIntResources::init() {
   u16 i = 0;
   RAM_DATA.r1 = Root->Size;
   RAM_DATA.r2 = Root->NumberOfItems;
-  /*TODO если CRC любого ресурса не совпадает,то дропить весь список*/
   while (i < Root->NumberOfItems) {
     pItem p = &Root->Items[i++];
     if (crc16((u8*) p, sizeof (TResourceTableItem)) == 0) {
       ValidItems.push_back(p);
+    } else {
+      ValidItems.clear();
+      return;
     }
   }
 }
