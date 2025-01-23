@@ -12,7 +12,7 @@ console.log('Start Hex Reader');
 const settings: any = getSettingsFormConfigFile();
 
 const fileContent: Array<string> = fs.readFileSync(settings.App).toString().split("\n");
-const Areas: Array<TFlashSegmen> = [...getUsageMemoryAddresAndSize(fileContent, settings.FirmwareCheckInfo),
+const Areas: Array<TFlashSegmen> = [...getUsageMemoryAddresAndSize(fileContent, settings.AppCheckInfoAddress),
 ...getResourses(settings.resources || undefined)];
 
 const COMx: ComPort = new ComPort(settings.COM);
