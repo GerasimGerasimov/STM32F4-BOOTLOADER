@@ -5,17 +5,16 @@ import { getUsageMemoryAddresAndSize } from "./hex";
 import { TFlashSegmen } from "./hextypes";
 import { ErasedPagesToU8Array, getErasedPages, U16ToU8Array, U32ToU8Array } from "./mcu";
 import { getResourses } from "./resourses";
-import { getSettingsFormConfigFile } from "./utils/config";
+import { Settings } from "./utils/config";
 import { delay } from "./utils/delay";
 
 console.log('Start Hex Reader');
-const settings: any = getSettingsFormConfigFile();
 
-const fileContent: Array<string> = fs.readFileSync(settings.App).toString().split("\n");
-const Areas: Array<TFlashSegmen> = [...getUsageMemoryAddresAndSize(fileContent, settings.FirmwareCheckInfo),
-...getResourses(settings.resources || undefined)];
+const fileContent: Array<string> = fs.readFileSync(Settings.App).toString().split("\n");
+const Areas: Array<TFlashSegmen> = [...getUsageMemoryAddresAndSize(fileContent, Settings.AppCheckInfoAddress),
+...getResourses(Settings.resources || undefined)];
 
-const COMx: ComPort = new ComPort(settings.COM);
+const COMx: ComPort = new ComPort(Settings.COM);
 
 (async () => {
   while (true) {
@@ -28,9 +27,9 @@ const COMx: ComPort = new ComPort(settings.COM);
       }
       const AvailiblePages: Array<TFlashSegmen> = await getAvailablePagesList();
       const chunkSize = calculateChunkSize(AvailiblePages);
-      const ErasedPages: Array<string> = getErasedPages(Areas, AvailiblePages, settings.SkipSectors);
+      const ErasedPages: Array<string> = getErasedPages(Areas, AvailiblePages, Settings.SkipSectors);
       await eraseSpecifiedPages(ErasedPages);
-      await downloadCodeToMCU(settings.SkipSectors, chunkSize);
+      await downloadCodeToMCU(Settings.SkipSectors, chunkSize);
       await startApplication();
       console.log('Hex Reader has Done');
       process.exit(0);

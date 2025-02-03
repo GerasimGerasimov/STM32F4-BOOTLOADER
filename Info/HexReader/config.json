@@ -1,32 +1,32 @@
 {
-  "App1": "D:/Project/Projects/!SMFCB/DExSys/FW/CM4/DExS-SMFCB/EWARMv6/STM32F407IGT6/Exe/DExS.M4CPU.SMFCB.hex",
-  "App":"D:/Project/Projects/STM32F4-BOOTLOADER/Application/src/EWARMv6/STM32F407IGT6/Exe/STM32-APP.hex",
-  "SkipSectors":["0x080A0000", "0x080C0000", "0x080E0000","0x08080000"],
-  "SkipSectors1":[],
-  "COM":{
-    "port":"COM3",
-  "settings": {
-        "baudRate": 115200,
-        "dataBits": 8,
-        "parity": "none",
-        "stopBits": 1,
-        "flowControl": false
+  "App": "D:/Project/Projects/!SMFCB/DExSys/FW/CM4/DExS-SMFCB/EWARMv6/STM32F407IGT6/Exe/DExS.M4CPU.SMFCB.hex",
+  "App1": "D:/Project/Projects/STM32F4-BOOTLOADER/Application/src/EWARMv6/STM32F407IGT6/Exe/STM32-APP.hex",
+  "SkipSectors": [
+    "0x080A0000",
+    "0x080C0000",
+    "0x080E0000",
+    "0x08080000"
+  ],
+  "SkipSectors1": [],
+  "COM": {
+    "port": "COM3",
+    "settings": {
+      "baudRate": 115200,
+      "dataBits": 8,
+      "parity": "none",
+      "stopBits": 1,
+      "flowControl": false
     }
   },
-  "FirmwareCheckInfo": {
-    "info": "0x08008200",
-    "infoSize": 8,
-    "CheckFrom": "0x08008208",
-    "CheckTo":   "0x0800D000"
-  },
+  "AppCheckInfoAddress": "0x08008200",
   "resources": {
     "start": "0x08080000",
     "items1": {},
     "items": {
-      "ID" : "12345678 DExS.SMFCB v1.10.3.0 29.11.2021 MVK www.intmash.ru",
-	  "URL" : "www.intmash.ru",
-      "INI" : { 
-        "file":"D:/Project/Projects/!SMFCB/DExSys/FW/CM4/DExS-SMFCB/Devices/DExS SMFCB 1_10_2.ini"
+      "ID": "00000771 DExS.SMFCB v1.10.5.0 21.05.2022 www.intmash.ru",
+      "URL": "www.intmash.ru",
+      "INI": {
+        "file": "D:/Project/Projects/!SMFCB/DExSys/FW/CM4/DExS-SMFCB/Devices/DExS SMFCB 1_10_2.ini"
       }
     }
   }

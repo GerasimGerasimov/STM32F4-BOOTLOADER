@@ -3,9 +3,9 @@ import { TFlashSegmen } from "./hextypes";
 import { intersection, U16ToU8Array, U16ToU8ArrayLE, U32ToU8ArrayLE } from "./mcu";
 
 export class TFirmwareCheckInfo {
-	info: string = ''; //0x08008200;
-	CheckFrom: string = ''; //0x08008208;
-	CheckTo: string = ''; //0x0800C4FF;
+  info: string = ''; //0x08008200;
+  CheckFrom: string = ''; //0x08008208;
+  CheckTo: string = ''; //0x0800C4FF;
 }
 
 class TAppCheckInfo {
@@ -13,9 +13,9 @@ class TAppCheckInfo {
   AppCRC16: number;
   AppInfoCrc: number;
 }
-const SIZE_OF_APP_CHECK_INFO: number = 8;
+export const SIZE_OF_APP_CHECK_INFO: number = 8;
 
-export function addCRC16ToCodeArea(Areas: Array<TFlashSegmen>, FirmwareCheckInfo : TFirmwareCheckInfo) {
+export function addCRC16ToCodeArea(Areas: Array<TFlashSegmen>, FirmwareCheckInfo: TFirmwareCheckInfo) {
   if (!validateFirmwareCheckInfo(FirmwareCheckInfo)) return;
   /*Find out, the Area is there an intersection with checked region*/
   const Area: TFlashSegmen = getAreaIncludedFirmwareCheckInfo(Areas, FirmwareCheckInfo);
@@ -28,7 +28,7 @@ export function addCRC16ToCodeArea(Areas: Array<TFlashSegmen>, FirmwareCheckInfo
          BUT! the start addres for crc should be FirmwareCheckInfo.CheckFrom*/
   const CheckStartPosition: number = parseInt(FirmwareCheckInfo.CheckFrom) - parseInt(Area.start);
   const CheckEndPosition: number = parseInt(FirmwareCheckInfo.CheckTo) - parseInt(Area.start);
-  const CheckedCode:Array<number> =  Area.code.slice(CheckStartPosition, CheckEndPosition);
+  const CheckedCode: Array<number> = Area.code.slice(CheckStartPosition, CheckEndPosition);
   const AppCRC16: number = getCRC16(new Uint8Array(CheckedCode));
   /* Write a class of TAppCheckInfo (take it from Application src) and fill it of data:
          - size of Application
@@ -36,7 +36,7 @@ export function addCRC16ToCodeArea(Areas: Array<TFlashSegmen>, FirmwareCheckInfo
   const AppCheckInfo: TAppCheckInfo = {
     AppSize: CheckedCode.length,
     AppCRC16,
-    AppInfoCrc:0
+    AppInfoCrc: 0
   }
   /*Calculate CRC of the TAppCheckInfo*/
   /*Convert the TAppCheckInfo to  Byte Array*/
@@ -51,11 +51,11 @@ export function addCRC16ToCodeArea(Areas: Array<TFlashSegmen>, FirmwareCheckInfo
 
   /*write the prepared Array of TAppCheckInfo to Area */
   const AppinfoStartPosition: number = parseInt(FirmwareCheckInfo.info) - parseInt(Area.start);
-  
+
   Area.code.splice(AppinfoStartPosition, SIZE_OF_APP_CHECK_INFO, ...AppCheckInfoSummaryBin);
 }
 
-function validateFirmwareCheckInfo(FirmwareCheckInfo : TFirmwareCheckInfo): boolean {
+function validateFirmwareCheckInfo(FirmwareCheckInfo: TFirmwareCheckInfo): boolean {
   if (FirmwareCheckInfo === undefined) {
     console.warn('FirmwareCheckInfo is out of settings');
     return false;
@@ -69,19 +69,21 @@ function validateFirmwareCheckInfo(FirmwareCheckInfo : TFirmwareCheckInfo): bool
   return true;
 }
 
-function getAreaIncludedFirmwareCheckInfo(Areas: Array<TFlashSegmen>, FirmwareCheckInfo : TFirmwareCheckInfo):TFlashSegmen | undefined {
+function getAreaIncludedFirmwareCheckInfo(Areas: Array<TFlashSegmen>, FirmwareCheckInfo: TFirmwareCheckInfo): TFlashSegmen | undefined {
   let Area: TFlashSegmen = undefined;
-  let A: {start:number, end: number} = {start:parseInt(FirmwareCheckInfo.info),
-                                            end:parseInt(FirmwareCheckInfo.CheckTo)};
-  
+  let A: { start: number, end: number } = {
+    start: parseInt(FirmwareCheckInfo.info),
+    end: parseInt(FirmwareCheckInfo.CheckTo)
+  };
+
   for (const area of Areas) {
-      const AreaStartAddr: number = parseInt(area.start);
-      const AreaEnd: number = AreaStartAddr + (Number(area.size) || 0);
-      const B: {start:number, end: number} = {start:AreaStartAddr, end:AreaEnd};
-      if (intersection(A, B)) {
-        Area = area;
-        break;
-      }
+    const AreaStartAddr: number = parseInt(area.start);
+    const AreaEnd: number = AreaStartAddr + (Number(area.size) || 0);
+    const B: { start: number, end: number } = { start: AreaStartAddr, end: AreaEnd };
+    if (intersection(A, B)) {
+      Area = area;
+      break;
+    }
   }
   return Area;
 }

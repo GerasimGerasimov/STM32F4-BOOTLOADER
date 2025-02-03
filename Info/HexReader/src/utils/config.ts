@@ -1,6 +1,8 @@
 import fs = require ("fs");
 
-export function getSettingsFormConfigFile (): any {
+export const Settings: any = getSettingsFormConfigFile();
+
+function getSettingsFormConfigFile (): any {
   let filename = process.argv[2];
   try {
     const s: string =  fs.readFileSync(filename, 'utf8');

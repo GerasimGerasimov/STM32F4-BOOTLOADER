@@ -1,16 +1,9 @@
 #include "stm32f4xx.h"
 #include "ModbusSlaveConf.h"
-
 #include "init.h"
 #include "id.h"
-
-#include "STM32F4xx_Intmash_Flash.h"
 #include "DExS.M4CPU_BoardLEDs.h"
-
-#include "STM32F4xx_Intmash_BKP.h"
-//////////////////////////
 #include "ramdata.h"
-
 #include "bootloader.h"
                          
 const char * IDtext = "Bootloader v1.0.0 07.12.2021 www.intmash.ru";
@@ -31,7 +24,6 @@ int main(void) {
   LED3_OFF;
   LED4_OFF;
 
-  BkpSram_Configuration();
   while (1)
   { 
     ////////////////////////////////////////////////////////////////////////////    
