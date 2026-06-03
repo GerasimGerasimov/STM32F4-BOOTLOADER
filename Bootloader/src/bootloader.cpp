@@ -4,6 +4,7 @@
 #include "str.h"
 #include "STM32F4xx_intmash_MBbasicCommands.h"
 #include "STM32F4xx_Intmash_Flash.h"
+#include "RAMdata.h"
 #include <vector>
 
 //������� ����������
@@ -253,6 +254,11 @@ typedef TAppCheckInfo* pAppCheckInfo;
 
 bool isApplicationReadyToStart(void) {
   const pAppCheckInfo AppCheckInfo = (pAppCheckInfo) APP_INFO_LOCATION;
+  RAM_DATA.data[0] = AppCheckInfo->AppCrc;
+  RAM_DATA.data[1] = AppCheckInfo->AppInfoCrc;
+  RAM_DATA.data32[0] = AppCheckInfo->AppSize;
+  RAM_DATA.data[2] = crc16((unsigned char*)APP_LOCATION, AppCheckInfo->AppSize);
+  RAM_DATA.data[3] = crc16((unsigned char *) AppCheckInfo, APP_INFO_SIZE);
   return (bool)(crc16((unsigned char *) AppCheckInfo, APP_INFO_SIZE) == 0)
          ? (bool)(crc16((unsigned char *) APP_LOCATION, AppCheckInfo->AppSize) 
                    == AppCheckInfo->AppCrc)
@@ -268,4 +274,9 @@ tU16 startApplication(ModbusSlaveType* Slave) {
   BootLoaderStart[4] = 0x00;
   BootLoaderStart[5] = 0x00;   
   NVIC_SystemReset();
+}
+
+bool isApplicationToBe(){
+  uint32_t jumpAddress = *(__IO uint32_t*) (APPLICATION_ADDRESS + 4); 
+  return (bool) (jumpAddress != 0xFFFFFFFF);
 }
