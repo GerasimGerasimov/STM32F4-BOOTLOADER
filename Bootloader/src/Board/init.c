@@ -13,8 +13,8 @@ void GPIO_INIT_Configuration (void) {
   RCC_AHB1PeriphClockCmd( RCC_AHB1Periph_GPIOB, ENABLE);
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
-  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;//притянут кверху
-  //порт A                       USB_P
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;//РїСЂРёС‚СЏРЅСѓС‚ РєРІРµСЂС…Сѓ
+  //РїРѕСЂС‚ A                       USB_P
   GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_2;
   GPIO_Init(GPIOB, &GPIO_InitStructure);
 
@@ -24,7 +24,7 @@ void GPIO_INIT_Configuration (void) {
 }
 //--------------------------------------------------------------
 
-void GPIO_Configuration(void){//настройка портов ввода-вывода
+void GPIO_Configuration(void){//РЅР°СЃС‚СЂРѕР№РєР° РїРѕСЂС‚РѕРІ РІРІРѕРґР°-РІС‹РІРѕРґР°
   
   GPIO_InitTypeDef GPIO_InitStructure;
   
@@ -34,30 +34,30 @@ void GPIO_Configuration(void){//настройка портов ввода-вывода
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;//
  
 //------------------------------------------------------------------------------------------------------------     
-  //инициализируем выходы
+  //РёРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј РІС‹С…РѕРґС‹
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;//теперь выходы пушпульные
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;//С‚РµРїРµСЂСЊ РІС‹С…РѕРґС‹ РїСѓС€РїСѓР»СЊРЅС‹Рµ
   
     //                           USART3_DIR
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12;
   GPIO_Init(GPIOB, &GPIO_InitStructure);
 
-  //порт C                          LED_3         LED_2       LED_1   
-  GPIO_InitStructure.GPIO_Pin  =  GPIO_Pin_1 | GPIO_Pin_2 | GPIO_Pin_3;
+  //РїРѕСЂС‚ C                          LED_2       LED_1   
+  GPIO_InitStructure.GPIO_Pin  =  GPIO_Pin_2 | GPIO_Pin_3;
   GPIO_Init(GPIOC, &GPIO_InitStructure);
 
 }
 
 //******************************************************************************
-//Таймер общего назначения с прерыванием раз в 0,001 сек
+//РўР°Р№РјРµСЂ РѕР±С‰РµРіРѕ РЅР°Р·РЅР°С‡РµРЅРёСЏ СЃ РїСЂРµСЂС‹РІР°РЅРёРµРј СЂР°Р· РІ 0,001 СЃРµРє
 void TIM6_Configuration(void){
   TIM_TimeBaseInitTypeDef  TIM_TimeBaseStructure;
   
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM6, ENABLE);
    /* Time Base configuration */
-  TIM_TimeBaseStructure.TIM_Prescaler = 10-1;//частота = TIM4CLK(84МГц)/10 = 8,4МГц.
+  TIM_TimeBaseStructure.TIM_Prescaler = 10-1;//С‡Р°СЃС‚РѕС‚Р° = TIM4CLK(84РњР“С†)/10 = 8,4РњР“С†.
   TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
-  TIM_TimeBaseStructure.TIM_Period = 8400;//частота переполнения 8,4Мгц/8400 = 1кГц
+  TIM_TimeBaseStructure.TIM_Period = 8400;//С‡Р°СЃС‚РѕС‚Р° РїРµСЂРµРїРѕР»РЅРµРЅРёСЏ 8,4РњРіС†/8400 = 1РєР“С†
   TIM_TimeBaseStructure.TIM_ClockDivision = 0;
   TIM_TimeBaseStructure.TIM_RepetitionCounter = 0;
 
@@ -75,7 +75,7 @@ void TIM6_Configuration(void){
 * Output         : None
 * Return         : None
 ********************************************************************************/
-//разрешаем переходы по векторам и настраиваем приоритеты следующих прерываний:
+//СЂР°Р·СЂРµС€Р°РµРј РїРµСЂРµС…РѕРґС‹ РїРѕ РІРµРєС‚РѕСЂР°Рј Рё РЅР°СЃС‚СЂР°РёРІР°РµРј РїСЂРёРѕСЂРёС‚РµС‚С‹ СЃР»РµРґСѓСЋС‰РёС… РїСЂРµСЂС‹РІР°РЅРёР№:
 void NVIC_Configuration(void)
 {
   NVIC_InitTypeDef NVIC_InitStructure;
@@ -93,7 +93,7 @@ void NVIC_Configuration(void)
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   /* Enable TIM interrupts */
   
-  NVIC_InitStructure.NVIC_IRQChannel = TIM6_DAC_IRQn;//таймер общего назначения(DIO)
+  NVIC_InitStructure.NVIC_IRQChannel = TIM6_DAC_IRQn;//С‚Р°Р№РјРµСЂ РѕР±С‰РµРіРѕ РЅР°Р·РЅР°С‡РµРЅРёСЏ(DIO)
   NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority =0;
   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
   NVIC_Init(&NVIC_InitStructure);
@@ -104,13 +104,13 @@ void NVIC_Configuration(void)
   NVIC_Init(&NVIC_InitStructure); 
 }
 
-void Init (void){//начальная инициализация. 
+void Init (void){//РЅР°С‡Р°Р»СЊРЅР°СЏ РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ. 
   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA1, ENABLE);
   RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2, ENABLE);
-  GPIO_Configuration();//конфигурируем порт
-  ModbusClientInit();//инициализируем работу интерфейсов модбас-клиента  
-  TIM6_Configuration();//перенёс для искл ложного включения реле  
-  NVIC_Configuration();//конфигурируем прерывания
+  GPIO_Configuration();//РєРѕРЅС„РёРіСѓСЂРёСЂСѓРµРј РїРѕСЂС‚
+  ModbusClientInit();//РёРЅРёС†РёР°Р»РёР·РёСЂСѓРµРј СЂР°Р±РѕС‚Сѓ РёРЅС‚РµСЂС„РµР№СЃРѕРІ РјРѕРґР±Р°СЃ-РєР»РёРµРЅС‚Р°  
+  TIM6_Configuration();//РїРµСЂРµРЅС‘СЃ РґР»СЏ РёСЃРєР» Р»РѕР¶РЅРѕРіРѕ РІРєР»СЋС‡РµРЅРёСЏ СЂРµР»Рµ  
+  NVIC_Configuration();//РєРѕРЅС„РёРіСѓСЂРёСЂСѓРµРј РїСЂРµСЂС‹РІР°РЅРёСЏ
 }
 
 

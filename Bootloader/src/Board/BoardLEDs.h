@@ -11,10 +11,6 @@
 #define LED_2_OFF  (GPIOC->BSRRH = GPIO_Pin_2)
 #define LED_2_ST   (GPIOC->ODR & GPIO_Pin_2)
 
-#define LED_3_ON   (GPIOC->BSRRL = GPIO_Pin_1)
-#define LED_3_OFF  (GPIOC->BSRRH = GPIO_Pin_1)
-#define LED_3_ST   (GPIOC->ODR & GPIO_Pin_1)
-
 #define INIT_ON    (GPIOB->BSRRL = GPIO_Pin_2)
 #define INIT_OFF   (GPIOB->BSRRH = GPIO_Pin_2)
 #define INIT_OST   (GPIOB->ODR & GPIO_Pin_2)

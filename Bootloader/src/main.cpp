@@ -6,7 +6,7 @@
 #include "ramdata.h"
 #include "bootloader.h"
                          
-const char * IDtext = "Bootloader ALS v1.3.0 02.06.2026 www.intmash.ru";
+const char * IDtext = "Bootloader HVAC.HRU v1.3.1 02.06.2026 www.intmash.ru";
 
 int main(void){
 
@@ -26,7 +26,6 @@ int main(void){
   Init();
   LED_1_ON;
   LED_2_OFF;
-  LED_3_OFF;
 
   __enable_irq(); 
 

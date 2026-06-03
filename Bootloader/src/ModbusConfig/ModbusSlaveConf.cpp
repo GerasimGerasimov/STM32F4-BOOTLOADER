@@ -72,10 +72,10 @@ void ModbusSlaveTransaction(Intmash_Usart* UARTstr, ModbusSlaveType* SlaveStr, G
 
 extern "C" void USART1_IRQHandler(){
   //прерывание USART от USB
-  ModbusSlaveTransaction(&UARTtoUSB, &USBslave, GPIOC, GPIO_Pin_1);
+  ModbusSlaveTransaction(&UARTtoUSB, &USBslave, GPIOC, GPIO_Pin_3);
 }
 
 extern "C" void USART3_IRQHandler(){
   //прерывание USART от RS485-1
-  ModbusSlaveTransaction(&UARTtoRS485_1, &RS485slave_1, GPIOC, GPIO_Pin_3);
+  ModbusSlaveTransaction(&UARTtoRS485_1, &RS485slave_1, GPIOC, GPIO_Pin_2);
 }
