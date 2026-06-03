@@ -657,7 +657,7 @@
                 </option>
                 <option>
                     <name>OOCOutputFile</name>
-                    <state>ICM.4X.BOOTLOADER.hex</state>
+                    <state>ALS.BOOTLOADER.hex</state>
                 </option>
                 <option>
                     <name>OOCCommandLineProducer</name>
@@ -1411,10 +1411,10 @@
                 <option>
                     <name>CCIncludePath2</name>
                     <state>$PROJ_DIR$\..\</state>
-                    <state>$PROJ_DIR$\..\..\..\CMSIS\Device\ST\STM32F4xx\Include</state>
-                    <state>$PROJ_DIR$\..\..\..\CMSIS\Include</state>
-                    <state>$PROJ_DIR$\..\..\..\CMSIS\STM32F4xx_StdPeriph_Driver\inc</state>
-                    <state>$PROJ_DIR$\..\..\..\CMSIS\STM32F4xx_StdPeriph_Driver</state>
+                    <state>$PROJ_DIR$\..\CMSIS\Device\ST\STM32F4xx\Include</state>
+                    <state>$PROJ_DIR$\..\CMSIS\Include</state>
+                    <state>$PROJ_DIR$\..\CMSIS\STM32F4xx_StdPeriph_Driver\inc</state>
+                    <state>$PROJ_DIR$\..\CMSIS\STM32F4xx_StdPeriph_Driver</state>
                     <state>$PROJ_DIR$\..\STM32F4xx_Intmash_Driver</state>
                     <state>$PROJ_DIR$\..\Board</state>
                     <state>$PROJ_DIR$\..\IntmashLib</state>
@@ -2134,12 +2134,6 @@
         </settings>
     </configuration>
     <group>
-        <name>CMSIS</name>
-        <file>
-            <name>$PROJ_DIR$\..\..\..\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c</name>
-        </file>
-    </group>
-    <group>
         <name>Board</name>
         <file>
             <name>$PROJ_DIR$\..\Board\BoardLEDs.h</name>
@@ -2152,9 +2146,15 @@
         </file>
     </group>
     <group>
+        <name>CMSIS</name>
+        <file>
+            <name>$PROJ_DIR$\..\CMSIS\Device\ST\STM32F4xx\Source\Templates\system_stm32f4xx.c</name>
+        </file>
+    </group>
+    <group>
         <name>EWARMv6</name>
         <file>
-            <name>$PROJ_DIR$\..\..\..\CMSIS\Device\ST\STM32F4xx\Source\Templates\iar\startup_stm32f4xx.s</name>
+            <name>$PROJ_DIR$\..\CMSIS\Device\ST\STM32F4xx\Source\Templates\iar\startup_stm32f4xx.s</name>
         </file>
     </group>
     <group>
@@ -2184,31 +2184,31 @@
     <group>
         <name>StdPeriph_Driver</name>
         <file>
-            <name>$PROJ_DIR$\..\..\..\CMSIS\STM32F4xx_StdPeriph_Driver\src\misc.c</name>
+            <name>$PROJ_DIR$\..\CMSIS\STM32F4xx_StdPeriph_Driver\src\misc.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\CMSIS\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_dma.c</name>
+            <name>$PROJ_DIR$\..\CMSIS\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_dma.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\CMSIS\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_flash.c</name>
+            <name>$PROJ_DIR$\..\CMSIS\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_flash.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\CMSIS\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_gpio.c</name>
+            <name>$PROJ_DIR$\..\CMSIS\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_gpio.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\CMSIS\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_pwr.c</name>
+            <name>$PROJ_DIR$\..\CMSIS\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_pwr.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\CMSIS\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_rcc.c</name>
+            <name>$PROJ_DIR$\..\CMSIS\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_rcc.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\CMSIS\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_syscfg.c</name>
+            <name>$PROJ_DIR$\..\CMSIS\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_syscfg.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\CMSIS\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_tim.c</name>
+            <name>$PROJ_DIR$\..\CMSIS\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_tim.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\..\..\CMSIS\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_usart.c</name>
+            <name>$PROJ_DIR$\..\CMSIS\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_usart.c</name>
         </file>
     </group>
     <group>

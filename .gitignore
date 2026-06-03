@@ -52,3 +52,9 @@ Bootloader/src/EWARMv6/STM32-BOOTLOADER.hex
 Application/src/EWARMv6/settings/DExS.M4CPU.VTEG.dnx
 Application/src/EWARMv6/settings/DExS.M4CPU.VTEG.reggroups
 .vscode/iar-vsc.json
+Bootloader/src/EWARMv6/blank/
+Bootloader/src/EWARMv6/settings/
+Bootloader/src/EWARMv6/CompileOut/
+*.dep
+*.hex
+*.ewt
