@@ -277,6 +277,8 @@ typedef __I uint32_t vuc32;  /*!< Read Only */
 typedef __I uint16_t vuc16;  /*!< Read Only */
 typedef __I uint8_t vuc8;   /*!< Read Only */
 
+typedef float f32;
+
 typedef enum {RESET = 0, SET = !RESET} FlagStatus, ITStatus;
 
 typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
@@ -284,12 +286,26 @@ typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
 
 typedef enum {ERROR = 0, SUCCESS = !ERROR} ErrorStatus;
 
+typedef
+  union baulong { // Byte-addressable UINT
+     u32  uL;    // 1 DWORD
+     u16  i[2]; // 2 WORD
+     u8   b[4]; // 4 BYTES
+  } baulong;
+
+/*
+#ifndef __cplusplus
+typedef enum {FALSE = 0, TRUE = !FALSE} bool;
+#endif
+*/
+
 #ifndef __cplusplus
 typedef enum {FALSE = 0, false = 0, TRUE = !FALSE, true = !false } bool;
 #else
   #define TRUE  (1==1)
   #define FALSE (!TRUE)
 #endif
+
 
 /**
   * @}

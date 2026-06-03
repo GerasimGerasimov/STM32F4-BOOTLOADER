@@ -24,12 +24,6 @@ typedef
      vu8 b[2]; // u char: Var.b[0]:Var.b[1]
   } bavu16;
 
-typedef
-  union baulong { // Byte-addressable UINT
-     u32  uL;    // 1 DWORD
-     u16  i[2]; // 2 WORD
-     u8   b[4]; // 4 BYTES
-  } baulong;
 
 typedef
   union bauqword { // Byte-addressable QWORD 64bit

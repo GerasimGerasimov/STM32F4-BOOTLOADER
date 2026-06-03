@@ -47,12 +47,18 @@ typedef struct
   tU8 USART_Parity; // 0 - 0/ 2 - Even / 1- Odd
 } Intmash_Usart;  
 
-
+#ifdef __cplusplus
+ extern "C" {
+#endif
 
 void UsartDriverInit (Intmash_Usart *UserUsartStr);
 void UsartTransmit(Intmash_Usart *UserUsartStr, tU8* Buffer, tU16 Cnt);
 void UsartRecieve (Intmash_Usart *UserUsartStr, tU8* Buffer);
 tU16 UsartTxRxFinish(Intmash_Usart *UserUsartStr);
+
+#ifdef __cplusplus
+}
+#endif
 
 extern const tU32 USARTbaudRate[8];
 
