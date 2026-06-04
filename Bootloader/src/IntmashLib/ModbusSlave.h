@@ -135,7 +135,7 @@ tU16 ModbusCommandDecode(ModbusSlaveType* Slave, tU16 MesageSize, ModbusCommandH
 //функции копирования данных с расстановкой данных по протоколу Modbus
 void ModbusSwapCopy(tU8* Src, tU16* Dst, tU16 RegNum);
 //обработка ошибок по modbus
-tU8 ModbusError(ModbusSlaveType* Slave,tU8 ModbusErrorType);
+tU16 ModbusError(ModbusSlaveType* Slave,tU8 ModbusErrorType);
 //функции базовых команд Modbus
 tU8 ModbusReadCoils(ModbusSlaveType* Slave);
 tU8 ModbusReadDiscreteInputs(ModbusSlaveType* Slave);

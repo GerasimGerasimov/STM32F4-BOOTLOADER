@@ -16,7 +16,7 @@
 //запись ID устройства в буфер + crc. ответ на команду х11
 tU16 GetDeviceID(ModbusSlaveType* Slave){
   tU8 i=0;  
-  tU8 DataLength = 0; //длинна отправл€емой посылки
+  tU16 DataLength = 0; //длинна отправл€емой посылки
   
   DataLength = getStrLenght(DeviceID);  
   Slave->Buffer[MB_DATA_BYTE_CNT_CMD_11]=DataLength;
@@ -34,7 +34,7 @@ tU16 GetDeviceID(ModbusSlaveType* Slave){
 
 //функци€ чтени€ данных из разных секторов пам€ти
 //раньше называлась ModbusRamRead, что не есть правильно - тк читает она из любого сектора в зависимости от адреса
-tU8 ModbusDataRead(tU8* DATA_BASE,  tU8* Buffer, tU16 RegAddr, tU16 RegNum)
+tU16 ModbusDataRead(tU8* DATA_BASE,  tU8* Buffer, tU16 RegAddr, tU16 RegNum)
 {  
   //пишем в буфер нужные данные дл€ отправки старшим байтом вперед
   ModbusSwapCopy( (DATA_BASE+(RegAddr<<1)), (tU16*)&Buffer[MB_DATA_SECTION_CMD_03], RegNum);  
@@ -49,12 +49,12 @@ tU8 ModbusDataRead(tU8* DATA_BASE,  tU8* Buffer, tU16 RegAddr, tU16 RegNum)
 
 
 //функци€ выбора функции чтени€ пам€ти RAM, FLASH или CD 
-tU8 ModbusMemRead(ModbusSlaveType* Slave)
+tU16 ModbusMemRead(ModbusSlaveType* Slave)
 {
   //старша€ тетрада старшего байта адреса первого регистра данных (префикс)
   tU8 MemSpacePrefix = (Slave->Buffer[MB_START_ADDR_HI])>>PREFIX_SHIFT; 
   //длинна отправл€емой посылки
-  tU8 DataLength = 0; 
+  tU16 DataLength = 0; 
   //начальный адрес регистра данных
   tU16 RegAddr = (((tU16)(Slave->Buffer[MB_START_ADDR_HI] & (~PREFIX_MASK))) << 8) + Slave->Buffer[MB_START_ADDR_LO];
   //количество запрашиваемых регистров  
@@ -143,7 +143,7 @@ tU8 ModbusCDWrite(tU8* Buffer,tU8 BufDataIdx, tU8 RegAddr, tU8 RegNum)//
 }
 */
 //выбор функции записи в определенный сектор пам€ти
-tU8 ModbusMemWrite(ModbusSlaveType* Slave){  
+tU16 ModbusMemWrite(ModbusSlaveType* Slave){  
   //старша€ тетрада старшего байта адреса первого регистра данных (префикс)
   tU8 MemSpacePrefix = (Slave->Buffer[MB_START_ADDR_HI])>>PREFIX_SHIFT;  
   //начальный адрес регистра данных
@@ -153,7 +153,7 @@ tU8 ModbusMemWrite(ModbusSlaveType* Slave){
   //последний считываемый регистр  
   tU16 LastRegAddr = RegAddr + RegNum -1;
   //длинна отправл€емой посылки
-  tU8 DataLength = 0; 
+  tU16 DataLength = 0; 
   //переменна€ дл€ определени€ ошибки обращени€ к несуществующему адресу
   tU8  Error=0;
   

@@ -95,9 +95,9 @@ MesageSize - тип ошибки
 Ret:
 размер отправляемой посылки в байтах
 *******************************************************************************/
-tU8 ModbusError(ModbusSlaveType* Slave,tU8 ModbusErrorType)
+tU16 ModbusError(ModbusSlaveType* Slave,tU8 ModbusErrorType)
 {
-  tU8 DataLength = ERROR_ANSWER_SIZE; //длинна отправляемой посылки
+  tU16 DataLength = ERROR_ANSWER_SIZE; //длинна отправляемой посылки
   Slave->Buffer[MB_COMMAND_CODE]+=MB_ERR_CODE_PREFIX; //modify command code
   Slave->Buffer[MB_ERROR_SECTION]=ModbusErrorType; //code err
   

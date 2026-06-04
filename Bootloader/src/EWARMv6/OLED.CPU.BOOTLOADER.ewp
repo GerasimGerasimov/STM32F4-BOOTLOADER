@@ -657,7 +657,7 @@
                 </option>
                 <option>
                     <name>OOCOutputFile</name>
-                    <state>DExS.M4CPU.VTEG.hex</state>
+                    <state>OLED.CPU.BOOTLOADER.hex</state>
                 </option>
                 <option>
                     <name>OOCCommandLineProducer</name>
@@ -1075,15 +1075,15 @@
                 <debug>1</debug>
                 <option>
                     <name>ExePath</name>
-                    <state>STM32F407IGT6\Exe</state>
+                    <state>..\..\out</state>
                 </option>
                 <option>
                     <name>ObjPath</name>
-                    <state>STM32F407IGT6\Obj</state>
+                    <state>CompileOut\Obj</state>
                 </option>
                 <option>
                     <name>ListPath</name>
-                    <state>STM32F407IGT6\List</state>
+                    <state>CompileOut\List</state>
                 </option>
                 <option>
                     <name>GEndianMode</name>
@@ -1137,7 +1137,7 @@
                 </option>
                 <option>
                     <name>OGChipSelectEditMenu</name>
-                    <state>STM32F407IG	ST STM32F407IG</state>
+                    <state>STM32F405RG	ST STM32F405RG</state>
                 </option>
                 <option>
                     <name>GenLowLevelInterface</name>
@@ -1197,7 +1197,7 @@
                 </option>
                 <option>
                     <name>GFPUDeviceSlave</name>
-                    <state>STM32F407IG	ST STM32F407IG</state>
+                    <state>STM32F405RG	ST STM32F405RG</state>
                 </option>
                 <option>
                     <name>FPU2</name>
@@ -1350,7 +1350,7 @@
                 </option>
                 <option>
                     <name>CCDebugInfo</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>IEndianMode</name>
@@ -1731,7 +1731,7 @@
                 </option>
                 <option>
                     <name>OOCOutputFile</name>
-                    <state>STM32-BOOTLOADER.hex</state>
+                    <state>STM32-BOOTLOADER_OP.OLED.CM4.hex</state>
                 </option>
                 <option>
                     <name>OOCCommandLineProducer</name>
@@ -2161,9 +2161,6 @@
             <name>$PROJ_DIR$\..\IntmashLib\id.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Utilities\mmach.c</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\..\IntmashLib\ModbusSlave.c</name>
         </file>
     </group>
@@ -2179,40 +2176,19 @@
             <name>$PROJ_DIR$\..\STM32F4xx_StdPeriph_Driver\src\misc.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_adc.c</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\..\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_dma.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_exti.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_flash.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_fsmc.c</name>
-        </file>
-        <file>
             <name>$PROJ_DIR$\..\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_gpio.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_iwdg.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_pwr.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_rcc.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_rtc.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_sdio.c</name>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_spi.c</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_syscfg.c</name>

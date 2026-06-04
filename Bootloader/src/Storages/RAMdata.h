@@ -50,8 +50,12 @@ typedef
 //параметры расположеные в RAM
 typedef struct TRAM_DATA {
     baFLAGS0 FLAGS0;
-    u16 X;   //04 
-    u16 Y;   //05
+  u16 counter1;           //
+  u16 counter2;        //
+  u16 counter3;        //
+  u16 counter4;
+  u16 data[8];
+  u32 data32[8];
 } TRAM_DATA;
 
 //параметры расположеные RAM
