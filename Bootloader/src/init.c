@@ -10,14 +10,14 @@ ErrorStatus HSEStartUpStatus;
 
 void GPIO_INIT_Configuration (void) {
   GPIO_InitTypeDef GPIO_InitStructure;
-  RCC_AHB1PeriphClockCmd( RCC_AHB1Periph_GPIOA, ENABLE);
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+  RCC_AHB1PeriphClockCmd( RCC_AHB1Periph_GPIOB, ENABLE);
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN;
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;//притянут кверху
   GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;//теперь выходы пушпульные
   //порт A                       USB_P
-  GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_0;
-  GPIO_Init(GPIOA, &GPIO_InitStructure);
+  GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_2;
+  GPIO_Init(GPIOB, &GPIO_InitStructure);
 }
 //--------------------------------------------------------------
 
@@ -25,26 +25,27 @@ void GPIO_Configuration(void){//настройка портов ввода-вывода
   
   GPIO_InitTypeDef GPIO_InitStructure;
   
-  RCC_AHB1PeriphClockCmd( RCC_AHB1Periph_GPIOA | RCC_AHB1Periph_GPIOB |
-                          RCC_AHB1Periph_GPIOC | RCC_AHB1Periph_GPIOD, ENABLE);
+  RCC_AHB1PeriphClockCmd( RCC_AHB1Periph_GPIOA | RCC_AHB1Periph_GPIOB, ENABLE);
   
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;//
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;//
  
 //------------------------------------------------------------------------------------------------------------     
   //инициализируем выходы
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
   GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;//теперь выходы пушпульные
-    
-  //порт А                          DIR1
-  GPIO_InitStructure.GPIO_Pin  =  GPIO_Pin_11;            
-  GPIO_Init(GPIOA, &GPIO_InitStructure);
-  
-  //порт B                        LED_LNK      LED_RUN      LED_ALRM     LED_WRN        
-  GPIO_InitStructure.GPIO_Pin  =  GPIO_Pin_6 | GPIO_Pin_7 | GPIO_Pin_8 | GPIO_Pin_9;
-  GPIO_Init(GPIOC, &GPIO_InitStructure);
 
+  //Дискретные выходы ставлю в "1" для исключения ложных срабатываний
+  //               DOUT6        DOUT3         DOUT4         DOUT5                 DOUT2
+  GPIOA->BSRRL = GPIO_Pin_8 | GPIO_Pin_11 | GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_15;
+  //               DOUT7        DOUT8       DOUT1 
+  GPIOB->BSRRL = GPIO_Pin_6 | GPIO_Pin_7 | GPIO_Pin_13;
   
-
+//                                   DOUT6        DOUT3         DOUT4         DOUT5        DOUT2
+  GPIO_InitStructure.GPIO_Pin  =  GPIO_Pin_8 | GPIO_Pin_11 | GPIO_Pin_12 | GPIO_Pin_13 | GPIO_Pin_15;
+  GPIO_Init(GPIOA, &GPIO_InitStructure); 
+  //                              DOUT7        DOUT8        DOUT1
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7 | GPIO_Pin_13;
+  GPIO_Init(GPIOB, &GPIO_InitStructure);
 //------------------------------------------------------------------------------------------------------------   
   //Инициализируем ноги, связанные с переферией:
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF; 

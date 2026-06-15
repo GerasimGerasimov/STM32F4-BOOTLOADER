@@ -284,12 +284,19 @@ typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
 
 typedef enum {ERROR = 0, SUCCESS = !ERROR} ErrorStatus;
 
+/*
+#ifndef __cplusplus
+typedef enum {FALSE = 0, TRUE = !FALSE} bool;
+#endif
+*/
+
 #ifndef __cplusplus
 typedef enum {FALSE = 0, false = 0, TRUE = !FALSE, true = !false } bool;
 #else
   #define TRUE  (1==1)
   #define FALSE (!TRUE)
 #endif
+
 
 /**
   * @}

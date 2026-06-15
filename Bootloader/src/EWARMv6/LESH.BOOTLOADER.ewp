@@ -657,7 +657,7 @@
                 </option>
                 <option>
                     <name>OOCOutputFile</name>
-                    <state>ICM.4X.BOOTLOADER.hex</state>
+                    <state>AB2M.BOOTLOADER.hex</state>
                 </option>
                 <option>
                     <name>OOCCommandLineProducer</name>
@@ -1075,7 +1075,7 @@
                 <debug>1</debug>
                 <option>
                     <name>ExePath</name>
-                    <state>..\..\out</state>
+                    <state>STM32F406RGT6\Exe</state>
                 </option>
                 <option>
                     <name>ObjPath</name>
@@ -1731,7 +1731,7 @@
                 </option>
                 <option>
                     <name>OOCOutputFile</name>
-                    <state>ICM.4X.BOOTLOADER.hex</state>
+                    <state>AB2M.BOOTLOADER.hex</state>
                 </option>
                 <option>
                     <name>OOCCommandLineProducer</name>
@@ -2141,12 +2141,6 @@
         </file>
     </group>
     <group>
-        <name>DExS.M4CPU_Driver</name>
-        <file>
-            <name>$PROJ_DIR$\..\DExS_M4CPU\init.c</name>
-        </file>
-    </group>
-    <group>
         <name>EWARMv6</name>
         <file>
             <name>$PROJ_DIR$\..\..\..\CMSIS\Device\ST\STM32F4xx\Source\Templates\iar\startup_stm32f4xx.s</name>
@@ -2229,6 +2223,12 @@
     </group>
     <file>
         <name>$PROJ_DIR$\..\bootloader.cpp</name>
+    </file>
+    <file>
+        <name>$PROJ_DIR$\..\init.c</name>
+    </file>
+    <file>
+        <name>$PROJ_DIR$\..\init.h</name>
     </file>
     <file>
         <name>$PROJ_DIR$\..\main.cpp</name>

@@ -2,7 +2,6 @@
 #include "STM32F4xx_Intmash_USART.h"
 #include "ModbusSlave.h"
 #include "Intmash_bastypes.h" 
-#include "DExS.M4CPU_BoardLEDs.h"
 #include "STM32F4xx_Intmash_Flash.h"
 #include "RAMData.h"
 #include "crc16.h"
@@ -19,21 +18,12 @@ ModbusCommandHandlerType ModbusCommands[5]={
   {GetDeviceID, 0x11},
   {BootLoader, 0xB0},
   {0, 0},
-}; 
-
-
-#define INTERFACE_DEFAULT_SETTINGS 0x00000401
+};
 
 void ModbusClientInit(void) //фукци€ инициализации структуры, пример
 { 
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);//
-  
-  //tU32Union InterfaceSettings;
-  
-  //USART1, OptRS485
   UART1toRS485.USARTx = USART1;
-  //if(FlashStatus.Bits.FLASH_DATA_ERR) InterfaceSettings.I=INTERFACE_DEFAULT_SETTINGS; 
-  //else InterfaceSettings.I=FLASH_DATA.Modbus_U1_RS485;
 
   UART1toRS485.USART_BaudRate = 115200;//USARTbaudRate[InterfaceSettings.B[1]];
   RS485slave.SlaveAddress = 1;//InterfaceSettings.B[0];
@@ -46,9 +36,7 @@ void ModbusClientInit(void) //фукци€ инициализации структуры, пример
   UART1toRS485.DMA_channel = DMA_Channel_4;
   UART1toRS485.DMA_FLAGS_RX = DMA_FLAG_FEIF5 | DMA_FLAG_DMEIF5 | DMA_FLAG_TEIF5 | DMA_FLAG_HTIF5 | DMA_FLAG_TCIF5;
   UART1toRS485.DMA_FLAGS_TX = DMA_FLAG_FEIF7 | DMA_FLAG_DMEIF7 | DMA_FLAG_TEIF7 | DMA_FLAG_HTIF7 | DMA_FLAG_TCIF7;
-  UART1toRS485.GPIOxDIR = GPIOA;
-  UART1toRS485.GPIO_PinDIR = GPIO_Pin_11;
-  UART1toRS485.PolarityDIR = POLARITY_HI; //инверсна€ пол€рность 
+  UART1toRS485.PolarityDIR = WITHOUT_DIR; //инверсна€ пол€рность 
   UsartDriverInit (&UART1toRS485); //инициализаци€ периферии
   UsartRecieve (&UART1toRS485, &RS485slave.Buffer[0]);//настроили на прием и ждем
 }
@@ -58,7 +46,6 @@ void USART1_IRQHandler(void)
 {
   tU16 MsgSize = UsartTxRxFinish(&UART1toRS485);//определили что произошло: прием или прин€то MsgSize байт.
   if(MsgSize){//если прин€тно  
-    if(LED_LINK_ST) LED_LINK_ON; else LED_LINK_OFF; //моргнули светиком
     //вызываем функцию декодировани€, определ€ем размер пакета дл€ отправки
     MsgSize = ModbusCommandDecode(&RS485slave, MsgSize, ModbusCommands); 
     
